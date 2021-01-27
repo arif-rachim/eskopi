@@ -4,10 +4,7 @@ import useRouter, {RouterProvider} from "./components/useRouter";
 
 function App() {
     const Element = useRouter();
-    if(Element){
-        return <Element.Element {...Element.params}/>;
-    }
-    return <div></div>;
+    return <Element.Element {...Element.params}/>;
 }
 
 export default function Provider() {

@@ -44,25 +44,31 @@ function findMostMatchingComponent(pathArray, routing) {
     return {Element: routing[mostMatchingMap.pathMap], params: mostMatchingMap.params};
 }
 
-export function RouterProvider({children}) {
-    const [elementToMount, setElementToMount] = useState(null);
-    useEffect(() => {
+function getElementToMount() {
+    const hash = window.location.hash;
+    if (hash && hash.length > 0) {
+        const path = hash.substr(1, hash.length - 1);
+        const pathArray = path.split('/');
+        const component = findMostMatchingComponent(pathArray, routing);
+        return component;
+    }
+    if ('' in routing) {
+        return {Element: routing[''], params: {}};
+    }
+    return {Element: EmptyElement, params: {}};
+}
 
-        const handleHashChange = () => {
-            const hash = window.location.hash;
-            if (hash && hash.length > 0) {
-                const path = hash.substr(1, hash.length - 1);
-                const pathArray = path.split('/');
-                const component = findMostMatchingComponent(pathArray, routing);
-                setElementToMount(component);
-            }
-        }
+export function RouterProvider({children}) {
+    const [elementToMount, setElementToMount] = useState(getElementToMount());
+
+    useEffect(() => {
+        const handleHashChange = () => setElementToMount(getElementToMount());
         window.addEventListener("hashchange", handleHashChange);
-        handleHashChange();
         return () => {
             window.removeEventListener("hashchange", handleHashChange);
         }
     }, []);
+
     return <RoutingContext.Provider value={elementToMount}>
         {children}
     </RoutingContext.Provider>;
@@ -71,8 +77,12 @@ export function RouterProvider({children}) {
 function InvalidRoute({route}) {
     return <Vertical hAlign={'center'} vAlign={'center'}>
         <Vertical>
-            <Horizontal style={{fontSize: 30}} >Something went wrong !</Horizontal>
+            <Horizontal style={{fontSize: 30}}>Something went wrong !</Horizontal>
             <Horizontal><code><b>{route}</b></code> does not exist.</Horizontal>
         </Vertical>
     </Vertical>
+}
+
+function EmptyElement() {
+    return <Vertical>Nothing here ...</Vertical>
 }

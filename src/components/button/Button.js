@@ -85,6 +85,7 @@ export default function Button({
                    className={[...className, styles.button].join(' ')}
                    disabled={disabled}
                    type={type}
+                   onClick={onClick}
                    style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...style}}
                    {...props} />
 }

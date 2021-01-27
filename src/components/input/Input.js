@@ -42,8 +42,6 @@ function isUndefinedOrNull(b) {
  * @param {boolean} disabled
  * @param {Object} style
  *
- * @returns {JSX.Element}
- * @constructor
  */
 export default function Input({
                                   inputRef,

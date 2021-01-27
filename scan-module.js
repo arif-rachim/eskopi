@@ -28,9 +28,10 @@ function scanIndexFile(directory) {
     let files = await scanIndexFile(path.join('src','module'));
     files = files.map(f => {
         const key = f.replace('src\\module','').replace('index.js','');
-        const importKey = key.split('\\').filter(k => k.length > 0).join('_').split('-').join('_').split('@').join('');
-        const mapPath = key.split('\\').filter(k => k.length > 0).join('/');
-        const importPath = './module/'+mapPath+'/index';
+        let importKey = key.split('\\').filter(k => k.length > 0).join('_').split('-').join('_').split('@').join('');
+        let mapPath = key.split('\\').filter(k => k.length > 0).join('/');
+        let importPath = './module/'+mapPath+'/index';
+        importKey = importKey || '_';
         return {
             importKey,importPath,mapPath
         }

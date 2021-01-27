@@ -28,7 +28,7 @@ const STYLE_MAPPING = {
 }
 
 
-export function parseStyle(style,theme) {
+export function parseStyle(style, theme) {
     const result = {};
     const keys = Object.keys(style);
     for (const key of keys) {
@@ -39,7 +39,7 @@ export function parseStyle(style,theme) {
     return result;
 }
 
-export function parseBorder(style,color,theme) {
+export function parseBorder(style, color, theme) {
     color = color || 'light';
     if (color in theme) {
         color = theme[color];
@@ -52,7 +52,7 @@ export function parseBorder(style,color,theme) {
 
             let tc = tinycolor(color);
             tc.darken(Math.abs(100 * borderWeight * 0.2));
-            if(borderWeight === 0){
+            if (borderWeight === 0) {
                 tc.setAlpha(0);
             }
             const borderColor = tc.toString();
@@ -63,7 +63,7 @@ export function parseBorder(style,color,theme) {
 }
 
 
-export function parseRadius(style,theme) {
+export function parseRadius(style, theme) {
     const result = {};
     const keys = Object.keys(style);
     for (const key of keys) {
@@ -74,10 +74,10 @@ export function parseRadius(style,theme) {
     return result;
 }
 
-export function parseColorStyle({color, brightness, opacity},theme) {
+export function parseColorStyle({color, brightness, opacity}, theme) {
 
     const result = {};
-    if(color === undefined || color === null){
+    if (color === undefined || color === null) {
         return result;
     }
     if (color in theme) {
@@ -126,7 +126,6 @@ export function parseChildrenPosition({vAlign, hAlign, horizontal}) {
  * @param {JSX.Element[]} children
  * @param {string[]} className
  * @param {'primary' | 'secondary' |'danger' | 'light' | 'dark' | string } color
- * @param {boolean} heightFull
  * @param {Object} props
  * @param {useRef} domRef - useRef
  *
@@ -162,6 +161,19 @@ export function parseChildrenPosition({vAlign, hAlign, horizontal}) {
  * @param {'top'|'bottom'|'center'} vAlign - Vertical Align
  * @param {'left'|'right'|'center'} hAlign - Horizontal Align
  *
+ * @param {number|string} width
+ * @param {number|string} height
+ *
+ * @param {'auto'|'hidden'|'inherit'|'initial'|'overlay'|'revert'|'scroll'|'unset'|'visible'} overflow
+ * @param {'absolute'|'fixed'|'inherit'|'initial'|'relative'|'revert'|'static'|'sticky'|'unset'} position
+ *
+ * @param {number} top
+ * @param {number} left
+ * @param {number} right
+ * @param {number} bottom
+ *
+ * @param {string} transition
+ *
  * @returns {JSX.Element}
  * @constructor
  */
@@ -169,9 +181,8 @@ function Layout({
                     theme,
                     domRef,
                     horizontal = false,
-                    color ,
+                    color,
                     children,
-                    heightFull = false,
                     className = [],
                     p, pL, pR, pT, pB,
                     m, mL, mR, mT, mB,
@@ -183,6 +194,11 @@ function Layout({
                     gap,
                     hAlign,
                     vAlign,
+                    width, height,
+                    overflow = 'auto',
+                    position = 'relative',
+                    top, left, right, bottom,
+                    transition,
                     ...props
                 }) {
     const classNames = [styles.layout];
@@ -192,15 +208,14 @@ function Layout({
         classNames.push(styles.vertical);
     }
 
-    if (heightFull) {
-        classNames.push(styles.heightFull);
-    }
 
-    const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB},theme);
-    const borderStyle = parseBorder({b, bL, bR, bT, bB},color,theme);
-    const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR},theme);
-    const colorStyle = parseColorStyle({color, brightness, opacity},theme);
+    const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB}, theme);
+    const borderStyle = parseBorder({b, bL, bR, bT, bB}, color, theme);
+    const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
+    const colorStyle = parseColorStyle({color, brightness, opacity}, theme);
     const childrenPositionStyle = parseChildrenPosition({vAlign, hAlign, horizontal});
+    const dimensionStyle = {width, height, overflow, position, top, left, right, bottom,transition};
+
 
     let childrenClone = children;
     if (Array.isArray(childrenClone) && gap > 0) {
@@ -214,15 +229,15 @@ function Layout({
             return result;
         }, []);
     }
+    console.log('color style ',colorStyle);
     return <div ref={domRef} className={[...classNames, ...className].join(' ')}
-                style={{...colorStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...childrenPositionStyle, ...style}} {...props} >{childrenClone}</div>
+                style={{...dimensionStyle, ...colorStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...childrenPositionStyle, ...style}} {...props} >{childrenClone}</div>
 }
 
 
 /**
  * @param {string[]} className
  * @param {'primary' | 'secondary' |'danger' | 'light' | 'dark' | string } color
- * @param {boolean} heightFull
  * @param {Object} props
  * @param {useRef} domRef - useRef
  * @param {number} p - padding
@@ -254,13 +269,25 @@ function Layout({
  * @param {'top'|'bottom'|'center'} vAlign - Vertical Align
  * @param {'left'|'right'|'center'} hAlign - Horizontal Align
  *
+ * @param {number|string} width
+ * @param {number|string} height
+ *
+ * @param {'auto'|'hidden'|'inherit'|'initial'|'overlay'|'revert'|'scroll'|'unset'|'visible'} overflow
+ * @param {'absolute'|'fixed'|'inherit'|'initial'|'relative'|'revert'|'static'|'sticky'|'unset'} position
+ *
+ * @param {number} top
+ * @param {number} left
+ * @param {number} right
+ * @param {number} bottom
+ *
+ * @param {string} transition
+ *
  * @returns {JSX.Element}
  * @constructor
  */
 export function Horizontal({
                                domRef,
-                               color ,
-                               heightFull = false,
+                               color,
                                className = [],
                                p, pL, pR, pT, pB,
                                m, mL, mR, mT, mB,
@@ -272,12 +299,16 @@ export function Horizontal({
                                gap,
                                hAlign,
                                vAlign,
+                               width, height,
+                               overflow,
+                               position,
+                               top, left, right, bottom,
+                               transition,
                                ...props
                            }) {
     const prop = {
         domRef,
         color,
-        heightFull,
         className,
         p, pL, pR, pT, pB,
         m, mL, mR, mT, mB,
@@ -288,10 +319,16 @@ export function Horizontal({
         style,
         gap,
         hAlign,
-        vAlign
+        vAlign,
+        width,
+        height,
+        overflow,
+        position,
+        top, left, right, bottom,
+        transition
     }
     const [theme] = useTheme();
-    const layoutProps = {theme,...prop, ...props}
+    const layoutProps = {theme, ...prop, ...props}
     layoutProps.horizontal = true;
     return Layout(layoutProps);
 }
@@ -299,7 +336,6 @@ export function Horizontal({
 /**
  * @param {string[]} className
  * @param {'primary' | 'secondary' |'danger' | 'light' | 'dark' | string } color
- * @param {boolean} heightFull
  * @param {Object} props
  * @param {useRef} domRef - useRef
  * @param {number} p - padding
@@ -331,13 +367,25 @@ export function Horizontal({
  * @param {'top'|'bottom'|'center'} vAlign - Vertical Align
  * @param {'left'|'right'|'center'} hAlign - Horizontal Align
  *
+ * @param {number|string} height
+ * @param {number|string} width
+ *
+ * @param {'auto'|'hidden'|'inherit'|'initial'|'overlay'|'revert'|'scroll'|'unset'|'visible'} overflow
+ * @param {'absolute'|'fixed'|'inherit'|'initial'|'relative'|'revert'|'static'|'sticky'|'unset'} position
+ *
+ * @param {number} top
+ * @param {number} left
+ * @param {number} right
+ * @param {number} bottom
+ *
+ * @param {string} transition
+ *
  * @returns {JSX.Element}
  * @constructor
  */
 export function Vertical({
                              domRef,
-                             color ,
-                             heightFull = false,
+                             color,
                              className = [],
                              p, pL, pR, pT, pB,
                              m, mL, mR, mT, mB,
@@ -349,12 +397,16 @@ export function Vertical({
                              gap,
                              hAlign,
                              vAlign,
+                             height, width,
+                             overflow,
+                             position,
+                             top, left, right, bottom,
+                             transition,
                              ...props
                          }) {
     const prop = {
         domRef,
         color,
-        heightFull,
         className,
         p, pL, pR, pT, pB,
         m, mL, mR, mT, mB,
@@ -365,7 +417,12 @@ export function Vertical({
         style,
         gap,
         hAlign,
-        vAlign
+        vAlign,
+        width, height,
+        overflow,
+        position,
+        top, left, right, bottom,
+        transition
     }
     const [theme] = useTheme();
     const layoutProps = {theme, ...prop, ...props}
