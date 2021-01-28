@@ -1,3 +1,4 @@
+
 const path = require("path");
 const fs = require("fs");
 
@@ -27,9 +28,9 @@ function scanIndexFile(directory) {
 (async() => {
     let files = await scanIndexFile(path.join('src','module'));
     files = files.map(f => {
-        const key = f.replace('src\\module','').replace('index.js','');
-        let importKey = key.split('\\').filter(k => k.length > 0).join('_').split('-').join('_').split('@').join('');
-        let mapPath = key.split('\\').filter(k => k.length > 0).join('/');
+        const key = f.replace('src'+path.sep+'module','').replace('index.js','');
+        let importKey = key.split(path.sep).filter(k => k.length > 0).join('_').split('-').join('_').split('@').join('');
+        let mapPath = key.split(path.sep).filter(k => k.length > 0).join('/');
         let importPath = './module/'+mapPath+'/index';
         importKey = importKey || '_';
         return {
