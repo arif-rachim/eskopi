@@ -69,7 +69,7 @@ export default function Button({
         outline: 'none'
     };
     b = isUndefinedOrNull(b) ? 0.5 : b;
-    r = isUndefinedOrNull(r) ? 10 : r;
+    r = isUndefinedOrNull(r) ? 2 : r;
     p = isUndefinedOrNull(p) ? 4 : p;
     pT = isUndefinedOrNull(pT) ? 2 : pT;
     pB = isUndefinedOrNull(pB) ? 1.8 : pB;
@@ -77,7 +77,7 @@ export default function Button({
     const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB}, theme);
     const borderStyle = parseBorder({b, bL, bR, bT, bB}, color, theme);
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
-    const colorStyle = parseColorStyle({color, brightness: mouseOver ? mouseDown ? -20 : -10 : 0, opacity: 1}, theme);
+    const colorStyle = parseColorStyle({color, brightness: mouseOver ? mouseDown ? -0.2 : -0.1 : 0, opacity: 1}, theme);
     return <button ref={buttonRef} onMouseEnter={() => setMouseOver(true)}
                    onMouseLeave={() => setMouseOver(false)}
                    onMouseDown={() => setMouseDown(true)}

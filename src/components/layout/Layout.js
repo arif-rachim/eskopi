@@ -74,8 +74,15 @@ export function parseRadius(style, theme) {
     return result;
 }
 
-export function parseColorStyle({color, brightness, opacity}, theme) {
+function calculateColor(color, brightness, opacity) {
+    let tc = tinycolor(color);
+    const currentBrightnessPercentage = (tc.getBrightness() / 255) * 100;
+    tc.lighten((100 - currentBrightnessPercentage) * brightness);
+    tc.setAlpha(opacity);
+    return tc;
+}
 
+export function parseColorStyle({color, brightness, opacity}, theme) {
     const result = {};
     if (color === undefined || color === null) {
         return result;
@@ -83,11 +90,7 @@ export function parseColorStyle({color, brightness, opacity}, theme) {
     if (color in theme) {
         color = theme[color];
     }
-    let tc = tinycolor(color);
-    const currentBrightnessPercentage = (tc.getBrightness() / 255 ) * 100;
-    console.log('current brightness',currentBrightnessPercentage,'lighted',(100 - currentBrightnessPercentage) * brightness);
-    tc.lighten((100 - currentBrightnessPercentage) * brightness);
-    tc.setAlpha(opacity);
+    let tc = calculateColor(color, brightness, opacity);
     result.backgroundColor = tc.toString();
     if (tc.isDark()) {
         result.color = theme.light;
@@ -228,7 +231,6 @@ function Layout({
             return result;
         }, []);
     }
-    console.log('color style ',colorStyle);
     return <div ref={domRef} className={[...classNames, ...className].join(' ')}
                 style={{...dimensionStyle, ...colorStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...childrenPositionStyle, ...style}} {...props} >{childrenClone}</div>
 }
