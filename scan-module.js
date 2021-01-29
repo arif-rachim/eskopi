@@ -31,7 +31,7 @@ function scanIndexFile(directory) {
         const key = f.replace('src'+path.sep+'module','').replace('index.js','');
         let importKey = key.split(path.sep).filter(k => k.length > 0).join('_').split('-').join('_').split('@').join('');
         let mapPath = key.split(path.sep).filter(k => k.length > 0).join('/');
-        let importPath = './module/'+mapPath+'/index';
+        let importPath = './module/'+(mapPath.length > 0 ? mapPath+'/' :'')+'index';
         importKey = importKey || '_';
         return {
             importKey,importPath,mapPath
@@ -40,9 +40,10 @@ function scanIndexFile(directory) {
 
     const scriptFile = `
 ${files.map(f => `import ${f.importKey} from "${f.importPath}";`).join('\n')}
-export default {
+const routing = {
 ${files.map(f => `'${f.mapPath}' : ${f.importKey}`).join(',\n')}
 }
+export default routing;
     `;
     fs.writeFile(path.join('src','routing.js'),scriptFile, function (err) {
         if (err) return console.log(err);
