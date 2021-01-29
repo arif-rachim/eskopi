@@ -8,9 +8,14 @@ function isUndefinedOrNull(b) {
 }
 
 /**
+ *
  * @param {useRef} inputRef
  * @param {string} name
  * @param {string} defaultValue
+ * @param {boolean} disabled
+ * @param {string} className
+ * @param {string} color
+ * @param {Object} style
  *
  * @param {number} p - padding
  * @param {number} pL - padding left
@@ -36,12 +41,9 @@ function isUndefinedOrNull(b) {
  * @param {number} rBL - radius bottom left
  * @param {number} rBR - radius bottom right
  *
- * @param {string} type
- *
- * @param {string[]} className
- * @param {boolean} disabled
- * @param {Object} style
- *
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
  */
 export default function Input({
                                   inputRef,

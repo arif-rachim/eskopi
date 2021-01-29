@@ -1,14 +1,13 @@
-import Sidebar from "../../../components/sidebar/Sidebar";
-import {Vertical,Horizontal} from "../../../components/layout/Layout";
-import Button from "../../../components/button/Button";
-import Input from "../../../components/input/Input";
+import Sidebar from "components/sidebar/Sidebar";
+import {Vertical,Horizontal} from "components/layout/Layout";
+import Button from "components/button/Button";
+import Input from "components/input/Input";
 export default function SampleSideBar() {
     return <Vertical p={3} width={'100%'} height={'100%'}>
-        <Sidebar sidePanel={MySidePanel}>
+        <Sidebar  sidePanel={MySidePanel}>
             <Vertical color={"light"} height={'100%'} p={5}>
                 This is the actual content
-                <Input />
-            </Vertical>
+                <Input  /></Vertical>
         </Sidebar>
     </Vertical>
 }

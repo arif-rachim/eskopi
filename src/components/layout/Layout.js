@@ -84,11 +84,9 @@ export function parseColorStyle({color, brightness, opacity}, theme) {
         color = theme[color];
     }
     let tc = tinycolor(color);
-    if (brightness > 0) {
-        tc.brighten(brightness)
-    } else if (brightness < 0) {
-        tc.darken(Math.abs(brightness));
-    }
+    const currentBrightnessPercentage = (tc.getBrightness() / 255 ) * 100;
+    console.log('current brightness',currentBrightnessPercentage,'lighted',(100 - currentBrightnessPercentage) * brightness);
+    tc.lighten((100 - currentBrightnessPercentage) * brightness);
     tc.setAlpha(opacity);
     result.backgroundColor = tc.toString();
     if (tc.isDark()) {
@@ -153,8 +151,9 @@ export function parseChildrenPosition({vAlign, hAlign, horizontal}) {
  * @param {number} rBL - radius bottom left
  * @param {number} rBR - radius bottom right
  *
- * @param {number} brightness - -100 - 100
- * @param {number} opacity - opacity
+ * @param {number} brightness - negative one to positive one
+ * @param {number} opacity - opacity - zero to one
+ *
  * @param {Object} style - style for the panel
  * @param {number} gap - gap between array
  *
@@ -261,8 +260,8 @@ function Layout({
  * @param {number} rTR - radius top right
  * @param {number} rBL - radius bottom left
  * @param {number} rBR - radius bottom right
- * @param {number} brightness - -100 - 100
- * @param {number} opacity - opacity
+ * @param {number} brightness - negative one to positive one
+ * @param {number} opacity - opacity - zero to one
  * @param {Object} style - style for the panel
  * @param {number} gap - gap between array
  *
@@ -359,8 +358,8 @@ export function Horizontal({
  * @param {number} rTR - radius top right
  * @param {number} rBL - radius bottom left
  * @param {number} rBR - radius bottom right
- * @param {number} brightness - -100 - 100
- * @param {number} opacity - opacity
+ * @param {number} brightness - negative one to positive one
+ * @param {number} opacity - opacity - zero to one
  * @param {Object} style - style for the panel
  * @param {number} gap - gap between array
  *
