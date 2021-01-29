@@ -1,6 +1,6 @@
 import styles from "./Layout.module.css";
 import tinycolor from "tinycolor2";
-import {cloneElement} from "react/cjs/react.production.min";
+import React,{cloneElement} from "react";
 import useTheme from "../useTheme";
 
 
@@ -87,6 +87,7 @@ export function parseColorStyle({color, brightness, opacity}, theme) {
     if (color === undefined || color === null) {
         return result;
     }
+
     if (color in theme) {
         color = theme[color];
     }
@@ -429,3 +430,6 @@ export function Vertical({
     const layoutProps = {theme, ...prop, ...props}
     return Layout(layoutProps);
 }
+
+export const MVertical = React.memo(Vertical);
+export const MHorizontal = React.memo(Vertical);
