@@ -1,12 +1,12 @@
-import {useState} from "react";
 import styles from "./Input.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
-
+import {useCallback} from "react";
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
 }
 
+const replacedAutoCapsKey = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 /**
  *
  * @param {useRef} inputRef
@@ -40,7 +40,7 @@ function isUndefinedOrNull(b) {
  * @param {number} rTR - radius top right
  * @param {number} rBL - radius bottom left
  * @param {number} rBR - radius bottom right
- *
+ * @param {boolean} autoCaps - indicate to enable autoCaps
  * @param props
  * @returns {JSX.Element}
  * @constructor
@@ -57,6 +57,7 @@ export default function Input({
                                   m, mL, mR, mT, mB,
                                   b, bL, bR, bT, bB,
                                   r, rTL, rTR, rBL, rBR,
+                                  autoCaps,
                                   ...props
                               }) {
     const [theme] = useTheme();
@@ -82,6 +83,17 @@ export default function Input({
     return <input ref={inputRef} type={"text"} name={name} defaultValue={defaultValue}
                   className={[...className, styles.button].join(' ')}
                   readOnly={disabled}
+                  onKeyDownCapture={useCallback(e => {
+                      if (autoCaps && !e.ctrlKey && !e.shiftKey && replacedAutoCapsKey.indexOf(e.key) >= 0) {
+                          e.preventDefault();
+                          const position = e.target.selectionStart;
+                          let nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+                          const currentValue = e.target.value;
+                          const newValue = currentValue.substring(0,position)+e.key.toUpperCase()+currentValue.substring(position,currentValue.length);
+                          nativeInputValueSetter.call(e.target, newValue);
+                          e.target.setSelectionRange(position+1,position+1);
+                      }
+                  },[autoCaps])}
                   style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...style}}
                   {...props}/>
 }
