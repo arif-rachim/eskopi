@@ -430,6 +430,3 @@ export function Vertical({
     const layoutProps = {theme, ...prop, ...props}
     return Layout(layoutProps);
 }
-
-export const MVertical = React.memo(Vertical);
-export const MHorizontal = React.memo(Vertical);
