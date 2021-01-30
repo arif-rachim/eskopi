@@ -1,7 +1,7 @@
 import styles from "./Input.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
-import React, {useCallback,useState,useEffect} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
@@ -47,6 +47,7 @@ const replacedAutoCapsKey = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', '
  * @param {function(value)} onChange,
  * @param {function()} onBlur,
  * @param {Object} valueObserver,
+ * @param {Object} errorsObserver
  *
  * @param props
  * @returns {JSX.Element}
@@ -59,21 +60,24 @@ function Input({
                    className = [],
                    color,
                    style,
-                   type='text',
+                   type = 'text',
                    p, pL, pR, pT, pB,
                    m, mL, mR, mT, mB,
                    b, bL, bR, bT, bB,
                    r, rTL, rTR, rBL, rBR,
                    onChange, onBlur,
-                   autoCaps=true,
-                   errorMessage,
+                   autoCaps = true,
                    valueObserver,
+                   errorsObserver,
                    ...props
                }) {
     const [theme] = useTheme();
-    const [value,setValue] = useState(valueObserver.current[name]);
-    useEffect(() => valueObserver.addListener(name,setValue),[name, valueObserver]);
-    console.log('Recalculate');
+    const [value, setValue] = useState(valueObserver.current[name]);
+    const [errorMessage, setErrorMessage] = useState('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(valueObserver.stateListenerEffect(name, setValue), []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(errorsObserver.stateListenerEffect(name, setErrorMessage), []);
     const buttonStyle = {
         background: 'none',
         borderRadius: 5,

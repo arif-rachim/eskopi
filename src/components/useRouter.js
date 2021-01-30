@@ -5,8 +5,7 @@ import {Horizontal, Vertical} from "./layout/Layout";
 const RoutingContext = createContext({});
 
 export default function useRouter() {
-    const elementToMount = useContext(RoutingContext);
-    return elementToMount;
+    return useContext(RoutingContext);
 }
 
 function findMostMatchingComponent(pathArray, routing) {

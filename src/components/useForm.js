@@ -4,7 +4,7 @@ import {Vertical,Horizontal} from "./layout/Layout";
 import Label from "./label/Label";
 /**
  * Create onSubmit handler
- * @param controller
+ * @param {React.MutableRefObject<{validateOn: {}, errorsObserver: (React.MutableRefObject<*>|setObserver), valueObserver: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>} controller
  * @returns {function(*=): function(*): void}
  */
 const handleSubmitFactory = (controller) => (callback) => (event) => {
@@ -15,8 +15,7 @@ const handleSubmitFactory = (controller) => (callback) => (event) => {
 
 /**
  * Create register method
- * @param controller
- * @param setErrors
+ * @param {React.MutableRefObject<{validateOn: {}, errorsObserver: (React.MutableRefObject<*>|setObserver), valueObserver: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>} controller
  * @returns {function(*=): function(*): void}
  */
 const registerFactory = (controller) => (validator) => {
@@ -39,14 +38,15 @@ const registerFactory = (controller) => (validator) => {
 }
 
 /**
- * useForm function
- * @returns {{handleSubmit: (function(*=): function(*): void), controller: React.MutableRefObject<{errorsObserver: *, valueObserver: *, defaultValue: {}, setValue: *, userEditingField: {}, modified: {}, setErrors: *, value: {}, previousValue: {}, errors: {}}>, register: (function(*=): function(*): void)}}
+ *
+ * @param {Object} defaultValue
+ * @returns {{handleSubmit: (function(*=): function(*): void), controller: React.MutableRefObject<{validateOn: {}, errorsObserver: (React.MutableRefObject<*>|setObserver), valueObserver: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>, errorsObserver: (React.MutableRefObject<*>|setObserver), valueObserver: (React.MutableRefObject<*>|setObserver), setValue: (React.MutableRefObject<*>|setObserver), setErrors: (React.MutableRefObject<*>|setObserver), register: (function(*=): function(*): void)}}
  */
-export default function useForm() {
+export default function useForm(defaultValue={}) {
     const [errorsObserver, setErrors] = useObserver({});
     const [valueObserver, setValue] = useObserver({});
     const controller = useRef({
-        defaultValue: {},
+        defaultValue,
         value: {},
         userEditingField: {},
         previousValue: {},
@@ -56,6 +56,7 @@ export default function useForm() {
         setValue,
         errorsObserver,
         setErrors,
+        validateOn:{}
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleSubmit = useCallback(handleSubmitFactory(controller), []);
@@ -72,41 +73,84 @@ export default function useForm() {
     }
 }
 
+/**
+ *
+ * @param {React.MutableRefObject<{validateOn: {}, errorsObserver: (React.MutableRefObject<*>|setObserver), valueObserver: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>} controller
+ * @param {string} name
+ * @param {function(*=):string} validator
+ * @param {Object} value
+ */
+function validateError(controller, name, validator, value) {
+    const oldError = controller.current.errors[name];
+    let newError = '';
+    if (validator) {
+        newError = validator.apply(validator, [value]);
+    }
+    if (oldError !== newError) {
+        controller.current.errors[name] = newError;
+        controller.current.setErrors(name, newError);
+    }
+}
+
+/**
+ *
+ * @param propsRef
+ * @returns {function(): void}
+ */
 const callbackOnBlur = (propsRef) => () => {
     const {controller, name, validator} = propsRef.current;
+    // if user perform editing then this blur should be triggered
     if (controller.current.userEditingField[name]) {
+        // here we keep the oldValue
         const oldValue = controller.current.previousValue[name];
+        // here we get the curent value
         const newValue = controller.current.value[name];
-        const oldError = controller.current.errors[name];
-        let newError = '';
-        if (validator) {
-            newError = validator.apply(validator, [newValue]);
+        if(controller.current.validateOn[name] === 'blur'){
+            validateError(controller, name, validator, newValue);
         }
-        if (oldValue !== newValue) {
-            controller.current.setValue(name, newValue);
-        }
-        if (oldError !== newError) {
-            controller.current.errors[name] = newError;
-            controller.current.setErrors(name, newError);
-        }
+        // here we save the previous value
         controller.current.previousValue[name] = controller.current.value[name];
+        // here we set the editing is done !
         controller.current.userEditingField[name] = false;
     }
 };
 
+/**
+ *
+ * @param {Object} propsRef
+ * @returns {function(*=): void}
+ */
 const callbackOnChange = (propsRef) => (value) => {
-    const {controller, name} = propsRef.current;
+    const {controller, name , validator} = propsRef.current;
+    // here we flag that the user actually did perform editing
     controller.current.userEditingField[name] = true;
+    // here is the flag to store the value
     controller.current.value[name] = value;
+    // this is the flag indicates that the field has been modified
     controller.current.modified[name] = true;
+    // here we trigger the value update !
     controller.current.setValue(name,value);
+    if(controller.current.validateOn[name] === 'change'){
+        validateError(controller, name, validator, value);
+    }
 };
 
-
-export function Controller({name,label, defaultValue, validator, render, controller, ...props}) {
-    controller.current.defaultValue[name] = defaultValue;
+/**
+ *
+ * @param {string} name
+ * @param {string} label
+ * @param {function(value)} validator
+ * @param {'change'|'blur'} validateOn
+ * @param {React.Element} render
+ * @param {React.MutableRefObject<{validateOn: {}, errorsObserver: (React.MutableRefObject<*>|setObserver), valueObserver: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>} controller
+ * @param {*} props
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export function Controller({name,label, validator , validateOn='blur', render, controller, ...props}) {
+    controller.current.validateOn[name] = validateOn;
     if(!controller.current.modified[name]){
-        controller.current.valueObserver.current[name] = defaultValue
+        controller.current.valueObserver.current[name] = controller.current.defaultValue[name]
     }
     const propsRef = useRef({controller, name, validator});
     propsRef.current = {controller, name, validator};
@@ -115,12 +159,12 @@ export function Controller({name,label, defaultValue, validator, render, control
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const onChange = useCallback(callbackOnChange(propsRef), []);
     const Render = useRef(render).current;
-    return <Vertical>
+    return <Vertical overflow={'visible'}>
         <label>
-            <Vertical>
+            <Vertical overflow={'visible'}>
                 <Horizontal style={{fontSize: '0.8rem'}}>{label}</Horizontal>
-                <Render name={name} onBlur={onBlur} onChange={onChange} valueObserver={controller.current.valueObserver} {...props}/>
-                <Label name={name} observer={controller.current.errorsObserver}/>
+                <Render name={name} onBlur={onBlur} onChange={onChange} valueObserver={controller.current.valueObserver} errorsObserver={controller.current.errorsObserver} {...props}/>
+                <Label name={name} color={'danger'} observer={controller.current.errorsObserver}  style={{fontSize:'0.7rem',position:'absolute',bottom:-12,right:0}}/>
             </Vertical>
         </label>
     </Vertical>;

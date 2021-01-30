@@ -74,7 +74,7 @@ export function parseRadius(style, theme) {
     return result;
 }
 
-function calculateColor(color, brightness, opacity) {
+export function calculateBrightness(color, brightness, opacity) {
     let tc = tinycolor(color);
     const currentBrightnessPercentage = (tc.getBrightness() / 255) * 100;
     tc.lighten((100 - currentBrightnessPercentage) * brightness);
@@ -91,7 +91,7 @@ export function parseColorStyle({color, brightness, opacity}, theme) {
     if (color in theme) {
         color = theme[color];
     }
-    let tc = calculateColor(color, brightness, opacity);
+    let tc = calculateBrightness(color, brightness, opacity);
     result.backgroundColor = tc.toString();
     if (tc.isDark()) {
         result.color = theme.light;
