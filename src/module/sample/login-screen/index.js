@@ -13,7 +13,7 @@ export default function LoginScreen() {
             debugger;
         })}>
             <Vertical gap={3} color={"light"} brightness={-0.5} p={5} pT={7} r={5} b={0.5}>
-                <Controller></Controller>
+
                 <Label label={'User Name'} >
                     <Input autoCaps inputRef={register((value) => value && value.length > 0 ? '' : 'Hey your input invalid')}
                            name={'userName'} placeholder={'User Name'} />
