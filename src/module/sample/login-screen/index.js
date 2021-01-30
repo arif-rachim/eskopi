@@ -2,24 +2,19 @@ import {Horizontal,Vertical} from "components/layout/Layout";
 import Input from "../../../components/input/Input";
 import useForm, {Controller} from "../../../components/useForm";
 import Button from "../../../components/button/Button";
-import Label from "../../../components/label/Label";
 
+const valueRequired = errorMessage => value => value && value.length > 0 ? '' : errorMessage;
 
 export default function LoginScreen() {
-    const {controller, handleSubmit, register} = useForm();
-
+    const {controller, handleSubmit} = useForm();
+    console.log(controller);
     return <Vertical color={"light"} height={'100%'} hAlign={'center'} vAlign={'center'} >
         <form action="" onSubmit={handleSubmit((data) => {
             debugger;
         })}>
             <Vertical gap={3} color={"light"} brightness={-0.5} p={5} pT={7} r={5} b={0.5}>
-
-                <Label label={'User Name'} >
-                    <Input autoCaps inputRef={register((value) => value && value.length > 0 ? '' : 'Hey your input invalid')}
-                           name={'userName'} placeholder={'User Name'} />
-                </Label>
-                <Input inputRef={register((value) => value && value.length > 0 ? '' : 'Hey your password invalid')}
-                       name={'password'} type={'password'} placeholder={'Password'} required/>
+                <Controller defaultValue={'Arif'} label={"User Name"} controller={controller} render={Input} name={'userName'} validator={valueRequired('Name is required')}/>
+                <Controller defaultValue={'Password'} label={"Password"} controller={controller} render={Input} type={'password'} name={'password'} validator={valueRequired('Password is required')}/>
                 <Horizontal>
                     {JSON.stringify(controller.errors)}
                 </Horizontal>

@@ -1,23 +1,23 @@
 import styles from "./Input.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
-import React,{useCallback} from "react";
+import React, {useCallback,useState,useEffect} from "react";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
 }
 
 const replacedAutoCapsKey = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
 /**
  *
  * @param {useRef} inputRef
  * @param {string} name
- * @param {string} defaultValue
  * @param {boolean} disabled
  * @param {string} className
  * @param {string} color
  * @param {Object} style
- *
+ * @param {string} type
  * @param {number} p - padding
  * @param {number} pL - padding left
  * @param {number} pR - padding right
@@ -44,27 +44,35 @@ const replacedAutoCapsKey = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', '
  * @param {boolean} autoCaps - indicate to enable autoCaps
  * @param {string} errorMessage - indicate there is error
  *
+ * @param {function(value)} onChange,
+ * @param {function()} onBlur,
+ * @param {Object} valueObserver,
+ *
  * @param props
  * @returns {JSX.Element}
  * @constructor
  */
 function Input({
-                                  inputRef,
-                                  name,
-                                  defaultValue,
-                                  disabled,
-                                  className = [],
-                                  color,
-                                  style,
-                                  p, pL, pR, pT, pB,
-                                  m, mL, mR, mT, mB,
-                                  b, bL, bR, bT, bB,
-                                  r, rTL, rTR, rBL, rBR,
-                                  autoCaps,
-                                  errorMessage,
-                                  ...props
-                              }) {
+                   inputRef,
+                   name,
+                   disabled,
+                   className = [],
+                   color,
+                   style,
+                   type='text',
+                   p, pL, pR, pT, pB,
+                   m, mL, mR, mT, mB,
+                   b, bL, bR, bT, bB,
+                   r, rTL, rTR, rBL, rBR,
+                   onChange, onBlur,
+                   autoCaps=true,
+                   errorMessage,
+                   valueObserver,
+                   ...props
+               }) {
     const [theme] = useTheme();
+    const [value,setValue] = useState(valueObserver.current[name]);
+    useEffect(() => valueObserver.addListener(name,setValue),[name, valueObserver]);
     console.log('Recalculate');
     const buttonStyle = {
         background: 'none',
@@ -72,6 +80,7 @@ function Input({
         backgroundColor: 'none',
         outline: 'none'
     };
+    autoCaps = type === 'password' ? false : autoCaps;
     b = isUndefinedOrNull(b) ? 1 : b;
     r = isUndefinedOrNull(r) ? 2 : r;
     p = isUndefinedOrNull(p) ? 2 : p;
@@ -84,7 +93,7 @@ function Input({
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
     const colorStyle = parseColorStyle({color, brightness: 0.71, opacity: 1}, theme);
 
-    return <input ref={inputRef} type={"text"} name={name} defaultValue={defaultValue}
+    return <input ref={inputRef} type={type} name={name}
                   className={[...className, styles.button].join(' ')}
                   readOnly={disabled}
                   onKeyDownCapture={useCallback(e => {
@@ -93,17 +102,19 @@ function Input({
                           const position = e.target.selectionStart;
 
                           const currentValue = e.target.value;
-                          const newValue = currentValue.substring(0,position)+e.key.toUpperCase()+currentValue.substring(position,currentValue.length);
+                          const newValue = currentValue.substring(0, position) + e.key.toUpperCase() + currentValue.substring(position, currentValue.length);
 
                           let nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
                           nativeInputValueSetter.call(e.target, newValue);
-                          e.target.setSelectionRange(position+1,position+1);
-                          const event = new Event('input', { bubbles: true });
+                          e.target.setSelectionRange(position + 1, position + 1);
+                          const event = new Event('input', {bubbles: true});
                           e.target.dispatchEvent(event);
-
                       }
-                  },[autoCaps])}
+                  }, [autoCaps])}
                   style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...style}}
+                  onChange={(e) => onChange(e.target.value)}
+                  onBlur={onBlur}
+                  value={value}
                   {...props}/>
 }
 

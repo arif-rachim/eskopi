@@ -1,10 +1,17 @@
-import {Horizontal, Vertical} from "../layout/Layout";
+import {useState,useEffect} from "react";
+import {Horizontal} from "../layout/Layout";
 
-export default function Label({label, ...props}) {
-    return <label>
-        <Vertical>
-            <Horizontal style={{fontSize:'0.8rem'}}>{label}</Horizontal>
-            {props.children}
-        </Vertical>
-    </label>
+/**
+ * @param {string} name
+ * @param {*} observer
+ * @param {*} props
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export default function Label({name,observer,...props}) {
+    const [value,setValue] = useState(observer.current[name])
+    useEffect(() => {
+        return observer.addListener(name,setValue);
+    },[name, observer]);
+    return <Horizontal {...props}>{value}</Horizontal>
 }
