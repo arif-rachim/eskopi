@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from "react";
+import React, {useCallback, useRef} from "react";
 import useObserver from "./useObserver";
 import {Vertical,Horizontal} from "./layout/Layout";
 import Label from "./label/Label";
@@ -102,7 +102,7 @@ const callbackOnBlur = (propsRef) => () => {
     // if user perform editing then this blur should be triggered
     if (controller.current.userEditingField[name]) {
         // here we keep the oldValue
-        const oldValue = controller.current.previousValue[name];
+        // const oldValue = controller.current.previousValue[name];
         // here we get the curent value
         const newValue = controller.current.value[name];
         if(controller.current.validateOn[name] === 'blur'){
