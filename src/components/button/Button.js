@@ -36,6 +36,9 @@ function isUndefinedOrNull(b) {
  *
  * @param {'primary' | 'secondary' |'danger' | 'light' | 'dark' | string } color
  *
+ * @param {number} brightness - negative one to positive one
+ * @param {number} opacity - opacity - zero to one
+ *
  * @param {'submit' |'reset'|'button'}  type
  * @param {string[]} className
  * @param {function(event)} onClick
@@ -57,6 +60,7 @@ export default function Button({
                                    m, mL, mR, mT, mB,
                                    b, bL, bR, bT, bB,
                                    r, rTL, rTR, rBL, rBR,
+                                   brightness, opacity,
                                    ...props
                                }) {
     const [theme] = useTheme();
@@ -74,10 +78,13 @@ export default function Button({
     pT = isUndefinedOrNull(pT) ? 2 : pT;
     pB = isUndefinedOrNull(pB) ? 1.8 : pB;
     color = color || 'primary';
+    opacity = opacity || 1;
+    brightness = brightness || 0;
+
     const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB}, theme);
     const borderStyle = parseBorder({b, bL, bR, bT, bB}, color, theme);
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
-    const colorStyle = parseColorStyle({color, brightness: mouseOver ? mouseDown ? -0.2 : -0.1 : 0, opacity: 1}, theme);
+    const colorStyle = parseColorStyle({color, brightness: mouseOver ? mouseDown ? (-0.2 + brightness) : (-0.1 + brightness) : brightness, opacity}, theme);
     return <button ref={buttonRef} onMouseEnter={() => setMouseOver(true)}
                    onMouseLeave={() => setMouseOver(false)}
                    onMouseDown={() => setMouseDown(true)}

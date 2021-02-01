@@ -2,6 +2,7 @@ import styles from "./Input.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
 import React, {useCallback, useEffect, useState} from "react";
+import {useObserverValue} from "components/useObserver";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
@@ -72,12 +73,9 @@ function Input({
                    ...props
                }) {
     const [theme] = useTheme();
-    const [value, setValue] = useState(valueObserver.current[name]);
-    const [errorMessage, setErrorMessage] = useState('');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(valueObserver.stateListenerEffect(name, setValue), []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(errorsObserver.stateListenerEffect(name, setErrorMessage), []);
+    const value = useObserverValue(name,valueObserver);
+    const errorMessage = useObserverValue(name,errorsObserver);
+
     const buttonStyle = {
         background: 'none',
         borderRadius: 5,

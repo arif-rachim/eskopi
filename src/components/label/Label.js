@@ -12,6 +12,8 @@ import useTheme from "../useTheme";
  * @constructor
  */
 export default function Label({name,color,observer,style,...props}) {
+    observer.current = observer.current || {};
+    name = name || ''
     const [value,setValue] = useState(observer.current[name]);
     const [theme] = useTheme();
 

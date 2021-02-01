@@ -2,12 +2,19 @@ import Sidebar from "components/sidebar/Sidebar";
 import {Vertical,Horizontal} from "components/layout/Layout";
 import Button from "components/button/Button";
 import Input from "components/input/Input";
+import useObserver from "components/useObserver";
+import Label from "components/label/Label";
+
 export default function SampleSideBar() {
+    const [$value,setValue] = useObserver('');
+    const [$error,setError] = useObserver();
     return <Vertical p={3} width={'100%'} height={'100%'}>
         <Sidebar  sidePanel={MySidePanel}>
             <Vertical color={"light"} height={'100%'} p={5}>
                 This is the actual content
-                <Input  /></Vertical>
+                <Input valueObserver={$value} errorsObserver={$error} onChange={setValue}/>
+                <Label observer={$value}/>
+            </Vertical>
         </Sidebar>
     </Vertical>
 }

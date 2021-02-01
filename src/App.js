@@ -2,11 +2,20 @@ import {ThemeContextProvider} from "./components/useTheme";
 import {LayerContextProvider} from "./components/useLayers";
 import useRouter, {RouterProvider} from "./components/useRouter";
 import "firebase/firestore";
-import {FirebaseAppProvider} from "reactfire";
+import "firebase/auth";
+import {AuthCheck, FirebaseAppProvider} from "reactfire";
+import {Suspense} from "react";
+import LoginScreen from "module/login";
+import RegistrationScreen from "module/registration";
 
 function App() {
     const Element = useRouter();
-    return <Element.Element {...Element.params}/>;
+    if(Element.Element === RegistrationScreen){
+        return <Element.Element {...Element.params}/>;
+    }
+    return <AuthCheck fallback={<LoginScreen/>}>
+        <Element.Element {...Element.params}/>;
+    </AuthCheck>
 }
 
 
@@ -29,11 +38,13 @@ const firebaseConfig = {
 
 export default function Provider() {
     return (
-        <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+        <FirebaseAppProvider firebaseConfig={firebaseConfig} suspense={true} >
             <ThemeContextProvider>
                 <RouterProvider>
                     <LayerContextProvider>
-                        <App/>
+                        <Suspense fallback={<div>Loading ...</div>}>
+                            <App/>
+                        </Suspense>
                     </LayerContextProvider>
                 </RouterProvider>
             </ThemeContextProvider>
