@@ -1,9 +1,9 @@
-.layout{
+.layout {
     display: flex;
     box-sizing: border-box;
 }
 
-.horizontal{
+.horizontal {
     flex-direction: row;
 }
 

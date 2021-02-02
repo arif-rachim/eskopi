@@ -1,14 +1,14 @@
-import {createContext,useState,useContext,useCallback} from "react";
+import {createContext, useCallback, useContext, useState} from "react";
 import {v4} from "uuid";
 
 /**
  *
  * @returns {function(*=): Promise<ValidationOptions.unknown>}
  */
-export default function useLayers(){
+export default function useLayers() {
     const setStacks = useContext(LayerContext);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    return useCallback(createShowPanel(setStacks),[]);
+    return useCallback(createShowPanel(setStacks), []);
 }
 
 /**
@@ -39,8 +39,8 @@ const LayerContext = createContext({});
  * @returns {JSX.Element}
  * @constructor
  */
-export function LayerContextProvider({children}){
-    const [stacks,setStacks] = useState([]);
+export function LayerContextProvider({children}) {
+    const [stacks, setStacks] = useState([]);
     return <LayerContext.Provider value={setStacks}>
         {children}
         {stacks.map((stack) => {
@@ -55,6 +55,6 @@ export function LayerContextProvider({children}){
  * @returns {*}
  * @constructor
  */
-function Layer({children}){
+function Layer({children}) {
     return children
 }

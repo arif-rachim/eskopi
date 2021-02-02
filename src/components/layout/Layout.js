@@ -1,6 +1,6 @@
 import styles from "./Layout.module.css";
 import tinycolor from "tinycolor2";
-import React,{cloneElement} from "react";
+import React, {cloneElement} from "react";
 import useTheme from "../useTheme";
 
 
@@ -217,7 +217,7 @@ function Layout({
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
     const colorStyle = parseColorStyle({color, brightness, opacity}, theme);
     const childrenPositionStyle = parseChildrenPosition({vAlign, hAlign, horizontal});
-    const dimensionStyle = {width, height, overflow, position, top, left, right, bottom,transition};
+    const dimensionStyle = {width, height, overflow, position, top, left, right, bottom, transition};
 
 
     let childrenClone = children;

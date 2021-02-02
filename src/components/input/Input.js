@@ -1,8 +1,8 @@
 import styles from "./Input.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
-import React, {useCallback, useEffect, useState} from "react";
-import {useObserverValue} from "components/useObserver";
+import React, {useCallback} from "react";
+import {useObserverValue} from "components/useStateObserver";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
@@ -73,8 +73,8 @@ function Input({
                    ...props
                }) {
     const [theme] = useTheme();
-    const value = useObserverValue(name,valueObserver);
-    const errorMessage = useObserverValue(name,errorsObserver);
+    const value = useObserverValue(name, valueObserver);
+    const errorMessage = useObserverValue(name, errorsObserver);
 
     const buttonStyle = {
         background: 'none',

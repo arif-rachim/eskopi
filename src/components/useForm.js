@@ -1,5 +1,5 @@
 import React, {useCallback, useRef} from "react";
-import useObserver from "./useObserver";
+import useStateObserver from "components/useStateObserver";
 import {Horizontal, Vertical} from "./layout/Layout";
 import Label from "./label/Label";
 
@@ -55,8 +55,8 @@ const registerFactory = (controller) => (validator) => {
  * @returns {{handleSubmit: (function(*=): function(*): void), controller: React.MutableRefObject<{validateOn: {}, errorsObserver: (React.MutableRefObject<*>|setObserver), valueObserver: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, validator: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>, errorsObserver: (React.MutableRefObject<*>|setObserver), valueObserver: (React.MutableRefObject<*>|setObserver), setValue: (React.MutableRefObject<*>|setObserver), setErrors: (React.MutableRefObject<*>|setObserver), register: (function(*=): function(*): void)}}
  */
 export default function useForm(defaultValue = {}) {
-    const [errorsObserver, setErrors] = useObserver({});
-    const [valueObserver, setValue] = useObserver({});
+    const [errorsObserver, setErrors] = useStateObserver({});
+    const [valueObserver, setValue] = useStateObserver({});
     const controller = useRef({
         defaultValue,
         userEditingField: {},
@@ -74,16 +74,16 @@ export default function useForm(defaultValue = {}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const register = useCallback(registerFactory(controller), []);
     const reset = useCallback((defaultValue) => {
-        const {setErrors,setValue} = controller.current;
+        const {setErrors, setValue} = controller.current;
         Object.keys(controller.current.errorsObserver.current).forEach(key => {
-            setErrors(key,'');
+            setErrors(key, '');
         });
         controller.current.defaultValue = defaultValue ? defaultValue : controller.current.defaultValue;
         Object.keys(controller.current.valueObserver.current).forEach(key => {
-            if(controller.current?.defaultValue && key in controller.current.defaultValue){
-                setValue(key,controller.current.defaultValue[key]);
-            }else{
-                setValue(key,'');
+            if (controller.current?.defaultValue && key in controller.current.defaultValue) {
+                setValue(key, controller.current.defaultValue[key]);
+            } else {
+                setValue(key, '');
             }
 
         })
@@ -114,7 +114,7 @@ export default function useForm(defaultValue = {}) {
 function validateError(controller, name, validator, value) {
     let newError = '';
     if (validator) {
-        newError = validator.apply(validator, [value,controller.current.valueObserver.current]);
+        newError = validator.apply(validator, [value, controller.current.valueObserver.current]);
     }
     controller.current.setErrors(name, newError);
 }

@@ -20,27 +20,27 @@ function requiredValidator(errorMessage) {
 /**
  * On form submitted
  */
-function onSubmit(auth,controller) {
+function onSubmit(auth, controller) {
     return (data) => {
         auth.createUserWithEmailAndPassword(data.email, data.password).then((userCredential) => {
-            let user = userCredential.user;
-            
+            // do nothing
+
         }).catch((error) => {
             switch (error.code) {
                 case 'auth/weak-password' : {
-                    controller.current.setErrors('password','Weak password');
+                    controller.current.setErrors('password', 'Weak password');
                     break;
                 }
                 case 'auth/operation-not-allowed' : {
-                    controller.current.setErrors('name','Operation not allowed');
+                    controller.current.setErrors('name', 'Operation not allowed');
                     break;
                 }
                 case 'auth/invalid-email' : {
-                    controller.current.setErrors('email','Invalid email');
+                    controller.current.setErrors('email', 'Invalid email');
                     break;
                 }
                 case 'auth/email-already-in-use' : {
-                    controller.current.setErrors('email','Email already in use');
+                    controller.current.setErrors('email', 'Email already in use');
                     break;
                 }
                 default : {
@@ -64,7 +64,7 @@ export default function RegistrationScreen() {
 
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'}>
 
-        <form action="" onSubmit={handleSubmit(onSubmit(auth,controller))}>
+        <form action="" onSubmit={handleSubmit(onSubmit(auth, controller))}>
             <Vertical gap={2} b={1} p={4} r={5} brightness={0} color={"light"}>
                 <Controller controller={controller} render={Input} name={"name"} label={'Name'}
                             validator={requiredValidator('Name required')}/>

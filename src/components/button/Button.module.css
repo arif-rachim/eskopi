@@ -1,7 +1,8 @@
-.button:focus{
+.button:focus {
     outline: none;
 }
-.button{
+
+.button {
     cursor: pointer;
     box-sizing: border-box;
 }

@@ -1,6 +1,7 @@
-.input:focus{
+.input:focus {
     outline: none;
 }
-.input{
+
+.input {
     box-sizing: border-box;
 }

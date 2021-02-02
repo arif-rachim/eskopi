@@ -10,7 +10,7 @@ import RegistrationScreen from "module/registration";
 
 function App() {
     const Element = useRouter();
-    if(Element.Element === RegistrationScreen){
+    if (Element.Element === RegistrationScreen) {
         return <Element.Element {...Element.params}/>;
     }
     return <AuthCheck fallback={<LoginScreen/>}>
@@ -38,7 +38,7 @@ const firebaseConfig = {
 
 export default function Provider() {
     return (
-        <FirebaseAppProvider firebaseConfig={firebaseConfig} suspense={true} >
+        <FirebaseAppProvider firebaseConfig={firebaseConfig} suspense={true}>
             <ThemeContextProvider>
                 <RouterProvider>
                     <LayerContextProvider>

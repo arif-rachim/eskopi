@@ -45,7 +45,7 @@ function Popup({anchorRef, isRightAlign = false, isAbove = false, matchWithAncho
     } else {
         popupContainerStyle.top = 0;
     }
-    if(matchWithAnchorWidth){
+    if (matchWithAnchorWidth) {
         popupContainerStyle.width = width;
     }
     return <div style={{

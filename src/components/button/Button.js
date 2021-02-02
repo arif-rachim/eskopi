@@ -84,7 +84,11 @@ export default function Button({
     const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB}, theme);
     const borderStyle = parseBorder({b, bL, bR, bT, bB}, color, theme);
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
-    const colorStyle = parseColorStyle({color, brightness: mouseOver ? mouseDown ? (-0.2 + brightness) : (-0.1 + brightness) : brightness, opacity}, theme);
+    const colorStyle = parseColorStyle({
+        color,
+        brightness: mouseOver ? mouseDown ? (-0.2 + brightness) : (-0.1 + brightness) : brightness,
+        opacity
+    }, theme);
     return <button ref={buttonRef} onMouseEnter={() => setMouseOver(true)}
                    onMouseLeave={() => setMouseOver(false)}
                    onMouseDown={() => setMouseDown(true)}

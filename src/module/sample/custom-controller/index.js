@@ -16,7 +16,7 @@ export default function LoginScreen() {
                 <Input inputRef={register((value) => value && value.length > 0 ? '' : 'Hey your password invalid')}
                        name={'password'} type={'password'} placeholder={'Password'} required/>
 
-                <Controller controller={controller}  render={({value, onChange, onBlur, data, name}) => {
+                <Controller controller={controller} render={({value, onChange, onBlur, data, name}) => {
                     return <Horizontal>
                         {data.map(data => {
                             return <label key={JSON.stringify(data)}>
