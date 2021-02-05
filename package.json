@@ -6,7 +6,9 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "express": "^4.17.1",
     "firebase": "^8.2.5",
+    "morgan": "^1.10.0",
     "react": "^0.0.0-experimental-27659559e",
     "react-dom": "^0.0.0-experimental-27659559e",
     "react-scripts": "4.0.1",
@@ -15,9 +17,11 @@
     "uuid": "^8.3.2",
     "web-vitals": "^0.2.4"
   },
+  "type": "module",
   "scripts": {
     "scan-module": "node scan-module.js",
     "start": "npm run scan-module && react-scripts start",
+    "start-server": "node src-service/server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
