@@ -13,11 +13,11 @@ app.get('/error', () => {
     throw new Error('Yikes something went wrong');
 });
 app.use((req, res) => {
-    res.status(404).send('Not Found');
+    res.json({success:false,message:'Resource not found'});
 });
 app.use((err, req, res, next) => {
     console.error(err);
-    res.status(500).send(err.message);
+    res.json({success:false,message:err.message});
 });
 app.listen(PORT, () => {
     console.log('Server running at port ', PORT);
