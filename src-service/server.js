@@ -1,6 +1,6 @@
 import express from "express";
 import morgan from "morgan";
-import routes from "./routes/index.js";
+import routes from "./routes/database.js";
 
 const app = express();
 const PORT = 3000;
@@ -8,7 +8,6 @@ const PORT = 3000;
 app.use(morgan("dev"));
 app.use(express.urlencoded({extended: true}));
 app.use(routes);
-
 app.get('/error', () => {
     throw new Error('Yikes something went wrong');
 });
