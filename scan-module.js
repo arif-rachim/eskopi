@@ -1,14 +1,13 @@
-
-const path = require("path");
-const fs = require("fs");
+import path from "path";
+import fs from "fs";
 
 function scanIndexFile(directory) {
     return new Promise(resolve => {
         fs.readdir(directory, (err, files) => {
-            (async() => {
+            (async () => {
                 let result = [];
                 for (const file of files) {
-                    const filePath = path.join(directory,file);
+                    const filePath = path.join(directory, file);
                     const isDirectory = fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory();
                     const isFile = fs.existsSync(filePath) && fs.lstatSync(filePath).isFile();
                     if(isDirectory){

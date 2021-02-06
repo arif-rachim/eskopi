@@ -22,6 +22,7 @@ app.listen(PORT, () => log('Server running at port ', PORT));
 
 // In memory global store
 let store = {};
+let warehouse = {};
 
 // supported action
 const ACTION_CREATE = 'c';
@@ -31,7 +32,8 @@ const ACTION_DELETE = 'd';
 const ACTION_LINK = 'l';
 const ACTION_UNLINK = 'ul';
 
-const DB_NAME = '.store.json';
+const WAREHOUSE_NAME = '.warehouse.json';
+const STORE_NAME = '.store.json';
 
 const log = (...args) => console.log('[rest-service]', args.join(' '));
 
@@ -44,8 +46,8 @@ const log = (...args) => console.log('[rest-service]', args.join(' '));
 const createEntity = (queries, entityType) => {
     const id = uuid();
     const now = new Date();
-    store[id] = {type_: entityType, id_: id, created_: now.toISOString(), ...queries};
-    return store[id];
+    warehouse[id] = {type_: entityType, id_: id, created_: now.toISOString(), ...queries};
+    return warehouse[id];
 }
 
 /**
@@ -56,7 +58,7 @@ const createEntity = (queries, entityType) => {
 const getEntity = (params) => {
     let props = [];
     for (const key of params.reverse()) {
-        const entity = store[key]
+        const entity = warehouse[key];
         if (entity) {
             return [entity, props];
         } else {
@@ -94,7 +96,7 @@ const onActionUpdate = (params, queries) => {
         throw new Error('Entity deletion should have at least 2 param');
     }
     const [, entityId] = params;
-    const entity = store[entityId];
+    const entity = warehouse[entityId];
     Object.keys(queries).forEach(q => {
         entity[q] = queries[q];
     });
@@ -114,13 +116,13 @@ const onActionDelete = (params, queries) => {
         throw new Error('Entity deletion should have at least 2 param');
     }
     const [, entityId] = params;
-    const entity = store[entityId];
+    const entity = warehouse[entityId];
 
     // first we remove associated link
     if (entity.associated_) {
         for (const associatedLink of entity.associated_) {
             const [associatedEntityId, property] = associatedLink.split(':');
-            const associatedEntity = store[associatedEntityId];
+            const associatedEntity = warehouse[associatedEntityId];
             if (associatedEntity) {
                 associatedEntity[property] = associatedEntity[property].filter(d => d !== associatedEntityId);
                 associatedEntity.modified_ = new Date().toISOString();
@@ -128,11 +130,23 @@ const onActionDelete = (params, queries) => {
         }
     }
 
-    // then we remove from the catalog
+    // then we need to remove all links to this guy !
+    Object.keys(entity).forEach(key => {
+        if (Array.isArray(entity[key])) {
+            const linksToRemove = entity[key];
+            linksToRemove.forEach(link => {
+                if (warehouse[link]) {
+                    warehouse[link].associated_ = warehouse[link].associated_.filter(a => a !== `${entity.id_}:${key}`);
+                }
+            });
+        }
+    })
+
+    // then we remove from the store
     store[entity.type_] = store[entity.type_].filter(id => id !== entityId);
 
-    // then we remove from db
-    delete store[entityId];
+    // then we remove from warehouse
+    delete warehouse[entityId];
 
     persist();
     return `Entity ${entityId} Deleted`;
@@ -144,15 +158,21 @@ const onActionDelete = (params, queries) => {
  * @returns {*&{id_: string, created_: string, type_ : string, modified_ : string, associated_ : string[]}}
  */
 const onActionRead = (params, queries) => {
+    if (params.length === 1) {
+        const [type] = params;
+        if (type in store && store[type] !== undefined) {
+            return store[type];
+        }
+        throw new Error(`No collection of ${type} in store`);
+    }
+
     let [entity, props] = getEntity(params);
     if (!entity) {
         throw new Error(`Entity does not exist in [${params}]`);
     }
 
     for (const prop of props) {
-        if (Array.isArray(entity) && entity.indexOf(prop) < 0) {
-            throw new Error(`${prop} does not exist`);
-        } else if (!(prop in entity && entity[prop] !== undefined)) {
+        if (!(prop in entity && entity[prop] !== undefined)) {
             throw new Error(`${prop} does not exist in ${entity.id_}`);
         }
         entity = entity[prop];
@@ -174,8 +194,8 @@ const onActionLink = (params, queries) => {
     const [, entityFromId, property, entityToId] = params;
     const associatedLink = `${entityFromId}:${property}`;
 
-    const entityFrom = store[entityFromId];
-    const entityTo = store[entityToId];
+    const entityFrom = warehouse[entityFromId];
+    const entityTo = warehouse[entityToId];
 
     entityFrom[property] = entityFrom[property] || [];
     entityFrom[property].push(entityToId);
@@ -201,8 +221,8 @@ const onActionUnlink = (params, queries) => {
     }
     const [, entityFromId, property, entityToId] = params;
     const associatedLink = `${entityFromId}:${property}`;
-    const entityFrom = store[entityFromId];
-    const entityTo = store[entityToId];
+    const entityFrom = warehouse[entityFromId];
+    const entityTo = warehouse[entityToId];
 
     entityFrom[property] = entityFrom[property] || [];
     entityFrom[property] = entityFrom[property].filter(id => id !== entityToId);
@@ -305,14 +325,18 @@ function camelize(str) {
     }).replace(/\s+/g, '');
 }
 
-const storePath = path.resolve(DB_NAME);
+const storePath = path.resolve(STORE_NAME);
+const warehousePath = path.resolve(WAREHOUSE_NAME);
 
 async function initialization() {
     log('Loading store', storePath);
     try {
-        await access(storePath, constants.R_OK)
-        const serializedData = await readFile(storePath, 'utf-8');
-        store = JSON.parse(serializedData);
+        await access(storePath, constants.R_OK);
+        await access(warehousePath, constants.R_OK);
+        const storeSerializedData = await readFile(storePath, 'utf-8');
+        const warehouseSerializedData = await readFile(warehousePath, 'utf-8');
+        store = JSON.parse(storeSerializedData);
+        warehouse = JSON.parse(warehouseSerializedData);
         log('Store successfully loaded');
     } catch (err) {
         log(err.message);
@@ -340,6 +364,7 @@ async function _persist() {
     try {
         log('Persisting store');
         await writeFile(storePath, JSON.stringify(store));
+        await writeFile(warehousePath, JSON.stringify(warehouse));
         log('Store successfully persisted');
     } catch (err) {
         log(err.message);
