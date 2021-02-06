@@ -104,7 +104,21 @@ async function processRequest(params, query) {
 
         if (entity) {
             for (let i = 0; i < props.length; i++) {
-                entity = entity[props[i]];
+                const prop = props[i];
+                let entityHasNoProp = true;
+                if(Array.isArray(entity)){
+                    entityHasNoProp = entity.indexOf(prop) < 0;
+                    if(entityHasNoProp) {
+                        throw new Error(`${prop} does not exist`);
+                    }
+                }else{
+                    entityHasNoProp = !(prop in entity && entity[prop] !== undefined);
+                    if(entityHasNoProp) {
+                        throw new Error(`${prop} does not exist in ${entity.id_}`);
+                    }
+                }
+
+                entity = entity[prop];
             }
             return entity;
         } else {
