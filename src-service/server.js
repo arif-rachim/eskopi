@@ -6,7 +6,8 @@ const app = express();
 const PORT = 3000;
 
 app.use(morgan("dev"));
-app.use(express.urlencoded({extended: true}));
+//app.use(express.urlencoded({extended: true}));
+app.use(express.json());
 app.use(routes);
 app.get('/error', () => {
     throw new Error('Yikes something went wrong');

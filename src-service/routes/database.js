@@ -6,8 +6,10 @@ const router = express.Router();
 const rootDb = {};
 
 const ACTION_CREATE = 'c';
+const ACTION_READ = 'r';
 const ACTION_UPDATE = 'u';
 const ACTION_DELETE = 'd';
+
 const DB_PATH = process.env.DB_PATH ?? 'db';
 
 
@@ -15,7 +17,7 @@ const createEntity = async (queries) => {
     const id = uuid();
     const now = new Date();
     rootDb[id] = {...queries, id_: id, created_: now.toISOString()};
-    return id;
+    return rootDb[id];
 }
 const getEntity = async (id) => {
     if (id in rootDb) {
@@ -39,75 +41,84 @@ const getNearestEntity = async (params) => {
 
 async function processRequest(params, query) {
     const {a, ...queries} = query;
-    let result = undefined;
+
     let [entity, props] = await getNearestEntity(params);
+    if (a === undefined) {
+        throw new Error('Please provide action(a) {c:create|r:read|u:update|d:delete}')
+    }
     if (a === ACTION_CREATE) {
-        let key = '';
         if (entity) {
             if (Array.isArray(entity)) {
-                key = await createEntity(queries);
-                entity.push(key);
+                const persisted = await createEntity(queries);
+                entity.push(persisted.id_);
+                return persisted;
             } else {
                 props = props.join('');
-                key = await createEntity({...queries, parent_: {id_: entity.id_, property_: props}});
+                const persisted = await createEntity({...queries, associated_: [{id_: entity.id_, property_: props}]});
                 entity[props] = entity[props] || [];
-                entity[props].push(key);
+                entity[props].push(persisted.id_);
+                return persisted;
             }
-            result = key
+
         } else if (props.length >= 1) {
-            key = await createEntity(queries);
+            const persisted = await createEntity(queries);
             props = props.join('');
             rootDb[props] = rootDb[props] || [];
-            rootDb[props].push(key);
-            result = key;
+            rootDb[props].push(persisted.id_);
+            return persisted;
         }
     } else if (a === ACTION_UPDATE) {
         if (entity) {
             if (Array.isArray(entity)) {
-                throw Error('Invalid Path / Id');
+                throw Error(`You are trying to update a collection, maybe what you mean is to create [${params}].`);
             }
-            result = entity;
             Object.keys(queries).forEach(q => {
-                result[q] = queries[q];
+                entity[q] = queries[q];
             });
-            result.modified_ = new Date().toISOString();
+            entity.modified_ = new Date().toISOString();
+            return entity;
         } else {
-            throw Error('Invalid Path / Id');
+            throw Error(`Unable to update entity [${params}] because it does not exist.`);
         }
     } else if (a === ACTION_DELETE) {
 
         if (entity && props.length === 0) {
             if (Array.isArray(entity)) {
-                throw Error('Invalid Path / Id');
+                throw Error('Deleting collection is not allowed');
             }
-            if (entity.parent_) {
-                const parentEntity = await getEntity(entity.parent_.id_);
-                parentEntity[entity.parent_.property_] = parentEntity[entity.parent_.property_].filter(d => d !== entity.id_);
-                delete rootDb[entity.id_];
-                result = `Deleted`;
+            if (entity.associated_) {
+                // first we remove all the associated
+                for (const associatedLink of entity.associated_) {
+                    const associatedEntity = await getEntity(associatedLink.id_);
+                    if (associatedEntity) {
+                        associatedEntity[associatedLink.property_] = associatedEntity[associatedLink.property_].filter(d => d !== entity.id_);
+                    }
+                }
             }
+            delete rootDb[entity.id_];
+            return `Entity ${entity.id_} Deleted`;
         } else {
-            throw Error('Invalid Path / Id');
+            throw Error(`Unable to delete entity [${params}] because it does not exist.`);
         }
-    } else {
-        const [entity, props] = await getNearestEntity(params);
+    } else if (a === ACTION_READ) {
+
         if (entity) {
-            result = entity;
             for (let i = 0; i < props.length; i++) {
-                result = result[props[i]];
+                entity = entity[props[i]];
             }
+            return entity;
+        } else {
+            throw new Error(`Entity does not exist in [${params}]`);
         }
     }
-    if (result === undefined) {
-        throw Error('Invalid Path / Id');
-    }
-    return result;
+    throw new Error(`Unable to process request [${params}] [${query}]`);
 }
 
 
 router.get('/*', (req, res) => {
     const {params, query} = getParamsAndQuery(req);
-    processRequest(params, query).then(result => res.json({error: false, result})).catch(err => {
+
+    processRequest(params, {a: ACTION_READ, ...query}).then(result => res.json({error: false, result})).catch(err => {
         console.error(err);
         res.json({error: err.message});
     });
@@ -115,11 +126,27 @@ router.get('/*', (req, res) => {
 
 router.post('/*', (req, res) => {
     const {params, query} = getParamsAndQuery(req);
-    processRequest(params, query).then(result => res.json({error: false, result})).catch(err => {
+    const suggestedAction = params.length % 2 === 1 ? ACTION_CREATE : ACTION_UPDATE;
+    processRequest(params, {a: suggestedAction, ...query}).then(result => res.json({
+        error: false,
+        result
+    })).catch(err => {
         console.error(err);
         res.json({error: err.message});
     });
 });
+
+router.delete('/*', (req, res) => {
+    const {params, query} = getParamsAndQuery(req);
+    const suggestedAction = ACTION_DELETE;
+    processRequest(params, {a: suggestedAction, ...query}).then(result => res.json({
+        error: false,
+        result
+    })).catch(err => {
+        console.error(err);
+        res.json({error: err.message});
+    });
+})
 
 function toCamelCase(object) {
     return Object.keys(object).reduce((acc, key) => {
