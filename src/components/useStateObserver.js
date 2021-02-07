@@ -86,7 +86,7 @@ export default function useStateObserver(defaultValue) {
         valueObserver.addListener = addListener;
         valueObserver.stateListenerEffect = stateListenerEffect;
         return [valueObserver, setObserver];
-    }, []);
+    },[]);
 }
 
 export function useObserverValue(key, observer) {
@@ -94,7 +94,10 @@ export function useObserverValue(key, observer) {
         observer = key;
         key = undefined;
     }
-    observer = observer || EMPTY_OBSERVER;
+    observer = observer ?? EMPTY_OBSERVER;
+    if(!isObserver(observer)){
+        debugger;
+    }
     const [state, setState] = useState(key ? observer.current[key] : observer.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(observer.stateListenerEffect(key, setState), []);
@@ -102,8 +105,9 @@ export function useObserverValue(key, observer) {
 }
 
 const EMPTY_OBSERVER = {
-    current: undefined, stateListenerEffect: (key, state) => {
-    }
+    current: undefined,
+    stateListenerEffect: (key, state) => {},
+    addListener:() => {}
 }
 
 /**

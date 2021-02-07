@@ -18,8 +18,8 @@ const handleSubmitFactory = (controller) => (callback) => (event) => {
     });
     const hasNoError = Object.keys(controller.current.errorsObserver.current).reduce((acc, key) => {
         const hasNoError = !(key in controller.current.errorsObserver.current && controller.current.errorsObserver.current[key].length > 0);
-        return hasNoError || acc;
-    }, false);
+        return hasNoError && acc;
+    }, true);
     if (hasNoError) {
         callback.apply(callback, [controller.current.valueObserver.current, controller.current.errorsObserver.current]);
     }
