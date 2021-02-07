@@ -3,7 +3,6 @@ import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import Button from "components/button/Button";
-import {useAuth} from "reactfire";
 
 
 /**
@@ -60,11 +59,11 @@ export default function RegistrationScreen() {
         password: '',
         passwordConfirmation: ''
     });
-    const auth = useAuth();
+    // const auth = useAuth();
 
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'}>
 
-        <form action="" onSubmit={handleSubmit(onSubmit(auth, controller))}>
+        <form action="" onSubmit={handleSubmit(onSubmit({}, controller))}>
             <Vertical gap={2} b={1} p={4} r={5} brightness={0} color={"light"}>
                 <Controller controller={controller} render={Input} name={"name"} label={'Name'}
                             validator={requiredValidator('Name required')}/>

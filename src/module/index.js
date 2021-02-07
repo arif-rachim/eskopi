@@ -1,6 +1,8 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {useAuth, useUser} from "reactfire";
+//import {useAuth, useUser} from "reactfire";
 import Button from "components/button/Button";
+import useUser from "components/authentication/useUser";
+import useAuth from "components/authentication/useAuth";
 
 export default function Index() {
     const {data: user} = useUser();

@@ -6,14 +6,14 @@ function isFunction(functionToCheck) {
 
 /**
  * @param defaultValue
- * @returns {[React.MutableRefObject<*>, setObserver ]}
+ * @returns {[React.MutableRefObject<{current:*,addListener:function(callback):function(),stateListenerEffect:function(*=)}>, function (value) ]}
  */
 export default function useStateObserver(defaultValue) {
     const defaultValueRef = useRef(defaultValue);
     return useMemo(() => {
 
         let listeners = {};
-        const valueObserver = {current: defaultValueRef.current};
+        const valueObserver = {current: isFunction(defaultValueRef.current) ? defaultValueRef.current.call() : defaultValueRef.current};
         /**
          * @param {string} key
          * @param {function(value)} callback
@@ -95,4 +95,25 @@ export function useObserverValue(key, observer) {
 const EMPTY_OBSERVER = {
     current: undefined, stateListenerEffect: (key, state) => {
     }
+}
+
+/**
+ *
+ * @param {string} key
+ * @param {React.MutableRefObject<{current:*,addListener:function(callback):void,stateListenerEffect:function(*=)}>} observer
+ * @param {*} children
+ * @returns React.Element
+ * @constructor
+ */
+export function ObserverValue({key, observer, children}) {
+    const params = [];
+    if (key) {
+        params.push(key);
+    }
+    params.push(observer)
+    const value = useObserverValue.apply(null, params);
+    if (!isFunction(children)) {
+        throw new Error('ObserverValue children must be a function(value):ReactElement')
+    }
+    return children.apply(null, [value]);
 }
