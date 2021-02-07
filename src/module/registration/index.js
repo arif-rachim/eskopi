@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import Button from "components/button/Button";
-
+import useResource from "components/useResource";
+import {useObserverValue} from "components/useStateObserver"
 
 /**
  * Validator with error message
@@ -19,36 +20,13 @@ function requiredValidator(errorMessage) {
 /**
  * On form submitted
  */
-function onSubmit(auth, controller) {
+function onSubmit(getRegistrationResource) {
     return (data) => {
-        auth.createUserWithEmailAndPassword(data.email, data.password).then((userCredential) => {
-            // do nothing
-
-        }).catch((error) => {
-            switch (error.code) {
-                case 'auth/weak-password' : {
-                    controller.current.setErrors('password', 'Weak password');
-                    break;
-                }
-                case 'auth/operation-not-allowed' : {
-                    controller.current.setErrors('name', 'Operation not allowed');
-                    break;
-                }
-                case 'auth/invalid-email' : {
-                    controller.current.setErrors('email', 'Invalid email');
-                    break;
-                }
-                case 'auth/email-already-in-use' : {
-                    controller.current.setErrors('email', 'Email already in use');
-                    break;
-                }
-                default : {
-
-                }
-            }
-
+        getRegistrationResource('/authentication/register', {
+            name: data.name,
+            email: data.email,
+            password: data.password
         });
-
     }
 }
 
@@ -59,16 +37,17 @@ export default function RegistrationScreen() {
         password: '',
         passwordConfirmation: ''
     });
-    // const auth = useAuth();
+    const [registrationResource, getRegistrationResource, isPendingO] = useResource();
+
 
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'}>
 
-        <form action="" onSubmit={handleSubmit(onSubmit({}, controller))}>
+        <form action="" onSubmit={handleSubmit(onSubmit(getRegistrationResource))}>
             <Vertical gap={2} b={1} p={4} r={5} brightness={0} color={"light"}>
                 <Controller controller={controller} render={Input} name={"name"} label={'Name'}
-                            validator={requiredValidator('Name required')}/>
+                            validator={requiredValidator('Name required')} disabled={isPendingO}/>
                 <Controller controller={controller} render={Input} name={"email"} label={'Email'}
-                            validator={requiredValidator('Email Required')}/>
+                            validator={requiredValidator('Email Required')} autoCaps={false}/>
 
                 <Horizontal gap={5} overflow={'visible'}>
                     <Controller controller={controller} render={Input} name={"password"} type={"password"}

@@ -1,10 +1,22 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import styles from "./Button.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
+import {isObserver} from "components/useStateObserver";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
+}
+
+function effectOnDisabled(disabled, setIsDisabled) {
+    return () => {
+        let deregisterListener = () => {
+        };
+        if (isObserver(disabled)) {
+            deregisterListener = disabled.addListener((disabled) => setIsDisabled(disabled));
+        }
+        return deregisterListener;
+    };
 }
 
 /**
@@ -84,17 +96,21 @@ export default function Button({
     const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB}, theme);
     const borderStyle = parseBorder({b, bL, bR, bT, bB}, color, theme);
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
+
+    const [isDisabled, setIsDisabled] = useState(isObserver(disabled) ? false : disabled);
+    // eslint-disable-next-line
+    useEffect(effectOnDisabled(disabled, setIsDisabled), [disabled]);
     const colorStyle = parseColorStyle({
         color,
         brightness: mouseOver ? mouseDown ? (-0.2 + brightness) : (-0.1 + brightness) : brightness,
-        opacity
+        opacity: isDisabled ? 0.5 : opacity
     }, theme);
     return <button ref={buttonRef} onMouseEnter={() => setMouseOver(true)}
                    onMouseLeave={() => setMouseOver(false)}
                    onMouseDown={() => setMouseDown(true)}
                    onMouseUp={() => setMouseDown(false)}
                    className={[...className, styles.button].join(' ')}
-                   disabled={disabled}
+                   disabled={isDisabled}
                    type={type}
                    onClick={onClick}
                    style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...style}}

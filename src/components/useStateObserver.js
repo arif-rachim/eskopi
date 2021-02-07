@@ -4,6 +4,15 @@ function isFunction(functionToCheck) {
     return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 }
 
+export function isObserver(observer) {
+    return observer !== null && observer !== undefined &&
+        typeof observer === 'object' &&
+        'current' in observer &&
+        'addListener' in observer &&
+        'stateListenerEffect' in observer
+
+}
+
 /**
  * @param defaultValue
  * @returns {[React.MutableRefObject<{current:*,addListener:function(callback):function(),stateListenerEffect:function(*=)}>, function (value) ]}

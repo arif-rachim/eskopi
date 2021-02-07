@@ -398,6 +398,7 @@ initialization().then(() => {
 
 export const dbCreate = (type, config) => processRequest([type], {a: ACTION_CREATE, ...config});
 export const dbFind = (type, config) => processRequest([type], {a: ACTION_READ, ...config});
+export const dbFindOne = (type, config) => dbFind(type, config).reduce((acc, next) => acc ? acc : next, null);
 export const dbGet = (entityId, config) => processRequest(['', entityId], {a: ACTION_READ, ...config});
 export const dbUpdate = (entityId, config) => processRequest(['', entityId], {a: ACTION_UPDATE, ...config});
 export const dbDelete = (entityId, config) => processRequest(['', entityId], {a: ACTION_DELETE, ...config});

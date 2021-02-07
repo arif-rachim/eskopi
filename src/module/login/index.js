@@ -1,4 +1,4 @@
-import React, {Suspense} from "react";
+import React from "react";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "components/useForm";
 import useStateObserver, {ObserverValue, useObserverValue} from "components/useStateObserver";
@@ -40,33 +40,19 @@ export default function LoginScreen() {
 
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'}>
         <form action="" onSubmit={handleSubmit(onSubmit(getSignIn))}>
-            <Suspense fallback={<div>Loading ...</div>}>
-                <ObserverValue observer={signInR}>
-                    {signIn => {
-                        const message = signIn.read();
-                        return (<Vertical gap={2} width={200} b={1} p={4} r={5} brightness={0} color={"light"}>
-                            <Horizontal>{JSON.stringify(message)}</Horizontal>
-                            <Controller controller={controller} render={Input} name={"email"} label={'Email'}
-                                        validator={requiredValidator('Email Required')}/>
-                            <Controller controller={controller} render={Input} name={"password"} type={"password"}
-                                        label={"Password"} validator={requiredValidator('Password Required')}/>
-                            <Horizontal hAlign={'right'} mT={2} gap={2} vAlign={'center'}>
-                                <Button type={"button"} color={"secondary"} mL={1}
-                                        onClick={() => setRegister(true)}>Register</Button>
-                                <Horizontal width={'100%'}/>
-                                <ObserverValue observer={isPendingO}>
-                                    {isPending => {
-                                        if (isPending) {
-                                            return <div>Loading ...</div>
-                                        }
-                                        return <Button type={"submit"} style={{whiteSpace: 'nowrap'}}>Log In</Button>
-                                    }}
-                                </ObserverValue>
-                            </Horizontal>
-                        </Vertical>)
-                    }}
-                </ObserverValue>
-            </Suspense>
+            <Vertical gap={2} width={200} b={1} p={4} r={5} brightness={0} color={"light"}>
+                <Controller controller={controller} render={Input} name={"email"} label={'Email'}
+                            validator={requiredValidator('Email Required')} disabled={isPendingO}/>
+                <Controller controller={controller} render={Input} name={"password"} type={"password"}
+                            label={"Password"} validator={requiredValidator('Password Required')}
+                            disabled={isPendingO}/>
+                <Horizontal hAlign={'right'} mT={2} gap={2} vAlign={'center'}>
+                    <Button type={"button"} color={"secondary"} mL={1}
+                            onClick={() => setRegister(true)} disabled={isPendingO}>Register</Button>
+                    <Horizontal width={'100%'}/>
+                    <Button type={"submit"} style={{whiteSpace: 'nowrap'}} disabled={isPendingO}>Log In</Button>
+                </Horizontal>
+            </Vertical>
         </form>
     </Vertical>
 }

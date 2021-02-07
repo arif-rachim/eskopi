@@ -1,14 +1,25 @@
 import styles from "./Input.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
-import React, {useCallback} from "react";
-import {useObserverValue} from "components/useStateObserver";
+import React, {useCallback, useEffect, useState} from "react";
+import {isObserver, useObserverValue} from "components/useStateObserver";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
 }
 
 const replacedAutoCapsKey = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
+function effectOnDisabled(disabled, setIsDisabled) {
+    return () => {
+        let deregisterListener = () => {
+        };
+        if (isObserver(disabled)) {
+            deregisterListener = disabled.addListener((disabled) => setIsDisabled(disabled));
+        }
+        return deregisterListener;
+    };
+}
 
 /**
  *
@@ -75,7 +86,10 @@ function Input({
     const [theme] = useTheme();
     const value = useObserverValue(name, valueObserver);
     const errorMessage = useObserverValue(name, errorsObserver);
+    const [isDisabled, setIsDisabled] = useState(isObserver(disabled) ? false : disabled);
 
+    // eslint-disable-next-line
+    useEffect(effectOnDisabled(disabled, setIsDisabled), [disabled]);
     const buttonStyle = {
         background: 'none',
         borderRadius: 5,
@@ -93,12 +107,16 @@ function Input({
     const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB}, theme);
     const borderStyle = parseBorder({b, bL, bR, bT, bB}, color, theme);
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
-    const colorStyle = parseColorStyle({color, brightness: 0.71, opacity: 1}, theme);
+    const colorStyle = parseColorStyle({color, brightness: isDisabled ? -0.1 : 0.71, opacity: 1}, theme);
 
     return <input ref={inputRef} type={type} name={name}
                   className={[...className, styles.button].join(' ')}
-                  readOnly={disabled}
+                  readOnly={isDisabled}
                   onKeyDownCapture={useCallback(e => {
+                      if (isDisabled) {
+                          e.preventDefault();
+                          return;
+                      }
                       if (autoCaps && !e.ctrlKey && !e.shiftKey && replacedAutoCapsKey.indexOf(e.key) >= 0) {
                           e.preventDefault();
                           const position = e.target.selectionStart;
@@ -112,7 +130,7 @@ function Input({
                           const event = new Event('input', {bubbles: true});
                           e.target.dispatchEvent(event);
                       }
-                  }, [autoCaps])}
+                  }, [autoCaps, isDisabled])}
                   style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...style}}
                   onChange={(e) => onChange(e.target.value)}
                   onBlur={onBlur}

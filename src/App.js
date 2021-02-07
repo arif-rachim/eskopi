@@ -5,7 +5,7 @@ import {Suspense} from "react";
 import LoginScreen from "module/login";
 import RegistrationScreen from "module/registration";
 import {AuthCheck, UserProvider} from "components/authentication/useUser";
-
+import ErrorBoundary from "components/error-boundary/ErrorBoundary"
 
 function App() {
     const Element = useRouter();
@@ -22,9 +22,11 @@ export default function Provider() {
         <ThemeContextProvider>
             <RouterProvider>
                 <LayerContextProvider>
-                    <Suspense fallback={<div>Loading ...</div>}>
-                        <App/>
-                    </Suspense>
+                    <ErrorBoundary>
+                        <Suspense fallback={<div>Loading ...</div>}>
+                            <App/>
+                        </Suspense>
+                    </ErrorBoundary>
                 </LayerContextProvider>
             </RouterProvider>
         </ThemeContextProvider>
