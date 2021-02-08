@@ -1,4 +1,5 @@
 import {useEffect, useMemo, useRef, useState} from "react";
+import {v4 as uuid} from "uuid";
 
 function isFunction(functionToCheck) {
     return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
@@ -25,24 +26,28 @@ export function isObserver(observer) {
  */
 export default function useObserver(defaultValue) {
     const defaultValueRef = useRef(defaultValue);
+
     return useMemo(() => {
 
         let listeners = {_global: []};
-        const valueObserver = {current: isFunction(defaultValueRef.current) ? defaultValueRef.current.call() : defaultValueRef.current};
+        const current = isFunction(defaultValueRef.current) ? defaultValueRef.current.call() : defaultValueRef.current;
+
+        const $value = {current, id: uuid()}
+
         /**
          * @param {string | function(value)} key
-         * @param {function(value)} callback
+         * @param {function(value)} callbackOrValue
          */
-        const setObserver = (key, callback) => {
-            if (callback === undefined) {
-                callback = key;
+        const setValue = (key, callbackOrValue) => {
+            if (callbackOrValue === undefined) {
+                callbackOrValue = key;
                 key = undefined;
             }
 
             const oldVal = key ? defaultValueRef.current[key] : defaultValueRef.current;
-            let newVal = callback;
-            if (isFunction(callback)) {
-                newVal = callback.apply(this, [oldVal]);
+            let newVal = callbackOrValue;
+            if (isFunction(callbackOrValue)) {
+                newVal = callbackOrValue.apply(this, [oldVal]);
             }
             if (key) {
                 defaultValueRef.current[key] = newVal;
@@ -94,16 +99,16 @@ export default function useObserver(defaultValue) {
 
         const stateListenerEffect = (key, listener) => () => addListener(key, listener);
 
-        valueObserver.addListener = addListener;
-        valueObserver.stateListenerEffect = stateListenerEffect;
-        return [valueObserver, setObserver];
+        $value.addListener = addListener;
+        $value.stateListenerEffect = stateListenerEffect;
+        return [$value, setValue];
     },[]);
 }
 
 /**
  * hook to extract the value of observer.
  * @param {string | React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>} key
- * @param {React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>} observer
+ * @param {React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>|null} observer
  * @returns {*}
  */
 export function useObserverValue(key, observer) {
@@ -120,8 +125,11 @@ export function useObserverValue(key, observer) {
 
 const EMPTY_OBSERVER = {
     current: undefined,
-    stateListenerEffect: (key, state) => {},
-    addListener:() => {}
+    stateListenerEffect: (key, state) => {
+    },
+    addListener: () => {
+    },
+    id: 'EMPTY'
 }
 
 /**

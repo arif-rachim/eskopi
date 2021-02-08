@@ -65,8 +65,8 @@ function effectOnDisabled($disabled, setIsDisabled) {
  *
  * @param {function(value)} onChange,
  * @param {function()} onBlur,
- * @param {Object} valueObserver,
- * @param {Object} errorsObserver
+ * @param {React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>} $value,
+ * @param {React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>} $errors
  *
  * @param props
  * @returns {JSX.Element}
@@ -86,13 +86,13 @@ function Input({
                    r, rTL, rTR, rBL, rBR,
                    onChange, onBlur,
                    autoCaps = true,
-                   valueObserver,
-                   errorsObserver,
+                   $value,
+                   $errors,
                    ...props
                }) {
     const [theme] = useTheme();
-    const value = useObserverValue(name, valueObserver);
-    const errorMessage = useObserverValue(name, errorsObserver);
+    const value = useObserverValue(name, $value);
+    const errorMessage = useObserverValue(name, $errors);
     const [isDisabled, setIsDisabled] = useState(isObserver(disabled) ? false : disabled);
 
     // eslint-disable-next-line

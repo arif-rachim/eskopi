@@ -12,7 +12,7 @@ export default function SampleSideBar() {
         <Sidebar sidePanel={MySidePanel}>
             <Vertical color={"light"} height={'100%'} p={5}>
                 This is the actual content
-                <Input valueObserver={$value} errorsObserver={$error} onChange={setValue}/>
+                <Input $value={$value} $errors={$error} onChange={setValue}/>
                 <Label observer={$value}/>
             </Vertical>
         </Sidebar>

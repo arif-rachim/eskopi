@@ -32,27 +32,26 @@ export default function LoginScreen() {
     const [$register, setRegister] = useObserver(false);
     const [$signIn, getSignIn, $isPending] = useResource();
 
-    useResourceValue($signIn,(status,value) => {
+    useResourceValue($signIn, (status, value) => {
         if (value) {
             debugger;
         }
     });
 
+
     const register = useObserverValue($register);
 
     if (register) {
         return <RegistrationScreen onClose={(email) => {
-            debugger;
-            controller.current.setValue((oldVal) => {
-                oldVal.email = email;
-                debugger;
-                return oldVal;
-            })
+
+            controller.current.$value.current.email = email;
+            controller.current.setValue('email', email);
             setRegister(false);
         }}/>
     }
 
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'}>
+
         <form action="" onSubmit={handleSubmit(onSubmit(getSignIn))}>
             <Vertical gap={2} width={200} b={1} p={4} r={5} brightness={0} color={"light"}>
                 <Controller controller={controller} render={Input} name={"email"} label={'Email'}

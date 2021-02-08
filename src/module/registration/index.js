@@ -40,8 +40,7 @@ export default function RegistrationScreen({onClose}) {
     useResourceValue($registration, (status, value) => {
         if (value) {
             if (!value.error) {
-                debugger;
-                onClose(controller.current.valueObserver.current.email);
+                onClose(controller.current.$value.current.email);
             } else {
                 controller.current.setErrors((errors) => {
                     errors.email = value.error;
