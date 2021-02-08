@@ -1,5 +1,5 @@
 import {createContext, useContext} from "react";
-import useStateObserver, {useObserverValue} from "components/useStateObserver";
+import useObserver, {useObserverValue} from "components/useObserver";
 
 
 const UserContext = createContext({});
@@ -21,8 +21,8 @@ export default function useUser() {
  * @constructor
  */
 export function UserProvider({children}) {
-    const [userO, setUser] = useStateObserver(EMPTY_USER);
-    return <UserContext.Provider value={[userO, setUser]}>
+    const [$user, setUser] = useObserver(EMPTY_USER);
+    return <UserContext.Provider value={[$user, setUser]}>
         {children}
     </UserContext.Provider>
 }

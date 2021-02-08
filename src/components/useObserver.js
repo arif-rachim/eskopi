@@ -17,7 +17,7 @@ export function isObserver(observer) {
  * @param defaultValue
  * @returns {[React.MutableRefObject<{current:*,addListener:function(callback):function(),stateListenerEffect:function(*=)}>, function (value) ]}
  */
-export default function useStateObserver(defaultValue) {
+export default function useObserver(defaultValue) {
     const defaultValueRef = useRef(defaultValue);
     return useMemo(() => {
 

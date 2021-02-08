@@ -1,10 +1,9 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import Button from "components/button/Button";
 import useResource from "components/useResource";
-import {useObserverValue} from "components/useStateObserver"
 
 /**
  * Validator with error message
@@ -37,7 +36,7 @@ export default function RegistrationScreen() {
         password: '',
         passwordConfirmation: ''
     });
-    const [registrationResource, getRegistrationResource, isPendingO] = useResource();
+    const [$registration, getRegistrationResource, $isPending] = useResource();
 
 
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'}>
@@ -45,7 +44,7 @@ export default function RegistrationScreen() {
         <form action="" onSubmit={handleSubmit(onSubmit(getRegistrationResource))}>
             <Vertical gap={2} b={1} p={4} r={5} brightness={0} color={"light"}>
                 <Controller controller={controller} render={Input} name={"name"} label={'Name'}
-                            validator={requiredValidator('Name required')} disabled={isPendingO}/>
+                            validator={requiredValidator('Name required')} disabled={$isPending}/>
                 <Controller controller={controller} render={Input} name={"email"} label={'Email'}
                             validator={requiredValidator('Email Required')} autoCaps={false}/>
 

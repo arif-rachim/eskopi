@@ -1,5 +1,5 @@
 import React, {useCallback, useRef} from "react";
-import useStateObserver from "components/useStateObserver";
+import useObserver from "components/useObserver";
 import {Horizontal, Vertical} from "./layout/Layout";
 import Label from "./label/Label";
 
@@ -55,16 +55,16 @@ const registerFactory = (controller) => (validator) => {
  * @returns {{handleSubmit: (function(*=): function(*): void), controller: React.MutableRefObject<{validateOn: {}, errorsObserver: (React.MutableRefObject<*>|setObserver), valueObserver: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, validator: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>, errorsObserver: (React.MutableRefObject<*>|setObserver), valueObserver: (React.MutableRefObject<*>|setObserver), setValue: (React.MutableRefObject<*>|setObserver), setErrors: (React.MutableRefObject<*>|setObserver), register: (function(*=): function(*): void)}}
  */
 export default function useForm(defaultValue = {}) {
-    const [errorsObserver, setErrors] = useStateObserver({});
-    const [valueObserver, setValue] = useStateObserver({});
+    const [$errors, setErrors] = useObserver({});
+    const [$value, setValue] = useObserver({});
     const controller = useRef({
         defaultValue,
         userEditingField: {},
         previousValue: {},
         modified: {},
-        valueObserver,
+        valueObserver: $value,
         setValue,
-        errorsObserver,
+        errorsObserver: $errors,
         setErrors,
         validateOn: {},
         validator: {}
@@ -96,9 +96,9 @@ export default function useForm(defaultValue = {}) {
         handleSubmit,
         register,
         controller,
-        valueObserver,
+        valueObserver: $value,
         setValue,
-        errorsObserver,
+        errorsObserver: $errors,
         setErrors,
         reset
     }

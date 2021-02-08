@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import styles from "./Button.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
-import {isObserver} from "components/useStateObserver";
+import {isObserver} from "components/useObserver";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;

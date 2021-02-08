@@ -1,7 +1,8 @@
 import React from "react";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "components/useForm";
-import useStateObserver, {ObserverValue, useObserverValue} from "components/useStateObserver";
+import useObserver, {useObserverValue} from "components/useObserver";
+import {useResourceValue} from "components/useResource";
 import RegistrationScreen from "module/registration";
 import useResource from "components/useResource";
 import Input from "components/input/Input";
@@ -29,10 +30,14 @@ function onSubmit(getSignIn) {
 
 export default function LoginScreen() {
     const {controller, handleSubmit} = useForm({email: '', password: ''});
-    const [registerO, setRegister] = useStateObserver(false);
-    const [signInR, getSignIn, isPendingO] = useResource();
+    const [$register, setRegister] = useObserver(false);
+    const [$signIn, getSignIn, $isPending] = useResource();
 
-    const register = useObserverValue(registerO);
+    useResourceValue($signIn,(status,value) => {
+        console.log('status',status,'value',value);
+    });
+
+    const register = useObserverValue($register);
 
     if (register) {
         return <RegistrationScreen/>
@@ -42,15 +47,15 @@ export default function LoginScreen() {
         <form action="" onSubmit={handleSubmit(onSubmit(getSignIn))}>
             <Vertical gap={2} width={200} b={1} p={4} r={5} brightness={0} color={"light"}>
                 <Controller controller={controller} render={Input} name={"email"} label={'Email'}
-                            validator={requiredValidator('Email Required')} disabled={isPendingO}/>
+                            validator={requiredValidator('Email Required')} disabled={$isPending}/>
                 <Controller controller={controller} render={Input} name={"password"} type={"password"}
                             label={"Password"} validator={requiredValidator('Password Required')}
-                            disabled={isPendingO}/>
+                            disabled={$isPending}/>
                 <Horizontal hAlign={'right'} mT={2} gap={2} vAlign={'center'}>
                     <Button type={"button"} color={"secondary"} mL={1}
-                            onClick={() => setRegister(true)} disabled={isPendingO}>Register</Button>
+                            onClick={() => setRegister(true)} disabled={$isPending}>Register</Button>
                     <Horizontal width={'100%'}/>
-                    <Button type={"submit"} style={{whiteSpace: 'nowrap'}} disabled={isPendingO}>Log In</Button>
+                    <Button type={"submit"} style={{whiteSpace: 'nowrap'}} disabled={$isPending}>Log In</Button>
                 </Horizontal>
             </Vertical>
         </form>

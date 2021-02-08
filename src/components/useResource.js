@@ -1,5 +1,5 @@
-import useStateObserver from "components/useStateObserver";
-import {useCallback} from "react";
+import useObserver from "components/useObserver";
+import {useCallback,useEffect,useRef} from "react";
 
 const API_SERVER = 'http://localhost:4000'
 
@@ -59,6 +59,9 @@ function suspensify(promise, setIsPending) {
             if (status === STATUS_PENDING) throw suspender;
             if (status === STATUS_ERROR) throw result;
             if (status === STATUS_SUCCESS) return result;
+        },
+        status() {
+            return status;
         }
     }
 }
@@ -102,19 +105,50 @@ function getCallback(setIsPending, isPendingObserver, setResource, timeout) {
  * @returns {[React.MutableRefObject<{read:function():*}>, function(url:string,body:*), React.MutableRefObject<{current:*}>]}
  */
 export default function useResource(url, data, timeout = 1000) {
-    const [resourceObserver, setResource] = useStateObserver(() => {
+    const [$resource, setResource] = useObserver(() => {
         if (url) {
             return data === undefined ? suspensify(get(url), setIsPending) : suspensify(post(url, data), setIsPending);
         }
         return EMPTY_RESOURCE;
     });
-    const [isPendingObserver, setIsPending] = useStateObserver(false);
+    const [$isPending, setIsPending] = useObserver(false);
 
     // eslint-disable-next-line
-    const getResource = useCallback(getCallback(setIsPending, isPendingObserver, setResource, timeout), []);
+    const getResource = useCallback(getCallback(setIsPending, $isPending, setResource, timeout), []);
     return [
-        resourceObserver,
+        $resource,
         getResource,
-        isPendingObserver
+        $isPending
     ]
+}
+
+export function useResourceValue($resource,callback){
+    const callbackRef = useRef(callback);
+    callbackRef.current = callback;
+    useEffect(() => {
+        const callback = callbackRef.current;
+        return $resource.addListener(handleListener(callback))
+    },[$resource]);
+}
+
+const handleListener = (callback) => {
+    function resourceListener(resource){
+        let status = resource.status();
+        let result = undefined;
+        try{
+            result = resource.read();
+        }catch(promise){
+            if('then' in promise){
+                promise.then((val) => {
+                    resourceListener(resource);
+                }).catch(err => {
+                    resourceListener(resource);
+                });
+            }else{
+                resourceListener(resource);
+            }
+        }
+        callback.apply(null,[status,result]);
+    }
+    return resourceListener;
 }

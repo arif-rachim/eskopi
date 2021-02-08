@@ -2,7 +2,7 @@ import styles from "./Input.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
 import React, {useCallback, useEffect, useState} from "react";
-import {isObserver, useObserverValue} from "components/useStateObserver";
+import {isObserver, useObserverValue} from "components/useObserver";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;

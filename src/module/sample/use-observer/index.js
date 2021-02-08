@@ -1,17 +1,17 @@
-import useStateObserver from "components/useStateObserver";
+import useObserver from "components/useObserver";
 import {Horizontal, Vertical} from "../../../components/layout/Layout";
 import {useEffect, useState} from "react";
 
 
 export default function UseObserver() {
-    const [observer, setObserver] = useStateObserver(new Date());
+    const [$observer, setObserver] = useObserver(new Date());
     useEffect(() => {
         setInterval(() => {
             setObserver(new Date());
         }, 1000)
     }, [setObserver]);
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'}>
-        <MyComponent observer={observer}/>
+        <MyComponent observer={$observer}/>
     </Vertical>
 }
 
