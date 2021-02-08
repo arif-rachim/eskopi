@@ -3,7 +3,7 @@ import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import Button from "components/button/Button";
-import useResource from "components/useResource";
+import useResource, {useResourceValue} from "components/useResource";
 
 /**
  * Validator with error message
@@ -29,7 +29,7 @@ function onSubmit(getRegistrationResource) {
     }
 }
 
-export default function RegistrationScreen() {
+export default function RegistrationScreen({onClose}) {
     const {controller, handleSubmit, reset} = useForm({
         name: '',
         email: '',
@@ -37,7 +37,19 @@ export default function RegistrationScreen() {
         passwordConfirmation: ''
     });
     const [$registration, getRegistrationResource, $isPending] = useResource();
-
+    useResourceValue($registration, (status, value) => {
+        if (value) {
+            if (!value.error) {
+                debugger;
+                onClose(controller.current.valueObserver.current.email);
+            } else {
+                controller.current.setErrors((errors) => {
+                    errors.email = value.error;
+                    return errors;
+                });
+            }
+        }
+    })
 
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'}>
 

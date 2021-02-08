@@ -10,12 +10,19 @@ function isUndefinedOrNull(b) {
 
 const replacedAutoCapsKey = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
-function effectOnDisabled(disabled, setIsDisabled) {
+/**
+ *
+ * @param {React.MutableRefObject<{current:*,addListener:function(*=),stateListenerEffect:function(*=)}>} $disabled
+ * @param {function():void} setIsDisabled
+ * @returns {function(): deregisterListener}
+ */
+function effectOnDisabled($disabled, setIsDisabled) {
     return () => {
         let deregisterListener = () => {
         };
-        if (isObserver(disabled)) {
-            deregisterListener = disabled.addListener((disabled) => setIsDisabled(disabled));
+        if (isObserver($disabled)) {
+
+            deregisterListener = $disabled.addListener((disabled) => setIsDisabled(disabled));
         }
         return deregisterListener;
     };
@@ -25,7 +32,7 @@ function effectOnDisabled(disabled, setIsDisabled) {
  *
  * @param {useRef} inputRef
  * @param {string} name
- * @param {boolean} disabled
+ * @param {boolean | React.MutableRefObject<{current:*,addListener:function(callback):function(),stateListenerEffect:function(*=)}>} disabled
  * @param {string} className
  * @param {string} color
  * @param {Object} style

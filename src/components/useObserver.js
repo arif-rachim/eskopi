@@ -4,6 +4,11 @@ function isFunction(functionToCheck) {
     return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 }
 
+/**
+ * Utilities to check if an object is an observer.
+ * @param {any} observer
+ * @returns {boolean}
+ */
 export function isObserver(observer) {
     return observer !== null && observer !== undefined &&
         typeof observer === 'object' &&
@@ -14,17 +19,18 @@ export function isObserver(observer) {
 }
 
 /**
+ * Hook to store the value, use useObserver instead use useState.
  * @param defaultValue
- * @returns {[React.MutableRefObject<{current:*,addListener:function(callback):function(),stateListenerEffect:function(*=)}>, function (value) ]}
+ * @returns {[React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=)}>, function (value) ]}
  */
 export default function useObserver(defaultValue) {
     const defaultValueRef = useRef(defaultValue);
     return useMemo(() => {
 
-        let listeners = {};
+        let listeners = {_global: []};
         const valueObserver = {current: isFunction(defaultValueRef.current) ? defaultValueRef.current.call() : defaultValueRef.current};
         /**
-         * @param {string} key
+         * @param {string | function(value)} key
          * @param {function(value)} callback
          */
         const setObserver = (key, callback) => {
@@ -46,18 +52,24 @@ export default function useObserver(defaultValue) {
                 });
             } else {
                 defaultValueRef.current = newVal;
-                listeners = Array.isArray(listeners) ? listeners : [];
-                listeners.forEach((l) => {
-                    l.apply(l, [newVal, oldVal]);
-                });
+                Object.keys(listeners).forEach((key) => {
+                    if (key === '_global') {
+                        listeners._global.forEach((l) => {
+                            l.apply(l, [newVal, oldVal]);
+                        });
+                    } else {
+                        listeners[key].forEach((l) => {
+                            l.apply(l, [newVal[key], oldVal[key]]);
+                        })
+                    }
+                })
             }
-
         };
 
         /**
          *
-         * @param key
-         * @param listener
+         * @param {string | function()}key
+         * @param {function()} listener
          * @returns {function(): void}
          */
         const addListener = (key, listener) => {
@@ -72,10 +84,9 @@ export default function useObserver(defaultValue) {
                     listeners[key].splice(listeners[key].indexOf(listener), 1);
                 }
             } else {
-                listeners = Array.isArray(listeners) ? listeners : [];
-                listeners.push(listener);
+                listeners._global.push(listener);
                 return () => {
-                    listeners.splice(listeners.indexOf(listener), 1);
+                    listeners._global.splice(listeners._global.indexOf(listener), 1);
                 }
             }
 
@@ -89,15 +100,18 @@ export default function useObserver(defaultValue) {
     },[]);
 }
 
+/**
+ * hook to extract the value of observer.
+ * @param {string | React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>} key
+ * @param {React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>} observer
+ * @returns {*}
+ */
 export function useObserverValue(key, observer) {
     if (observer === undefined) {
         observer = key;
         key = undefined;
     }
     observer = observer ?? EMPTY_OBSERVER;
-    if(!isObserver(observer)){
-        debugger;
-    }
     const [state, setState] = useState(key ? observer.current[key] : observer.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(observer.stateListenerEffect(key, setState), []);
@@ -111,7 +125,7 @@ const EMPTY_OBSERVER = {
 }
 
 /**
- *
+ * Element to use observer value.
  * @param {string} key
  * @param {React.MutableRefObject<{current:*,addListener:function(callback):void,stateListenerEffect:function(*=)}>} observer
  * @param {*} children

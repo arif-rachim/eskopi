@@ -2,9 +2,8 @@ import React from "react";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "components/useForm";
 import useObserver, {useObserverValue} from "components/useObserver";
-import {useResourceValue} from "components/useResource";
+import useResource, {useResourceValue} from "components/useResource";
 import RegistrationScreen from "module/registration";
-import useResource from "components/useResource";
 import Input from "components/input/Input";
 import Button from "components/button/Button";
 
@@ -34,13 +33,23 @@ export default function LoginScreen() {
     const [$signIn, getSignIn, $isPending] = useResource();
 
     useResourceValue($signIn,(status,value) => {
-        console.log('status',status,'value',value);
+        if (value) {
+            debugger;
+        }
     });
 
     const register = useObserverValue($register);
 
     if (register) {
-        return <RegistrationScreen/>
+        return <RegistrationScreen onClose={(email) => {
+            debugger;
+            controller.current.setValue((oldVal) => {
+                oldVal.email = email;
+                debugger;
+                return oldVal;
+            })
+            setRegister(false);
+        }}/>
     }
 
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'}>

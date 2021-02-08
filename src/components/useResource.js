@@ -1,8 +1,14 @@
 import useObserver from "components/useObserver";
-import {useCallback,useEffect,useRef} from "react";
+import {useCallback, useEffect, useRef} from "react";
 
 const API_SERVER = 'http://localhost:4000'
 
+/**
+ * Function to perform post method to api server
+ * @param {string} url
+ * @param {object} data
+ * @returns {Promise<object>}
+ */
 const post = async (url, data) => {
     if (url.indexOf('/') !== 0) {
         url = '/' + url;
@@ -21,6 +27,12 @@ const post = async (url, data) => {
     });
     return response.json(); // parses JSON response into native JavaScript objects
 }
+
+/**
+ * Function to perform get method to api server
+ * @param {string} url
+ * @returns {Promise<object>}
+ */
 const get = async (url) => {
     if (url.indexOf('/') !== 0) {
         url = '/' + url;
@@ -40,6 +52,12 @@ const STATUS_PENDING = 'pending';
 const STATUS_SUCCESS = 'success';
 const STATUS_ERROR = 'error';
 
+/**
+ * function to hold promise into supensify object
+ * @param promise
+ * @param setIsPending
+ * @returns {{read(): any, status(): string}}
+ */
 function suspensify(promise, setIsPending) {
     let status = STATUS_PENDING;
 
@@ -71,6 +89,14 @@ const EMPTY_RESOURCE = {
     }
 };
 
+/**
+ *
+ * @param setIsPending
+ * @param {React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>} isPendingObserver
+ * @param {function(*=):void} setResource
+ * @param {number} timeout
+ * @returns {function(*=, *=): void}
+ */
 function getCallback(setIsPending, isPendingObserver, setResource, timeout) {
     return (url, data) => {
         let timer = null;
@@ -139,9 +165,9 @@ const handleListener = (callback) => {
             result = resource.read();
         }catch(promise){
             if('then' in promise){
-                promise.then((val) => {
+                promise.then(() => {
                     resourceListener(resource);
-                }).catch(err => {
+                }).catch(() => {
                     resourceListener(resource);
                 });
             }else{
