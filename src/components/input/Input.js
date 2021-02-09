@@ -100,11 +100,10 @@ function Input({
     const buttonStyle = {
         background: 'none',
         borderRadius: 5,
-        backgroundColor: 'none',
         outline: 'none'
     };
     autoCaps = type === 'password' ? false : autoCaps;
-    b = isUndefinedOrNull(b) ? 1 : b;
+    b = isUndefinedOrNull(b) ? 2 : b;
     r = isUndefinedOrNull(r) ? 2 : r;
     p = isUndefinedOrNull(p) ? 2 : p;
     pT = isUndefinedOrNull(pT) ? 2 : pT;

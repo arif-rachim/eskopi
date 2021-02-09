@@ -27,6 +27,12 @@ const STYLE_MAPPING = {
     rBR: 'borderBottomRightRadius',
 }
 
+const Elevation = ['0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
+    '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+    '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
+    '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+    '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22)']
+
 
 export function parseStyle(style, theme) {
     const result = {};
@@ -51,7 +57,7 @@ export function parseBorder(style, color, theme) {
             const borderWeight = parseFloat(style[key].toString());
 
             let tc = tinycolor(color);
-            tc.darken(Math.abs(100 * borderWeight * 0.2));
+            tc.darken(Math.abs(100 * borderWeight * 0.05));
             if (borderWeight === 0) {
                 tc.setAlpha(0);
             }
@@ -92,7 +98,7 @@ export function parseColorStyle({color, brightness, opacity}, theme) {
         color = theme[color];
     }
     let tc = calculateBrightness(color, brightness, opacity);
-    result.backgroundColor = tc.toString();
+    result.background = tc.toRgbString();
     if (tc.isDark()) {
         result.color = theme.light;
     } else {
@@ -176,6 +182,9 @@ export function parseChildrenPosition({vAlign, hAlign, horizontal}) {
  * @param {number} bottom
  *
  * @param {string} transition
+ * @param {number} blur - blur effect in pixel
+ * @param {number} elevation - elevation one to five
+ * @param {string} background
  *
  * @returns {JSX.Element}
  * @constructor
@@ -202,6 +211,9 @@ function Layout({
                     position = 'relative',
                     top, left, right, bottom,
                     transition,
+                    blur,
+                    elevation,
+                    background,
                     ...props
                 }) {
     const classNames = [styles.layout];
@@ -218,7 +230,9 @@ function Layout({
     const colorStyle = parseColorStyle({color, brightness, opacity}, theme);
     const childrenPositionStyle = parseChildrenPosition({vAlign, hAlign, horizontal});
     const dimensionStyle = {width, height, overflow, position, top, left, right, bottom, transition};
-
+    const blurStyle = blur ? {backdropFilter: `blur(${blur}px)`} : {};
+    const elevationStyle = elevation >= 1 && elevation <= 5 ? {boxShadow: Elevation[elevation - 1]} : {};
+    const backgroundStyle = background ? {background} : {};
 
     let childrenClone = children;
     if (Array.isArray(childrenClone) && gap > 0) {
@@ -233,7 +247,7 @@ function Layout({
         }, []);
     }
     return <div ref={domRef} className={[...classNames, ...className].join(' ')}
-                style={{...dimensionStyle, ...colorStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...childrenPositionStyle, ...style}} {...props} >{childrenClone}</div>
+                style={{...dimensionStyle, ...colorStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...childrenPositionStyle, ...blurStyle, ...elevationStyle, ...backgroundStyle, ...style}} {...props} >{childrenClone}</div>
 }
 
 
@@ -283,6 +297,9 @@ function Layout({
  * @param {number} bottom
  *
  * @param {string} transition
+ * @param {number} blur - blur effect in pixel
+ * @param {number} elevation - elevation one to five
+ * @param {string} background
  *
  * @returns {JSX.Element}
  * @constructor
@@ -306,6 +323,9 @@ export function Horizontal({
                                position,
                                top, left, right, bottom,
                                transition,
+                               blur,
+                               elevation,
+                               background,
                                ...props
                            }) {
     const prop = {
@@ -327,7 +347,8 @@ export function Horizontal({
         overflow,
         position,
         top, left, right, bottom,
-        transition
+        transition,
+        blur, elevation, background
     }
     const [theme] = useTheme();
     const layoutProps = {theme, ...prop, ...props}
@@ -381,6 +402,10 @@ export function Horizontal({
  * @param {number} bottom
  *
  * @param {string} transition
+ * @param {number} blur - blur effect in pixel
+ * @param {number} elevation - elevation one to five
+ * @param {string} background
+ *
  *
  * @returns {JSX.Element}
  * @constructor
@@ -404,6 +429,9 @@ export function Vertical({
                              position,
                              top, left, right, bottom,
                              transition,
+                             blur,
+                             elevation,
+                             background,
                              ...props
                          }) {
     const prop = {
@@ -424,7 +452,9 @@ export function Vertical({
         overflow,
         position,
         top, left, right, bottom,
-        transition
+        transition,
+        blur,
+        elevation, background
     }
     const [theme] = useTheme();
     const layoutProps = {theme, ...prop, ...props}

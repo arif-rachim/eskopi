@@ -65,8 +65,13 @@ function suspensify(promise, setIsPending) {
     let result = null;
     let suspender = promise.then(response => {
         setIsPending(false);
-        status = STATUS_SUCCESS;
-        result = response;
+        if (!response.error) {
+            status = STATUS_SUCCESS;
+            result = response.data;
+        } else {
+            status = STATUS_ERROR;
+            result = new Error(response.error);
+        }
     }, error => {
         setIsPending(false);
         status = STATUS_ERROR;
@@ -170,8 +175,9 @@ const handleListener = (callback) => {
                 }).catch(() => {
                     resourceListener(resource);
                 });
-            }else{
-                resourceListener(resource);
+            }else {
+                status = STATUS_ERROR;
+                result = promise;
             }
         }
         callback.apply(null,[status,result]);

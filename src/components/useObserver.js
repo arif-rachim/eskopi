@@ -51,12 +51,14 @@ export default function useObserver(defaultValue) {
             }
             if (key) {
                 defaultValueRef.current[key] = newVal;
+                $value.current[key] = newVal;
                 listeners[key] = listeners[key] || [];
                 listeners[key].forEach((l) => {
                     l.apply(l, [newVal, oldVal]);
                 });
             } else {
                 defaultValueRef.current = newVal;
+                $value.current = newVal;
                 Object.keys(listeners).forEach((key) => {
                     if (key === '_global') {
                         listeners._global.forEach((l) => {

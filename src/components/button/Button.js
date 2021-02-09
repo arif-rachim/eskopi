@@ -81,7 +81,6 @@ export default function Button({
     const buttonStyle = {
         background: 'none',
         borderRadius: 5,
-        backgroundColor: 'none',
         outline: 'none'
     };
     b = isUndefinedOrNull(b) ? 0.5 : b;
