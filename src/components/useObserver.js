@@ -1,9 +1,7 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import {v4 as uuid} from "uuid";
+import {isFunction} from "components/utils";
 
-function isFunction(functionToCheck) {
-    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
-}
 
 /**
  * Utilities to check if an object is an observer.
@@ -114,7 +112,7 @@ export default function useObserver(defaultValue) {
  * @returns {*}
  */
 export function useObserverValue(key, observer) {
-    if (observer === undefined) {
+    if (observer === undefined || observer === null) {
         observer = key;
         key = undefined;
     }

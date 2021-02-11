@@ -8,6 +8,7 @@ import Button from "components/button/Button";
 import useLayers from "components/useLayers";
 import Dialog from "components/dialog/Dialog";
 import useGradient from "components/useGradient";
+import useUser from "components/authentication/useUser";
 
 /**
  * Validator with error message
@@ -33,18 +34,17 @@ export default function LoginScreen() {
     const {controller, handleSubmit} = useForm({email: '', password: ''});
     const [$signIn, getSignIn, $isPending] = useResource();
     const showPanel = useLayers();
-    useResourceValue($signIn, (status, value) => {
+    const [, setUser] = useUser();
+    useResourceValue($signIn, (status, result) => {
         if (status === 'success') {
-
+            setUser(result);
         }
         if (status === 'error') {
-            showPanel(closePanel => <Dialog closePanel={closePanel}/>)
+            showPanel(closePanel => <Dialog closePanel={closePanel} message={result.message}/>)
         }
     });
     const background = useGradient(-1).stop(0, 'light', 0, 1).stop(1, 'light', -1, 1).toString();
-    debugger;
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'} background={background}>
-
         <form action="" onSubmit={handleSubmit(onSubmit(getSignIn))}>
             <Vertical gap={2} width={200} b={1} p={4} r={5} elevation={1}>
                 <Controller controller={controller} render={Input} name={"email"} label={'Email'}

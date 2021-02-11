@@ -83,12 +83,15 @@ export default function Button({
         borderRadius: 5,
         outline: 'none'
     };
-    b = isUndefinedOrNull(b) ? 0.5 : b;
+    color = color || 'light';
+
+    b = isUndefinedOrNull(b) ? color === 'light' ? 1.5 : 0.5 : b;
     r = isUndefinedOrNull(r) ? 2 : r;
     p = isUndefinedOrNull(p) ? 4 : p;
     pT = isUndefinedOrNull(pT) ? 2 : pT;
     pB = isUndefinedOrNull(pB) ? 1.8 : pB;
-    color = color || 'primary';
+
+
     opacity = opacity || 1;
     brightness = brightness || 0;
 

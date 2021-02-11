@@ -37,17 +37,17 @@ export default function RegistrationScreen({onClose}) {
         passwordConfirmation: ''
     });
     const [$registration, getRegistrationResource, $isPending] = useResource();
-    useResourceValue($registration, (status, value) => {
-        if (value) {
-            if (!value.error) {
-                onClose(controller.current.$value.current.email);
-            } else {
-                controller.current.setErrors((errors) => {
-                    errors.email = value.error;
-                    return errors;
-                });
-            }
+    useResourceValue($registration, (status, result) => {
+        if (status === 'error') {
+            controller.current.setErrors((errors) => {
+                errors.email = result.message;
+                return errors;
+            });
         }
+        if (status === 'success') {
+            onClose(controller.current.$value.current.email);
+        }
+
     })
 
     return <Vertical vAlign={'center'} hAlign={'center'} width={'100%'} height={'100%'} top={0} position={'absolute'}>

@@ -1,33 +1,27 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
-import Input from "../../../components/input/Input";
 import useForm, {Controller} from "../../../components/useForm";
 import Button from "../../../components/button/Button";
+import {useObserverValue} from "components/useObserver";
+import Input from "components/input/Input";
 
 export default function LoginScreen() {
-    const {errors, handleSubmit, register, controller} = useForm();
+    const {errors, handleSubmit, register, controller} = useForm({userName: '', password: ''});
 
     return <Vertical color={"light"} height={'100%'} hAlign={'center'} vAlign={'center'}>
         <form action="" onSubmit={handleSubmit((data) => {
 
         })}>
             <Vertical gap={3} color={"light"} brightness={-0.5} p={5} pT={7} r={5} b={0.5}>
-                <Input inputRef={register((value) => value && value.length > 0 ? '' : 'Hey your input invalid')}
-                       name={'userName'} placeholder={'User Name'} required/>
-                <Input inputRef={register((value) => value && value.length > 0 ? '' : 'Hey your password invalid')}
-                       name={'password'} type={'password'} placeholder={'Password'} required/>
+                <Controller controller={controller} render={Input} name={'userName'}/>
+                <Controller controller={controller} render={Input} name={'password'} type={'password'}/>
 
-                <Controller controller={controller} render={({value, onChange, onBlur, data, name}) => {
+                <Controller controller={controller} render={({$value, $errors, onChange, onBlur, data, name}) => {
                     return <Horizontal>
                         {data.map(data => {
                             return <label key={JSON.stringify(data)}>
                                 <Horizontal vAlign={'center'} style={{whiteSpace: 'nowrap'}}>
-                                    <input type={'checkbox'}
-                                           name={name}
-                                           value={data}
-                                           checked={value === data}
-                                           onChange={_ => onChange(data)}
-                                           onBlur={_ => onBlur(data)}
-                                    />{data}</Horizontal>
+                                    <Checkbox name={name} onBlur={onBlur} onChange={onChange} data={data}
+                                              $value={$value} $errors={$errors}/>{data}</Horizontal>
                             </label>
                         })}
                     </Horizontal>
@@ -41,4 +35,16 @@ export default function LoginScreen() {
             </Vertical>
         </form>
     </Vertical>
+}
+
+
+function Checkbox({name, data, $value, $errors, onChange, onBlur}) {
+    const value = useObserverValue(name, $value);
+    return <input type={'checkbox'}
+                  name={name}
+                  value={data}
+                  checked={data === value}
+                  onChange={_ => onChange(data)}
+                  onBlur={_ => onBlur(data)}
+    />
 }
