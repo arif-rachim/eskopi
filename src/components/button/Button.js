@@ -44,21 +44,22 @@ function effectOnDisabled(disabled, setIsDisabled) {
  * @param {number} rTR - radius top right
  * @param {number} rBL - radius bottom left
  * @param {number} rBR - radius bottom right
- *
- *
  * @param {'primary' | 'secondary' |'danger' | 'light' | 'dark' | string } color
  *
  * @param {number} brightness - negative one to positive one
+ * @param {number} hoverBrightness - negative or positive value
+ * @param {number} mouseDownBrightness - negative or positive value
  * @param {number} opacity - opacity - zero to one
  *
  * @param {'submit' |'reset'|'button'}  type
  * @param {string[]} className
  * @param {function(event)} onClick
  * @param {boolean} disabled
- * @param {Object} style
- * @param {*} props
+ *
+ *
+ * @param style
+ * @param props
  * @returns {JSX.Element}
- * @constructor
  */
 export default function Button({
                                    buttonRef,
@@ -73,6 +74,7 @@ export default function Button({
                                    b, bL, bR, bT, bB,
                                    r, rTL, rTR, rBL, rBR,
                                    brightness, opacity,
+                                   hoverBrightness, mouseDownBrightness,
                                    ...props
                                }) {
     const [theme] = useTheme();
@@ -92,19 +94,22 @@ export default function Button({
     pB = isUndefinedOrNull(pB) ? 1.8 : pB;
 
 
-    opacity = opacity || 1;
-    brightness = brightness || 0;
+    opacity = opacity ?? 1;
+    brightness = brightness ?? 0;
+    hoverBrightness = hoverBrightness ?? brightness - 0.1;
+    mouseDownBrightness = mouseDownBrightness ?? mouseDownBrightness - 0.2;
 
     const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB}, theme);
     const borderStyle = parseBorder({b, bL, bR, bT, bB}, color, theme);
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
 
     const [isDisabled, setIsDisabled] = useState(isObserver(disabled) ? false : disabled);
+
     // eslint-disable-next-line
     useEffect(effectOnDisabled(disabled, setIsDisabled), [disabled]);
     const colorStyle = parseColorStyle({
         color,
-        brightness: mouseOver ? mouseDown ? (-0.2 + brightness) : (-0.1 + brightness) : brightness,
+        brightness: mouseOver ? mouseDown ? mouseDownBrightness : hoverBrightness : brightness,
         opacity: isDisabled ? 0.5 : opacity
     }, theme);
     return <button ref={buttonRef} onMouseEnter={() => setMouseOver(true)}

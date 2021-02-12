@@ -134,7 +134,7 @@ export function parseChildrenPosition({vAlign, hAlign, horizontal}) {
  * @param {JSX.Element[]} children
  * @param {string[]} className
  * @param {'primary' | 'secondary' |'danger' | 'light' | 'dark' | string } color
- * @param {Object} props
+ * @param props
  * @param {useRef} domRef - useRef
  *
  * @param {number} p - padding
@@ -164,7 +164,7 @@ export function parseChildrenPosition({vAlign, hAlign, horizontal}) {
  * @param {number} brightness - negative one to positive one
  * @param {number} opacity - opacity - zero to one
  *
- * @param {Object} style - style for the panel
+ * @param style - style for the panel
  * @param {number} gap - gap between array
  *
  * @param {'top'|'bottom'|'center'} vAlign - Vertical Align
@@ -254,7 +254,7 @@ function Layout({
 /**
  * @param {string[]} className
  * @param {'primary' | 'secondary' |'danger' | 'light' | 'dark' | string } color
- * @param {Object} props
+ * @param props
  * @param {useRef} domRef - useRef
  * @param {number} p - padding
  * @param {number} pL - padding left
@@ -279,7 +279,7 @@ function Layout({
  * @param {number} rBR - radius bottom right
  * @param {number} brightness - negative one to positive one
  * @param {number} opacity - opacity - zero to one
- * @param {Object} style - style for the panel
+ * @param style - style for the panel
  * @param {number} gap - gap between array
  *
  * @param {'top'|'bottom'|'center'} vAlign - Vertical Align
@@ -359,7 +359,7 @@ export function Horizontal({
 /**
  * @param {string[]} className
  * @param {'primary' | 'secondary' |'danger' | 'light' | 'dark' | string } color
- * @param {Object} props
+ * @param  props
  * @param {useRef} domRef - useRef
  * @param {number} p - padding
  * @param {number} pL - padding left
@@ -384,7 +384,7 @@ export function Horizontal({
  * @param {number} rBR - radius bottom right
  * @param {number} brightness - negative one to positive one
  * @param {number} opacity - opacity - zero to one
- * @param {Object} style - style for the panel
+ * @param  style - style for the panel
  * @param {number} gap - gap between array
  *
  * @param {'top'|'bottom'|'center'} vAlign - Vertical Align
