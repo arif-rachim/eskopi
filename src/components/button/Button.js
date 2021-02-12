@@ -20,7 +20,6 @@ function effectOnDisabled(disabled, setIsDisabled) {
 }
 
 /**
- * @param {useRef} buttonRef
  * @param {number} p - padding
  * @param {number} pL - padding left
  * @param {number} pR - padding right
@@ -54,15 +53,16 @@ function effectOnDisabled(disabled, setIsDisabled) {
  * @param {'submit' |'reset'|'button'}  type
  * @param {string[]} className
  * @param {function(event)} onClick
+ * @param {function(event)} onMouseOver
  * @param {boolean} disabled
- *
+ * @param domRef
  *
  * @param style
  * @param props
  * @returns {JSX.Element}
  */
 export default function Button({
-                                   buttonRef,
+                                   domRef,
                                    type,
                                    onClick,
                                    disabled,
@@ -75,9 +75,11 @@ export default function Button({
                                    r, rTL, rTR, rBL, rBR,
                                    brightness, opacity,
                                    hoverBrightness, mouseDownBrightness,
+                                   onMouseOver,
                                    ...props
                                }) {
     const [theme] = useTheme();
+
     const [mouseOver, setMouseOver] = useState(false);
     const [mouseDown, setMouseDown] = useState(false);
     const buttonStyle = {
@@ -112,7 +114,8 @@ export default function Button({
         brightness: mouseOver ? mouseDown ? mouseDownBrightness : hoverBrightness : brightness,
         opacity: isDisabled ? 0.5 : opacity
     }, theme);
-    return <button ref={buttonRef} onMouseEnter={() => setMouseOver(true)}
+    return <button ref={domRef}
+                   onMouseEnter={() => setMouseOver(true)}
                    onMouseLeave={() => setMouseOver(false)}
                    onMouseDown={() => setMouseDown(true)}
                    onMouseUp={() => setMouseDown(false)}
@@ -120,6 +123,7 @@ export default function Button({
                    disabled={isDisabled}
                    type={type}
                    onClick={onClick}
+                   onMouseOver={onMouseOver}
                    style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...style}}
                    {...props} />
 }

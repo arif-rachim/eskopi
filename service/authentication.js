@@ -1,6 +1,7 @@
 import express from "express";
-import {dbCreate, dbFindOne} from "./database.js";
+import {dbCreate, dbFindOne, dbUpdate} from "./database.js";
 import passwordHash from "password-hash";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -8,9 +9,27 @@ router.post('/sign-in', (req, res) => {
     const {email, password} = req.body;
     const user = dbFindOne('users', {email});
     if (user && passwordHash.verify(password, user.password)) {
-        return res.json({error: false, data: user});
+        const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1800s'});
+        return res.json({error: false, data: {...user, token: token}});
     }
     return res.json({error: 'Wrong password or invalid user'})
+});
+
+router.get('/sign-out', (req, res) => {
+    const user = req.user;
+    return res.json({error: false, data: 'Successfully signout'});
+});
+
+
+router.post('/change-password', (req, res) => {
+    const {oldPassword, newPassword} = req.body;
+    const {email} = req.user;
+    const user = dbFindOne('users', {email});
+    if (user && passwordHash.verify(oldPassword, user.password)) {
+        dbUpdate(user.id_, {password: passwordHash.generate(newPassword)});
+        return res.json({error: false, data: `${user.email} password successfully updated.`});
+    }
+    return res.json({error: 'Unable to update user password'})
 });
 
 router.post('/register', (req, res) => {

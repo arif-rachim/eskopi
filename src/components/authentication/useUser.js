@@ -11,8 +11,8 @@ export const USER_KEY = 'active_user'
  * @returns {[*, *]}
  */
 export default function useUser() {
-    const [user$, setUser] = useContext(UserContext);
-    return [user$, setUser];
+    const [$user, setUser] = useContext(UserContext);
+    return [$user, setUser];
 }
 
 /**
@@ -30,6 +30,9 @@ export function UserProvider({children}) {
         return EMPTY_USER;
     });
     const setUser = useCallback((user) => {
+        if (user === null) {
+            return window.localStorage.removeItem(USER_KEY);
+        }
         const oldUser = $user.current;
         let newUser = user;
         if (isFunction(user)) {

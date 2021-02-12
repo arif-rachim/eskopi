@@ -1,6 +1,6 @@
 import styles from "./Layout.module.css";
 import tinycolor from "tinycolor2";
-import React, {cloneElement} from "react";
+import React, {cloneElement, useState} from "react";
 import useTheme from "../useTheme";
 
 
@@ -128,6 +128,15 @@ export function parseChildrenPosition({vAlign, hAlign, horizontal}) {
     return result;
 }
 
+function handleMouse(hasMouseDownOrHoverBrightness, setMouseOver, action) {
+    return () => {
+        if (!hasMouseDownOrHoverBrightness) {
+            return;
+        }
+        setMouseOver(action);
+    };
+}
+
 /**
  * @param {*} theme
  * @param {boolean} horizontal
@@ -162,6 +171,9 @@ export function parseChildrenPosition({vAlign, hAlign, horizontal}) {
  * @param {number} rBR - radius bottom right
  *
  * @param {number} brightness - negative one to positive one
+ * @param {number} brightnessHover - negative or positive value
+ * @param {number} brightnessMouseDown - negative or positive value
+ *
  * @param {number} opacity - opacity - zero to one
  *
  * @param style - style for the panel
@@ -185,6 +197,9 @@ export function parseChildrenPosition({vAlign, hAlign, horizontal}) {
  * @param {number} blur - blur effect in pixel
  * @param {number} elevation - elevation one to five
  * @param {string} background
+ * @param {'pointer'|'default'} cursor
+ *
+ * @param {function(e)} onClick
  *
  * @returns {JSX.Element}
  * @constructor
@@ -201,19 +216,23 @@ function Layout({
                     b, bL, bR, bT, bB,
                     r, rTL, rTR, rBL, rBR,
                     brightness,
+                    brightnessHover,
+                    brightnessMouseDown,
                     opacity,
                     style,
                     gap,
                     hAlign,
                     vAlign,
                     width, height,
-                    overflow = 'auto',
+                    overflow = 'visible',
                     position = 'relative',
                     top, left, right, bottom,
                     transition,
                     blur,
                     elevation,
                     background,
+                    cursor,
+                    onClick,
                     ...props
                 }) {
     const classNames = [styles.layout];
@@ -223,17 +242,26 @@ function Layout({
         classNames.push(styles.vertical);
     }
 
+    const [mouseOver, setMouseOver] = useState(false);
+    const [mouseDown, setMouseDown] = useState(false);
 
     const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB}, theme);
     const borderStyle = parseBorder({b, bL, bR, bT, bB}, color, theme);
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
+
+    if (mouseOver) {
+        brightness = brightness + brightnessHover;
+    }
+    if (mouseDown) {
+        brightness = brightness + brightnessMouseDown;
+    }
     const colorStyle = parseColorStyle({color, brightness, opacity}, theme);
     const childrenPositionStyle = parseChildrenPosition({vAlign, hAlign, horizontal});
     const dimensionStyle = {width, height, overflow, position, top, left, right, bottom, transition};
     const blurStyle = blur ? {backdropFilter: `blur(${blur}px)`} : {};
     const elevationStyle = elevation >= 1 && elevation <= 5 ? {boxShadow: Elevation[elevation - 1]} : {};
     const backgroundStyle = background ? {background} : {};
-
+    const cursorStyle = cursor ? {cursor} : {};
     let childrenClone = children;
     if (Array.isArray(childrenClone) && gap > 0) {
         childrenClone = childrenClone.filter(element => element.type !== undefined).reduce((result, next, index, array) => {
@@ -246,8 +274,32 @@ function Layout({
             return result;
         }, []);
     }
+
+
+    const hasMouseHover = brightnessHover !== undefined;
+    const hasMouseDown = brightnessMouseDown !== undefined;
+
+
     return <div ref={domRef} className={[...classNames, ...className].join(' ')}
-                style={{...dimensionStyle, ...colorStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...childrenPositionStyle, ...blurStyle, ...elevationStyle, ...backgroundStyle, ...style}} {...props} >{childrenClone}</div>
+                style={{
+                    ...dimensionStyle,
+                    ...colorStyle,
+                    ...paddingMarginStyle,
+                    ...borderStyle,
+                    ...radiusStyle,
+                    ...childrenPositionStyle,
+                    ...blurStyle,
+                    ...elevationStyle,
+                    ...backgroundStyle,
+                    ...cursorStyle,
+                    ...style
+                }} {...props}
+                onMouseEnter={handleMouse(hasMouseHover, setMouseOver, true)}
+                onMouseLeave={handleMouse(hasMouseHover, setMouseOver, false)}
+                onMouseDown={handleMouse(hasMouseDown, setMouseDown, true)}
+                onMouseUp={handleMouse(hasMouseDown, setMouseDown, false)}
+                onClick={onClick}
+    >{childrenClone}</div>
 }
 
 
@@ -278,6 +330,9 @@ function Layout({
  * @param {number} rBL - radius bottom left
  * @param {number} rBR - radius bottom right
  * @param {number} brightness - negative one to positive one
+ * @param {number} brightnessHover - negative or positive value
+ * @param {number} brightnessMouseDown - negative or positive value
+ *
  * @param {number} opacity - opacity - zero to one
  * @param style - style for the panel
  * @param {number} gap - gap between array
@@ -300,6 +355,8 @@ function Layout({
  * @param {number} blur - blur effect in pixel
  * @param {number} elevation - elevation one to five
  * @param {string} background
+ * @param {'pointer'|'default'} cursor
+ * @param {function(e)} onClick
  *
  * @returns {JSX.Element}
  * @constructor
@@ -313,6 +370,8 @@ export function Horizontal({
                                b, bL, bR, bT, bB,
                                r, rTL, rTR, rBL, rBR,
                                brightness,
+                               brightnessHover,
+                               brightnessMouseDown,
                                opacity,
                                style,
                                gap,
@@ -326,6 +385,8 @@ export function Horizontal({
                                blur,
                                elevation,
                                background,
+                               cursor,
+                               onClick,
                                ...props
                            }) {
     const prop = {
@@ -337,6 +398,8 @@ export function Horizontal({
         b, bL, bR, bT, bB,
         r, rTL, rTR, rBL, rBR,
         brightness,
+        brightnessHover,
+        brightnessMouseDown,
         opacity,
         style,
         gap,
@@ -348,7 +411,9 @@ export function Horizontal({
         position,
         top, left, right, bottom,
         transition,
-        blur, elevation, background
+        blur, elevation, background,
+        cursor,
+        onClick
     }
     const [theme] = useTheme();
     const layoutProps = {theme, ...prop, ...props}
@@ -383,6 +448,8 @@ export function Horizontal({
  * @param {number} rBL - radius bottom left
  * @param {number} rBR - radius bottom right
  * @param {number} brightness - negative one to positive one
+ * @param {number} brightnessHover - negative or positive value
+ * @param {number} brightnessMouseDown - negative or positive value
  * @param {number} opacity - opacity - zero to one
  * @param  style - style for the panel
  * @param {number} gap - gap between array
@@ -405,7 +472,9 @@ export function Horizontal({
  * @param {number} blur - blur effect in pixel
  * @param {number} elevation - elevation one to five
  * @param {string} background
+ * @param {'pointer'|'default'} cursor
  *
+ * @param {function(e)} onClick
  *
  * @returns {JSX.Element}
  * @constructor
@@ -419,6 +488,8 @@ export function Vertical({
                              b, bL, bR, bT, bB,
                              r, rTL, rTR, rBL, rBR,
                              brightness,
+                             brightnessHover,
+                             brightnessMouseDown,
                              opacity,
                              style,
                              gap,
@@ -432,6 +503,8 @@ export function Vertical({
                              blur,
                              elevation,
                              background,
+                             cursor,
+                             onClick,
                              ...props
                          }) {
     const prop = {
@@ -443,6 +516,8 @@ export function Vertical({
         b, bL, bR, bT, bB,
         r, rTL, rTR, rBL, rBR,
         brightness,
+        brightnessHover,
+        brightnessMouseDown,
         opacity,
         style,
         gap,
@@ -454,7 +529,9 @@ export function Vertical({
         top, left, right, bottom,
         transition,
         blur,
-        elevation, background
+        elevation, background,
+        cursor,
+        onClick
     }
     const [theme] = useTheme();
     const layoutProps = {theme, ...prop, ...props}

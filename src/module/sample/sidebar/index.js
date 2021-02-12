@@ -13,7 +13,7 @@ export default function SampleSideBar() {
             <Vertical color={"light"} height={'100%'} p={5}>
                 This is the actual content
                 <Input $value={$value} $errors={$error} onChange={setValue}/>
-                <Label observer={$value}/>
+                <Label $value={$value}/>
             </Vertical>
         </Sidebar>
     </Vertical>

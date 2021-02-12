@@ -1,21 +1,25 @@
+import {useCallback} from "react";
 import useLayers from "./useLayers";
 
 /**
- * showPopup(closePanel => <Popup closePanel={closePanel}/>,{anchorRef,position:{bottom-left,bottom-right,top-left,top-right}})
+ * showPopup(closePanel => <Popup closePanel={closePanel}/>,{anchorRef,matchWithAnchorWidth:boolean,isRightAlign:boolean,isAbove:boolean})
  */
 export default function usePopup() {
     const showPanel = useLayers();
-    return (popupFactory, {anchorRef, matchWithAnchorWidth = false, isRightAlign = false, isAbove = false}) => {
-        return showPanel(closePanel => {
-            const panel = popupFactory(closePanel);
-            return <Popup anchorRef={anchorRef}
-                          isRightAlign={isRightAlign}
-                          isAbove={isAbove}
-                          matchWithAnchorWidth={matchWithAnchorWidth}>
-                {panel}
-            </Popup>
-        })
-    };
+    return useCallback((popupFactory, {
+        anchorRef,
+        matchWithAnchorWidth = false,
+        isRightAlign = false,
+        isAbove = false
+    }) => showPanel(closePanel => {
+        const panel = popupFactory(closePanel);
+        return <Popup anchorRef={anchorRef}
+                      isRightAlign={isRightAlign}
+                      isAbove={isAbove}
+                      matchWithAnchorWidth={matchWithAnchorWidth}>
+            {panel}
+        </Popup>
+    }), [showPanel]);
 }
 
 /**

@@ -6,6 +6,7 @@ import LoginScreen from "module/login";
 import RegistrationScreen from "module/registration";
 import {AuthCheck, UserProvider} from "components/authentication/useUser";
 import ErrorBoundary from "components/error-boundary/ErrorBoundary"
+import AppShell from "components/app-shell/AppShell";
 
 function App() {
     const Element = useRouter();
@@ -22,11 +23,13 @@ export default function Provider() {
         <ThemeContextProvider>
             <RouterProvider>
                 <LayerContextProvider>
-                    <ErrorBoundary>
-                        <Suspense fallback={<div>Loading ...</div>}>
-                            <App/>
-                        </Suspense>
-                    </ErrorBoundary>
+                    <AppShell>
+                        <ErrorBoundary>
+                            <Suspense fallback={<div>Loading ...</div>}>
+                                <App/>
+                            </Suspense>
+                        </ErrorBoundary>
+                    </AppShell>
                 </LayerContextProvider>
             </RouterProvider>
         </ThemeContextProvider>

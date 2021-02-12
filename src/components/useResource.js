@@ -1,5 +1,6 @@
-import useObserver from "components/useObserver";
+import useObserver, {useObserverValue} from "components/useObserver";
 import {useCallback, useEffect, useRef} from "react";
+import useUser from "components/authentication/useUser";
 
 const API_SERVER = 'http://localhost:4000'
 
@@ -9,21 +10,25 @@ const API_SERVER = 'http://localhost:4000'
  * @param {object} data
  * @returns {Promise<object>}
  */
-const post = async (url, data) => {
+const post = async (url, data, token) => {
     if (url.indexOf('/') !== 0) {
         url = '/' + url;
     }
+    const authorization = token ? {'Authorization': `Bearer ${token}`} : {};
+
     const response = await fetch(API_SERVER + url, {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         mode: 'cors', // no-cors, *cors, same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
         credentials: 'include', // include, *same-origin, omit
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            ...authorization
         },
         redirect: 'follow', // manual, *follow, error
         referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        body: JSON.stringify(data) // body data type must match "Content-Type" header
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+
     });
     return response.json(); // parses JSON response into native JavaScript objects
 }
@@ -31,19 +36,22 @@ const post = async (url, data) => {
 /**
  * Function to perform get method to api server
  * @param {string} url
+ * @param {string} token
  * @returns {Promise<object>}
  */
-const get = async (url) => {
+const get = async (url, token) => {
     if (url.indexOf('/') !== 0) {
         url = '/' + url;
     }
+    const authorization = token ? {headers: {'Authorization': `Bearer ${token}`}} : {};
     const response = await fetch(API_SERVER + url, {
         method: 'GET', // *GET, POST, PUT, DELETE, etc.
         mode: 'cors', // no-cors, *cors, same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: 'include', // include, *same-origin, omit
+        credentials: 'include', // include, *same-origin, omit,
         redirect: 'follow', // manual, *follow, error
-        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        ...authorization,
+        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url,
     });
     return response.json(); // parses JSON response into native JavaScript objects
 }
@@ -99,17 +107,18 @@ const EMPTY_RESOURCE = {
  * @param setIsPending
  * @param {React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>} isPendingObserver
  * @param {function(*=):void} setResource
+ * @param {string} token
  * @param {number} timeout
  * @returns {function(*=, *=): void}
  */
-function getCallback(setIsPending, isPendingObserver, setResource, timeout) {
+function getCallback(setIsPending, isPendingObserver, setResource, timeout, token) {
     return (url, data) => {
         let timer = null;
         let suspenseObject = null;
         if (data === undefined) {
-            suspenseObject = suspensify(get(url), setIsPending);
+            suspenseObject = suspensify(get(url, token), setIsPending);
         } else {
-            suspenseObject = suspensify(post(url, data), setIsPending);
+            suspenseObject = suspensify(post(url, data, token), setIsPending);
         }
 
         const deregisterListener = isPendingObserver.addListener((isPending) => {
@@ -136,16 +145,18 @@ function getCallback(setIsPending, isPendingObserver, setResource, timeout) {
  * @returns {[React.MutableRefObject<{read:function():*}>, function(url:string,body:*), React.MutableRefObject<{current:*}>]}
  */
 export default function useResource(url, data, timeout = 1000) {
+    const [$user] = useUser();
+    const token = useObserverValue($user)?.token;
     const [$resource, setResource] = useObserver(() => {
         if (url) {
-            return data === undefined ? suspensify(get(url), setIsPending) : suspensify(post(url, data), setIsPending);
+            return data === undefined ? suspensify(get(url, token), setIsPending) : suspensify(post(url, data, token), setIsPending);
         }
         return EMPTY_RESOURCE;
     });
     const [$isPending, setIsPending] = useObserver(false);
 
     // eslint-disable-next-line
-    const getResource = useCallback(getCallback(setIsPending, $isPending, setResource, timeout), []);
+    const getResource = useCallback(getCallback(setIsPending, $isPending, setResource, timeout, token), [token]);
     return [
         $resource,
         getResource,
@@ -153,34 +164,35 @@ export default function useResource(url, data, timeout = 1000) {
     ]
 }
 
-export function useResourceValue($resource,callback){
+export function useResourceValue($resource, callback) {
     const callbackRef = useRef(callback);
     callbackRef.current = callback;
     useEffect(() => {
         const callback = callbackRef.current;
         return $resource.addListener(handleListener(callback))
-    },[$resource]);
+    }, [$resource]);
 }
 
 const handleListener = (callback) => {
-    function resourceListener(resource){
+    function resourceListener(resource) {
         let status = resource.status();
         let result = undefined;
-        try{
+        try {
             result = resource.read();
-        }catch(promise){
-            if('then' in promise){
+        } catch (promise) {
+            if ('then' in promise) {
                 promise.then(() => {
                     resourceListener(resource);
                 }).catch(() => {
                     resourceListener(resource);
                 });
-            }else {
+            } else {
                 status = STATUS_ERROR;
                 result = promise;
             }
         }
-        callback.apply(null,[status,result]);
+        callback.apply(null, [status, result]);
     }
+
     return resourceListener;
 }

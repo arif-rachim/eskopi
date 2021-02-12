@@ -8,20 +8,31 @@ import {calculateBrightness} from "components/layout/Layout";
  */
 export default function useGradient(degree) {
     const [theme] = useTheme();
-    const gradient = {};
-
+    const gradient = new Map();
 
     return {
+        /**
+         *
+         * @param {string} position
+         * @param {string} color
+         * @param {number} brightness
+         * @param {number} alpha
+         * @returns {*}
+         */
         stop(position, color, brightness, alpha) {
             if (color in theme) {
                 color = theme[color];
             }
-            gradient[position.toString()] = calculateBrightness(color, brightness, alpha).toRgbString();
+            gradient.set(position.toString(), calculateBrightness(color, brightness, alpha).toRgbString());
             return this;
         },
-
+        /**
+         *
+         * @returns {string}
+         */
         toString() {
-            const gradientString = Object.keys(gradient).map(position => `${gradient[position]} ${parseFloat(position) * 100}%`).join(', ')
+
+            const gradientString = Array.from(gradient.keys()).map(position => `${gradient.get(position)} ${parseFloat(position) * 100}%`).join(', ')
             if (degree > 0) {
                 return `linear-gradient(${degree}deg, ${gradientString})`
             }

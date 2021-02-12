@@ -37,6 +37,7 @@ export default function useObserver(defaultValue) {
          * @param {function(value)} callbackOrValue
          */
         const setValue = (key, callbackOrValue) => {
+
             if (callbackOrValue === undefined) {
                 callbackOrValue = key;
                 key = undefined;
@@ -46,6 +47,9 @@ export default function useObserver(defaultValue) {
             let newVal = callbackOrValue;
             if (isFunction(callbackOrValue)) {
                 newVal = callbackOrValue.apply(this, [oldVal]);
+            }
+            if (newVal === oldVal) {
+                return;
             }
             if (key) {
                 defaultValueRef.current[key] = newVal;
@@ -63,6 +67,10 @@ export default function useObserver(defaultValue) {
                             l.apply(l, [newVal, oldVal]);
                         });
                     } else {
+                        if (newVal[key] === oldVal[key]) {
+                            console.log('newVal', newVal[key], 'oldVal', oldVal[key]);
+                            return;
+                        }
                         listeners[key].forEach((l) => {
                             l.apply(l, [newVal[key], oldVal[key]]);
                         })

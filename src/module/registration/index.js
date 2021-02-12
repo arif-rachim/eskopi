@@ -40,8 +40,7 @@ export default function RegistrationScreen({onClose}) {
     useResourceValue($registration, (status, result) => {
         if (status === 'error') {
             controller.current.setErrors((errors) => {
-                errors.email = result.message;
-                return errors;
+                return {...errors, email: result.message};
             });
         }
         if (status === 'success') {

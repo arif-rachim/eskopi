@@ -40,7 +40,8 @@ export default function LoginScreen() {
             setUser(result);
         }
         if (status === 'error') {
-            showPanel(closePanel => <Dialog closePanel={closePanel} message={result.message}/>)
+            showPanel(closePanel => <Dialog closePanel={closePanel} message={result.message}
+                                            buttons={{OK: {color: 'primary'}}}/>).then()
         }
     });
     const background = useGradient(-1).stop(0, 'light', 0, 1).stop(1, 'light', -1, 1).toString();
