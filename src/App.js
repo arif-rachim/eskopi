@@ -13,7 +13,7 @@ function App() {
         return <Element.Element {...Element.params}/>;
     }
     return <AuthCheck fallback={<LoginScreen/>}>
-        <Element.Element {...Element.params}/>;
+        <Element.Element {...Element.params}/>
     </AuthCheck>
 }
 
