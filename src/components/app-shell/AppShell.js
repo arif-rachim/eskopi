@@ -5,7 +5,8 @@ import useGradient from "components/useGradient";
 import useObserver, {useObserverValue} from "components/useObserver";
 import {Header} from "components/app-shell/Header";
 import useClickOutside from "components/useClickOutside";
-
+import Input from "../input/Input";
+import useForm,{Controller} from "../useForm";
 export default function AppShell({children}) {
     const [$showMenu, setShowMenu] = useObserver(false);
     const menuButtonRef = useRef();
@@ -25,17 +26,42 @@ function Content({children, $showMenu, setShowMenu, menuButtonRef}) {
         <Menu $showMenu={$showMenu} setShowMenu={setShowMenu} menuButtonRef={menuButtonRef}/>
     </Vertical>
 }
-
+const defaultMenus = {
+    'Page Builder' : {
+        path : 'page-builder'
+    },
+    'Access Management' : {
+        path : 'access-management'
+    }
+};
 function Menu({$showMenu, setShowMenu, menuButtonRef}) {
     const showMenu = useObserverValue($showMenu);
     const domRef = useRef();
     useClickOutside([domRef, menuButtonRef], event => {
         setShowMenu(false);
     });
+    const menus = defaultMenus; // later on we can pull dynamic menus from database.
+    const {controller} = useForm({search:''});
+    return <Vertical domRef={domRef}
+                     top={0} height={'100%'} brightness={0.5}
+                     position={"absolute"}
+                     color={"light"}
+                     width={200}
+                     left={showMenu ? 0 : -200} transition={'left 200ms cubic-bezier(0,0,0.7,0.9)'} bR={1}>
+        <Vertical p={1} bB={1} >
+            <Controller name={'search'} controller={controller} render={Input} validateOn={'change'} placeholder={'Search'}/>
+        </Vertical>
 
-    return <Vertical domRef={domRef} top={0} height={'100%'} position={"absolute"} color={"primary"} width={200}
-                     left={showMenu ? 0 : -200} transition={'left 200ms cubic-bezier(0,0,0.7,0.9)'}>
-        SHIT
+        {Object.keys(menus).map(menu => {
+            return <Vertical key={menu} color={"light"} cursor={"pointer"}
+                             brightness={-0.2} brightnessHover={-0.6}
+                             brightnessMouseDown={-0.9}
+                             bB={1} p={1} onClick={() => {
+                window.location.hash = `#${menus[menu].path}`
+            }}>
+                {menu}
+            </Vertical>
+        })}
     </Vertical>
 }
 

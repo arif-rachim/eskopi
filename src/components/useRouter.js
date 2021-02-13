@@ -1,6 +1,7 @@
 import {createContext, useContext, useEffect, useState} from "react";
 import routing from "../routing";
 import {Horizontal, Vertical} from "./layout/Layout";
+import useObserver from "./useObserver";
 
 const RoutingContext = createContext({});
 
@@ -40,7 +41,7 @@ function findMostMatchingComponent(pathArray, routing) {
         return {Element: InvalidRoute, params: {route: pathArray.join('/')}};
     }
     const mostMatchingMap = allMatchCriteria.sort((a, b) => a.score === b.score ? 0 : a.score > b.score ? -1 : 1)[0];
-    return {Element: routing[mostMatchingMap.pathMap], params: mostMatchingMap.params};
+    return {Element: routing[mostMatchingMap.pathMap], params: mostMatchingMap.params,key:mostMatchingMap.pathMap};
 }
 
 function getElementToMount() {
@@ -58,7 +59,7 @@ function getElementToMount() {
 }
 
 export function RouterProvider({children}) {
-    const [elementToMount, setElementToMount] = useState(getElementToMount());
+    const [$elementToMount, setElementToMount] = useObserver(getElementToMount());
 
     useEffect(() => {
         const handleHashChange = () => setElementToMount(getElementToMount());
@@ -68,7 +69,7 @@ export function RouterProvider({children}) {
         }
     }, []);
 
-    return <RoutingContext.Provider value={elementToMount}>
+    return <RoutingContext.Provider value={$elementToMount}>
         {children}
     </RoutingContext.Provider>;
 }

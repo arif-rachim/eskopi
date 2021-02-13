@@ -83,10 +83,6 @@ function handleChangePassword(showPanel) {
     };
 }
 
-function handleViewMyProfile() {
-    return function (event) {
-    };
-}
 
 function handleLogOut(confirmAction, setLogout) {
     return async function (event) {
@@ -111,8 +107,6 @@ function UserProfileMenu({closePanel, parentRef, setLogout}) {
         <Horizontal p={2} pL={3} pR={3} bT={1} mT={3} color={'light'} brightness={-0.3} brightnessHover={-1}
                     hAlign={"right"} cursor={'pointer'} onClick={handleChangePassword(showPanel)}>Change
             Password</Horizontal>
-        <Horizontal p={2} pL={3} pR={3} bT={1} color={'light'} brightness={-0.3} brightnessHover={-1} hAlign={"right"}
-                    cursor={'pointer'} onClick={handleViewMyProfile()}>My Profile</Horizontal>
         <Horizontal p={2} pL={3} pR={3} bT={1} color={'light'} brightness={-0.3} brightnessHover={-1} hAlign={"right"}
                     cursor={'pointer'} onClick={handleLogOut(confirmAction, setLogout)}>Log Out</Horizontal>
     </Vertical>
