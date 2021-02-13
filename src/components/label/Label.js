@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {calculateBrightness, Horizontal} from "../layout/Layout";
+import {calculateBrightness, Vertical} from "../layout/Layout";
 import useTheme from "../useTheme";
 
 /**
@@ -28,5 +28,5 @@ export default function Label({name, color, $value, style, ...props}) {
             console.log('value', value);
         })
     }, []);
-    return <Horizontal {...props} style={{color: color, ...style}}>{value}</Horizontal>
+    return <Vertical {...props} style={{color: color, ...style}}>{value}</Vertical>
 }

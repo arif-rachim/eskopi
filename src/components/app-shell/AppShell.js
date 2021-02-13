@@ -24,15 +24,19 @@ export default function AppShell({children}) {
 }
 
 function Header() {
-    const [$user] = useUser();
+    const [$user, setUser] = useUser();
     const [$showPopup, setShowPopup] = useObserver(false);
     const showPopup = usePopup();
     const buttonRef = useRef();
     const [$logout, setLogout] = useResource();
-    const [, setUser] = useUser();
     useResourceValue($logout, (status, result) => {
         if (status === 'success') {
             setUser(null);
+        }
+        if (status === 'error') {
+            if (result.message === "jwt expired") {
+                setUser(null);
+            }
         }
     })
 
@@ -54,10 +58,11 @@ function Header() {
 
     return <Vertical background={PANEL_GRADIENT}>
         <Horizontal hAlign={'right'} p={2} pR={2} pL={2}>
-            <Button domRef={buttonRef} brightness={-0.3} b={2} hoverBrightness={-0.7} onMouseOver={(event) => {
-                setShowPopup(true);
-            }}>
-                <Label name={'name'} $value={$user}/>
+            <Button domRef={buttonRef} brightness={-0.3} b={2} hoverBrightness={-0.7} minWidth={120}
+                    onMouseOver={(event) => {
+                        setShowPopup(true);
+                    }}>
+                <Label name={'name'} $value={$user} style={{textAlign: 'right'}}/>
             </Button>
 
         </Horizontal>

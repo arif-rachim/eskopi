@@ -30,8 +30,9 @@ export function UserProvider({children}) {
         return EMPTY_USER;
     });
     const setUser = useCallback((user) => {
-        if (user === null) {
-            return window.localStorage.removeItem(USER_KEY);
+        if (user === null || user === undefined) {
+            window.localStorage.removeItem(USER_KEY);
+            return _setUser(EMPTY_USER);
         }
         const oldUser = $user.current;
         let newUser = user;

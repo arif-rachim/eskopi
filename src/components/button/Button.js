@@ -49,6 +49,7 @@ function effectOnDisabled(disabled, setIsDisabled) {
  * @param {number} hoverBrightness - negative or positive value
  * @param {number} mouseDownBrightness - negative or positive value
  * @param {number} opacity - opacity - zero to one
+ * @param {number} minWidth - minimum width
  *
  * @param {'submit' |'reset'|'button'}  type
  * @param {string[]} className
@@ -76,6 +77,7 @@ export default function Button({
                                    brightness, opacity,
                                    hoverBrightness, mouseDownBrightness,
                                    onMouseOver,
+                                   minWidth,
                                    ...props
                                }) {
     const [theme] = useTheme();
@@ -114,6 +116,10 @@ export default function Button({
         brightness: mouseOver ? mouseDown ? mouseDownBrightness : hoverBrightness : brightness,
         opacity: isDisabled ? 0.5 : opacity
     }, theme);
+    const internalStyle = {};
+    if (minWidth >= 0) {
+        internalStyle.minWidth = minWidth;
+    }
     return <button ref={domRef}
                    onMouseEnter={() => setMouseOver(true)}
                    onMouseLeave={() => setMouseOver(false)}
@@ -124,6 +130,6 @@ export default function Button({
                    type={type}
                    onClick={onClick}
                    onMouseOver={onMouseOver}
-                   style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...style}}
+                   style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...internalStyle, ...style}}
                    {...props} />
 }
