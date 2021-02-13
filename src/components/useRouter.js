@@ -1,4 +1,4 @@
-import {createContext, useContext, useEffect, useState} from "react";
+import {createContext, useContext, useEffect} from "react";
 import routing from "../routing";
 import {Horizontal, Vertical} from "./layout/Layout";
 import useObserver from "./useObserver";
@@ -67,7 +67,7 @@ export function RouterProvider({children}) {
         return () => {
             window.removeEventListener("hashchange", handleHashChange);
         }
-    }, []);
+    }, [setElementToMount]);
 
     return <RoutingContext.Provider value={$elementToMount}>
         {children}
