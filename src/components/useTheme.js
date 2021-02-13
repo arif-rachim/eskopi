@@ -5,7 +5,7 @@ import useLayers from "./useLayers";
 const ThemeContext = createContext({
     surfaceColor: '#DDE6E0',
     accentColor: '#612A05',
-    radiusMultiplier: 2.5,
+    radiusMultiplier: 0,
     paddingMultiplier: 2.5,
     darkTextColor: '#333',
     lightTextColor: '#FAFAFA'
@@ -67,7 +67,7 @@ function Theme({closePanel, theme, setTheme}) {
 
 export function ThemeContextProvider({children}) {
     const [theme, setTheme] = useState({
-        radiusMultiplier: 2.5,
+        radiusMultiplier: 0,
         paddingMultiplier: 2.5,
         primary: '#2E89FF',
         secondary: '#1FB34B',

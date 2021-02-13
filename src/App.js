@@ -1,15 +1,29 @@
-import {ThemeContextProvider} from "./components/useTheme";
-import {LayerContextProvider} from "./components/useLayers";
+import {ThemeContextProvider} from "components/useTheme";
+import {LayerContextProvider} from "components/useLayers";
 import useRouter, {RouterProvider} from "./components/useRouter";
-import {Suspense, useEffect, useState} from "react";
+import {Suspense, useCallback, useEffect, useMemo, useState} from "react";
 import LoginScreen from "module/login";
 import {AuthCheck, UserProvider} from "components/authentication/useUser";
 import ErrorBoundary from "components/error-boundary/ErrorBoundary"
 import AppShell from "components/app-shell/AppShell";
-import {Horizontal, Vertical} from "./components/layout/Layout";
+import {Horizontal, Vertical} from "components/layout/Layout";
 import {v4 as uuid} from "uuid";
 import Books from "components/book/Books";
-import useObserver, {useObserverValue} from "components/useObserver";
+import useObserver from "components/useObserver";
+
+function handleOnChange(setActiveTab) {
+    return (index) => setActiveTab(index);
+}
+
+function handleOnClose(setBooks) {
+    return (index) => {
+        setBooks(oldBooks => {
+            const newBooks = [...oldBooks];
+            newBooks.splice(index, 1);
+            return newBooks;
+        })
+    };
+}
 
 function App() {
     const $element = useRouter();
@@ -27,17 +41,14 @@ function App() {
     }), [$element]);
 
     const [$activeTab, setActiveTab] = useObserver(0);
+    const bookTitles = JSON.stringify(books.map(book => book.title));
 
     return <AuthCheck fallback={<LoginScreen/>}>
         <Vertical height={'100%'}>
-            <TabMenu data={books.map(book => book.title)} $value={$activeTab}
-                     onChange={(index) => setActiveTab(index)} onClose={(index) => {
-                setBooks(oldBooks => {
-                    const newBooks = [...oldBooks];
-                    newBooks.splice(index, 1);
-                    return newBooks;
-                })
-            }}/>
+            <TabMenu data={useMemo(() => JSON.parse(bookTitles), [bookTitles])} $value={$activeTab}
+                // eslint-disable-next-line
+                     onChange={useCallback(handleOnChange(setActiveTab), [])}
+                     onClose={useCallback(handleOnClose(setBooks), [])}/>
             <Vertical height={'100%'}>
                 {books.map((book, index) => {
                     return <Books key={book.id} index={index} $activeIndex={$activeTab} {...book}/>
@@ -48,12 +59,17 @@ function App() {
 }
 
 function TabButton({index, $selectedIndex, onChange, onClose, title}) {
-    const selectedIndex = useObserverValue($selectedIndex);
+    const [brightness, setBrightness] = useState(-12);
+    useEffect(() => {
+        return $selectedIndex.addListener(selectedIndex => {
+            setBrightness(selectedIndex === index ? -1 : -12);
+        });
+    }, [$selectedIndex, index]);
     return <Horizontal color={"light"}
                        gap={2}
                        vAlign={'center'}
                        brightnessHover={-2}
-                       brightness={selectedIndex === index ? -12 : -1}
+                       brightness={brightness}
                        brightnessMouseDown={-3}
                        p={2}
                        pT={1}

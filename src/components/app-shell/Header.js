@@ -60,13 +60,19 @@ export function Header({setShowMenu, menuButtonRef}) {
             })();
         })
     }, [$showPopup, setLogout, setShowPopup, showPopup]);
-    const PANEL_GRADIENT = useGradient(180).stop(0, 'light', 0).stop(0.9, 'light', -3).stop(1, 'light', -5).toString();
+    const PANEL_GRADIENT = useGradient(180).stop(0, 'light', -1).stop(0.1, 'light', -2).stop(0.9, 'light', -2).stop(1, 'light', -4).toString();
 
     return <Vertical background={PANEL_GRADIENT} $visible={$visible}>
-        <Horizontal hAlign={'right'} p={2} pR={2} pL={2}>
-            <Button domRef={menuButtonRef} onClick={() => setShowMenu(true)}>Menu</Button>
+        <Horizontal hAlign={'right'}>
+            <Button domRef={menuButtonRef} b={0} bB={4} bR={2} p={0} onClick={() => setShowMenu(true)}>
+                <svg viewBox='0 0 512 512' width={30} height={30}>
+                    <path fill='none' stroke='currentColor' strokeLinecap='round' strokeMiterlimit='10'
+                          strokeWidth='20' d='M80 160h352M80 256h352M80 352h352'/>
+                </svg>
+
+            </Button>
             <Horizontal style={{flex: 1}}/>
-            <Button domRef={buttonRef} brightness={-0.3} b={2} hoverBrightness={-0.7} minWidth={120}
+            <Button domRef={buttonRef} brightness={-0.3} b={0} bL={2} bB={3} hoverBrightness={-0.7} minWidth={120}
                     onMouseOver={(event) => {
                         setShowPopup(true);
                     }}>

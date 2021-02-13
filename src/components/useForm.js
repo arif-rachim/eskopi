@@ -167,12 +167,13 @@ const callbackOnChange = (propsRef) => (value) => {
  * @param {string} label
  * @param {function(value)} validator
  * @param {'change'|'blur'} validateOn
+ * @param {number} flex
  * @param {React.Element} render
  * @param {React.MutableRefObject<{validateOn: {}, $errors: (React.MutableRefObject<*>|setObserver), $value: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>} controller
  * @returns {JSX.Element}
  * @constructor
  */
-export function Controller({name, label, validator, validateOn = 'blur', render, controller, ...props}) {
+export function Controller({name, label, validator, validateOn = 'blur', render, controller, flex, ...props}) {
     controller.current.validateOn[name] = validateOn;
     controller.current.validator[name] = validator;
     if (!controller.current.modified[name]) {
@@ -185,10 +186,13 @@ export function Controller({name, label, validator, validateOn = 'blur', render,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const onChange = useCallback(callbackOnChange(propsRef), []);
     const Render = useRef(render).current;
-
-    return <Vertical overflow={'visible'}>
+    const containerStyle = {};
+    if (flex) {
+        containerStyle.flex = flex;
+    }
+    return <Vertical overflow={'visible'} style={containerStyle}>
         <label>
-            <Vertical overflow={'visible'} mB={2}>
+            <Vertical overflow={'visible'}>
                 <Horizontal style={{fontSize: '0.8rem'}}>{label}</Horizontal>
                 <Render name={name} onBlur={onBlur} onChange={onChange} $value={controller.current.$value}
                         $errors={controller.current.$errors} {...props}/>
