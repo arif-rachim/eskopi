@@ -127,7 +127,7 @@ export function useObserverValue(key, observer) {
     observer = observer ?? EMPTY_OBSERVER;
     const [state, setState] = useState(key ? observer.current[key] : observer.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(observer.stateListenerEffect(key, setState), []);
+    useEffect(observer.stateListenerEffect(key, setState), [observer]);
     return state;
 }
 

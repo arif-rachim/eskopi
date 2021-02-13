@@ -23,13 +23,15 @@ export default function Provider() {
         <ThemeContextProvider>
             <RouterProvider>
                 <LayerContextProvider>
-                    <AppShell>
-                        <ErrorBoundary>
-                            <Suspense fallback={<div>Loading ...</div>}>
-                                <App/>
-                            </Suspense>
-                        </ErrorBoundary>
-                    </AppShell>
+                    <ErrorBoundary>
+                        <AppShell>
+                            <ErrorBoundary>
+                                <Suspense fallback={<div>Loading ...</div>}>
+                                    <App/>
+                                </Suspense>
+                            </ErrorBoundary>
+                        </AppShell>
+                    </ErrorBoundary>
                 </LayerContextProvider>
             </RouterProvider>
         </ThemeContextProvider>

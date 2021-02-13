@@ -5,7 +5,7 @@ import {useObserverValue} from "components/useObserver";
 import Input from "components/input/Input";
 
 export default function LoginScreen() {
-    const {errors, handleSubmit, register, controller} = useForm({userName: '', password: ''});
+    const {errors, handleSubmit, controller} = useForm({userName: '', password: ''});
 
     return <Vertical color={"light"} height={'100%'} hAlign={'center'} vAlign={'center'}>
         <form action="" onSubmit={handleSubmit((data) => {

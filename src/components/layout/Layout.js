@@ -1,6 +1,6 @@
 import styles from "./Layout.module.css";
 import tinycolor from "tinycolor2";
-import React, {cloneElement, useState} from "react";
+import React, {cloneElement, useEffect, useState} from "react";
 import useTheme from "../useTheme";
 
 
@@ -198,6 +198,7 @@ function handleMouse(hasMouseDownOrHoverBrightness, setMouseOver, action) {
  * @param {number} elevation - elevation one to five
  * @param {string} background
  * @param {'pointer'|'default'} cursor
+ * @param {{current:boolean}} $visible
  *
  * @param {function(e)} onClick
  *
@@ -233,6 +234,7 @@ function Layout({
                     background,
                     cursor,
                     onClick,
+                    $visible,
                     ...props
                 }) {
     const classNames = [styles.layout];
@@ -260,8 +262,28 @@ function Layout({
     const dimensionStyle = {width, height, overflow, position, top, left, right, bottom, transition};
     const blurStyle = blur ? {backdropFilter: `blur(${blur}px)`} : {};
     const elevationStyle = elevation >= 1 && elevation <= 5 ? {boxShadow: Elevation[elevation - 1]} : {};
-    const backgroundStyle = background ? {background} : {};
-    const cursorStyle = cursor ? {cursor} : {};
+
+    const internalStyle = {};
+    if (background) {
+        internalStyle.background = background;
+    }
+    if (cursor) {
+        internalStyle.cursor = cursor;
+    }
+    const [visible, setVisible] = useState(() => $visible ? $visible.current : true);
+    useEffect(() => {
+        if (!$visible) {
+            return;
+        }
+        return $visible.addListener((visible) => {
+            setVisible(visible);
+        })
+    }, [$visible]);
+
+    if (visible === false) {
+        internalStyle.display = 'none';
+    }
+
     let childrenClone = children;
     if (Array.isArray(childrenClone) && gap > 0) {
         childrenClone = childrenClone.filter(element => element.type !== undefined).reduce((result, next, index, array) => {
@@ -290,8 +312,7 @@ function Layout({
                     ...childrenPositionStyle,
                     ...blurStyle,
                     ...elevationStyle,
-                    ...backgroundStyle,
-                    ...cursorStyle,
+                    ...internalStyle,
                     ...style
                 }} {...props}
                 onMouseEnter={handleMouse(hasMouseHover, setMouseOver, true)}
@@ -356,6 +377,8 @@ function Layout({
  * @param {number} elevation - elevation one to five
  * @param {string} background
  * @param {'pointer'|'default'} cursor
+ * @param {{current:boolean}} $visible
+ *
  * @param {function(e)} onClick
  *
  * @returns {JSX.Element}
@@ -387,6 +410,7 @@ export function Horizontal({
                                background,
                                cursor,
                                onClick,
+                               $visible,
                                ...props
                            }) {
     const prop = {
@@ -413,7 +437,8 @@ export function Horizontal({
         transition,
         blur, elevation, background,
         cursor,
-        onClick
+        onClick,
+        $visible
     }
     const [theme] = useTheme();
     const layoutProps = {theme, ...prop, ...props}
@@ -473,6 +498,7 @@ export function Horizontal({
  * @param {number} elevation - elevation one to five
  * @param {string} background
  * @param {'pointer'|'default'} cursor
+ * @param {{current:boolean}} $visible
  *
  * @param {function(e)} onClick
  *
@@ -505,6 +531,7 @@ export function Vertical({
                              background,
                              cursor,
                              onClick,
+                             $visible,
                              ...props
                          }) {
     const prop = {
@@ -531,6 +558,7 @@ export function Vertical({
         blur,
         elevation, background,
         cursor,
+        $visible,
         onClick
     }
     const [theme] = useTheme();

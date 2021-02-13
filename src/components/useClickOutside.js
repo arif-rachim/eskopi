@@ -8,7 +8,7 @@ export default function useClickOutside(domRefs = [], listener) {
     const listenerRef = useRef(listener);
     listenerRef.current = listener;
     useEffect(() => {
-        const callback = listenerRef.current;
+
         const eventListener = event => {
             for (const domRef of domRefs) {
                 if (domRef.current) {
@@ -21,11 +21,12 @@ export default function useClickOutside(domRefs = [], listener) {
                     }
                 }
             }
+            const callback = listenerRef.current;
             callback(event);
         }
         window.addEventListener('click', eventListener);
         return () => {
             window.removeEventListener('click', eventListener);
         }
-    }, []);
+    }, [domRefs]);
 }

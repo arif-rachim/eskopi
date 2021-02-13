@@ -23,10 +23,5 @@ export default function Label({name, color, $value, style, ...props}) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect($value.stateListenerEffect(name, setValue), []);
-    useEffect(() => {
-        return $value.addListener((value) => {
-            console.log('value', value);
-        })
-    }, []);
     return <Vertical {...props} style={{color: color, ...style}}>{value}</Vertical>
 }
