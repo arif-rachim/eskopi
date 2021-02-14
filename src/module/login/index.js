@@ -1,7 +1,7 @@
 import React from "react";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "components/useForm";
-import useResource, {useResourceValue} from "components/useResource";
+import useResource, {useResourceListener} from "components/useResource";
 import RegistrationScreen from "module/registration";
 import Input from "components/input/Input";
 import Button from "components/button/Button";
@@ -35,7 +35,7 @@ export default function LoginScreen() {
     const [$signIn, getSignIn, $isPending] = useResource();
     const showPanel = useLayers();
     const [, setUser] = useUser();
-    useResourceValue($signIn, (status, result) => {
+    useResourceListener($signIn, (status, result) => {
         if (status === 'success') {
             setUser(result);
         }

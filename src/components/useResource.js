@@ -164,16 +164,13 @@ export default function useResource(url, data, timeout = 1000) {
     ]
 }
 
-export function useResourceValue($resource, callback) {
-    const callbackRef = useRef(callback);
-    callbackRef.current = callback;
-    useEffect(() => {
-        const callback = callbackRef.current;
-        return $resource.addListener(handleListener(callback))
-    }, [$resource]);
+export function useResourceListener($resource, listener) {
+    const callbackRef = useRef(listener);
+    callbackRef.current = listener;
+    useEffect(() => $resource.addListener(handleListener(callbackRef)), [$resource]);
 }
 
-const handleListener = (callback) => {
+const handleListener = (listenerRef) => {
     function resourceListener(resource) {
         let status = resource.status();
         let result = undefined;
@@ -191,7 +188,7 @@ const handleListener = (callback) => {
                 result = promise;
             }
         }
-        callback.apply(null, [status, result]);
+        listenerRef.current.apply(null, [status, result]);
     }
 
     return resourceListener;

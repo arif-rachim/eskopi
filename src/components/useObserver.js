@@ -29,9 +29,7 @@ export default function useObserver(defaultValue) {
 
         let listeners = {_global: []};
         const current = isFunction(defaultValueRef.current) ? defaultValueRef.current.call() : defaultValueRef.current;
-
         const $value = {current, id: uuid()}
-
         /**
          * @param {string | function(value)} key
          * @param {function(value)} callbackOrValue
@@ -130,20 +128,24 @@ export function useObserverValue(key, observer) {
     return state;
 }
 
-export function useObserverListener(key,observer,listener){
-    if(listener === undefined){
-        listener = observer;
-        observer = key;
+/**
+ * hook to listen when observer is changed, this is an alternative then using the addListener in observer.
+ * @param {string|{current,addListener,stateListenerEffect}} key
+ * @param {{current,addListener,stateListenerEffect}|function(newValue,oldValue)} $observer
+ * @param {function(newValue,oldValue)} listener
+ */
+export function useObserverListener(key, $observer, listener = undefined) {
+    if (listener === undefined) {
+        listener = $observer;
+        $observer = key;
         key = undefined;
     }
-    debugger;
     const listenerRef = useRef(listener);
     listenerRef.current = listener;
-    observer = observer ?? EMPTY_OBSERVER;
-    useEffect(() => observer.addListener(key,(value) => {
-        debugger;
-        listenerRef.current.call();
-    }),[]);
+    $observer = $observer ?? EMPTY_OBSERVER;
+    useEffect(() => $observer.addListener(key, (newValue, oldValue) => {
+        listenerRef.current.call(listenerRef.current, newValue, oldValue);
+    }), [key, $observer]);
 }
 
 const EMPTY_OBSERVER = {
@@ -153,25 +155,4 @@ const EMPTY_OBSERVER = {
     addListener: () => {
     },
     id: 'EMPTY'
-}
-
-/**
- * Element to use observer value.
- * @param {string} key
- * @param {React.MutableRefObject<{current:*,addListener:function(callback):void,stateListenerEffect:function(*=)}>} observer
- * @param {*} children
- * @returns React.Element
- * @constructor
- */
-export function ObserverValue({key, observer, children}) {
-    const params = [];
-    if (key) {
-        params.push(key);
-    }
-    params.push(observer)
-    const value = useObserverValue.apply(null, params);
-    if (!isFunction(children)) {
-        throw new Error('ObserverValue children must be a function(value):ReactElement')
-    }
-    return children.apply(null, [value]);
 }

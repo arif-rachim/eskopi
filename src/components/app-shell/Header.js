@@ -2,7 +2,7 @@ import {useEffect, useRef} from "react";
 import useUser, {EMPTY_USER} from "components/authentication/useUser";
 import useObserver from "components/useObserver";
 import usePopup from "components/usePopup";
-import useResource, {useResourceValue} from "components/useResource";
+import useResource, {useResourceListener} from "components/useResource";
 import useGradient from "components/useGradient";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import Button from "components/button/Button";
@@ -21,7 +21,7 @@ export function Header({setShowMenu, menuButtonRef}) {
     const showPopup = usePopup();
     const buttonRef = useRef();
     const [$logout, setLogout] = useResource();
-    useResourceValue($logout, (status, result) => {
+    useResourceListener($logout, (status, result) => {
         if (status === 'success') {
             setUser(null);
         }
@@ -121,7 +121,7 @@ function ChangePasswordDialog({closePanel}) {
     const showError = useErrorMessage();
     const showInfo = useInfoMessage();
     const [$changePasswordResource, setResource] = useResource();
-    useResourceValue($changePasswordResource, async (status, result) => {
+    useResourceListener($changePasswordResource, async (status, result) => {
         if (status === 'error') {
             await showError(result.message);
         }

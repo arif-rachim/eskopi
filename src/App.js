@@ -8,7 +8,7 @@ import ErrorBoundary from "components/error-boundary/ErrorBoundary"
 import AppShell from "components/app-shell/AppShell";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {v4 as uuid} from "uuid";
-import Books from "components/book/Books";
+import Pages from "components/page/Pages";
 import useObserver from "components/useObserver";
 
 function handleOnChange(setActiveTab) {
@@ -30,13 +30,12 @@ function App() {
 
     const [books, setBooks] = useState([{
         pages: [$element.current],
-        activePage: 0,
         title: $element.current.Element.title,
         id: uuid()
     }]);
     useEffect(() => $element.addListener((NewElement) => {
         setBooks(pages => {
-            return [...pages, {pages: [NewElement], activePage: 0, title: NewElement.Element.title, id: uuid()}];
+            return [...pages, {pages: [NewElement], title: NewElement.Element.title, id: uuid()}];
         })
     }), [$element]);
 
@@ -52,7 +51,7 @@ function App() {
                      onClose={useCallback(handleOnClose(setBooks), [])}/>
             <Vertical height={'100%'}>
                 {books.map((book, index) => {
-                    return <Books key={book.id} index={index} $activeIndex={$activeTab} {...book}/>
+                    return <Pages key={book.id} index={index} $activeIndex={$activeTab} {...book}/>
                 })}
             </Vertical>
         </Vertical>

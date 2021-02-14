@@ -3,7 +3,7 @@ import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import Button from "components/button/Button";
-import useResource, {useResourceValue} from "components/useResource";
+import useResource, {useResourceListener} from "components/useResource";
 
 /**
  * Validator with error message
@@ -37,7 +37,7 @@ export default function RegistrationScreen({onClose}) {
         passwordConfirmation: ''
     });
     const [$registration, getRegistrationResource, $isPending] = useResource();
-    useResourceValue($registration, (status, result) => {
+    useResourceListener($registration, (status, result) => {
         if (status === 'error') {
             controller.current.setErrors((errors) => {
                 return {...errors, email: result.message};
