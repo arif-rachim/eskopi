@@ -1,16 +1,29 @@
-import {useEffect} from "react";
+import {useEffect,useState} from "react";
 import {Horizontal, Vertical} from "components/layout/Layout";
-import useObserver from "components/useObserver";
+import useObserver, {useObserverListener} from "components/useObserver";
 import useGradient from "components/useGradient";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import Button from "components/button/Button";
+import {findMostMatchingComponent} from "../useRouter";
+import routing from "../../routing";
 
-export default function Books({pages, activePage, title, id, index, $activeIndex}) {
-    const {controller} = useForm({address: ''});
+function Page({Element,index,$activeIndex}) {
+    const [$visible,setVisible] = useObserver($activeIndex.current === index);
+    useObserverListener($activeIndex,(activeIndex) => {
+        debugger;
+        setVisible(activeIndex === index);
+    });
+    return <Vertical $visible={$visible}><Element.Element {...Element.params} path={Element.key}/></Vertical>;
+}
+
+export default function Books({pages, activePage, title, id,$activeIndex,index}) {
+    const {controller,handleSubmit} = useForm({address: ''});
     const [$visible, setVisible] = useObserver(index === $activeIndex.current);
+    const [pagesToRender,setPagesToRender] = useState(pages);
     useEffect(() => $activeIndex.addListener((activeIndex) => setVisible(activeIndex === index)), [$activeIndex, index, setVisible]);
     const PANEL_GRADIENT = useGradient(180).stop(0, 'light', -1).stop(0.1, 'light', -2).stop(0.9, 'light', -2).stop(1, 'light', -3).toString();
+    const [$pageActiveIndex,setPageActiveIndex] = useObserver(0);
     return <Vertical height={'100%'} width={'100%'} position={'absolute'} $visible={$visible}>
         <Horizontal background={PANEL_GRADIENT} p={1} vAlign={'center'} gap={2}>
             <Horizontal>
@@ -27,10 +40,28 @@ export default function Books({pages, activePage, title, id, index, $activeIndex
                     </svg>
                 </Button>
             </Horizontal>
-            <Horizontal>Address</Horizontal>
-            <Controller name={'address'} render={Input} controller={controller} flex={1}/>
-            <Button>Go</Button>
+            <form action="" style={{display: 'flex', flex: 1}} onSubmit={handleSubmit((data) => {
+                const elementToMount = findMostMatchingComponent(data.address.split('/'),routing);
+
+                setPagesToRender(pages => {
+                    // lets check if the pages already contains same key, then we ignore this !
+                    const matchPages = pages.filter(p => p.key === elementToMount.key);
+                    if(matchPages > 0){
+                        matchPages[0].params = elementToMount.params;
+                        setPageActiveIndex(pages.indexOf(matchPages[0]));
+                        return [...pages];
+                    }
+
+                    return [...pages,elementToMount];
+                });
+            })}>
+                <Horizontal style={{flex: 1}} vAlign={'center'} gap={1}>
+                    <Horizontal>Address</Horizontal>
+                    <Controller name={'address'} render={Input} controller={controller} flex={1} autoCaps={false}/>
+                    <Button>Go</Button>
+                </Horizontal>
+            </form>
         </Horizontal>
-        {pages.map(Element => <Element.Element {...Element.params} key={Element.key}/>)}
+        {pagesToRender.map((Element,index) => <Page $activeIndex={$pageActiveIndex} index={index} Element={Element} key={Element.key} />)}
     </Vertical>
 }

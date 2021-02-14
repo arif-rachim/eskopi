@@ -48,6 +48,7 @@ function App() {
             <TabMenu data={useMemo(() => JSON.parse(bookTitles), [bookTitles])} $value={$activeTab}
                 // eslint-disable-next-line
                      onChange={useCallback(handleOnChange(setActiveTab), [])}
+                // eslint-disable-next-line
                      onClose={useCallback(handleOnClose(setBooks), [])}/>
             <Vertical height={'100%'}>
                 {books.map((book, index) => {

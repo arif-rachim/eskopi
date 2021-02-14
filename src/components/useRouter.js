@@ -9,39 +9,18 @@ export default function useRouter() {
     return useContext(RoutingContext);
 }
 
-function findMostMatchingComponent(pathArray, routing) {
-    let allMatchCriteria = [];
-    for (const routingKey of Object.keys(routing)) {
-        const routingKeyArray = routingKey.split('/');
-        const routingAndPathLengthAreEqual = routingKeyArray.length === pathArray.length;
-        if (routingAndPathLengthAreEqual) {
-            const paramMatcher = routingKeyArray.reduce((accumulator, routeToken, index) => {
-                const isDynamic = routeToken.indexOf('@') === 0;
-                if (isDynamic) {
-                    const path = routeToken.substr(1, routeToken.length - 1);
-                    return {
-                        ...accumulator,
-                        params: {...accumulator.params, [path]: pathArray[index]}
-                    };
-                }
-                /// we need to get the params here
-                const match = accumulator.match && routeToken === pathArray[index]
-                return {...accumulator, match, totalMatch: match ? accumulator.totalMatch + 1 : accumulator.totalMatch}
-            }, {match: true, totalMatch: 0, params: {}});
-            if (paramMatcher.match) {
-                allMatchCriteria.push({
-                    pathMap: routingKey,
-                    score: paramMatcher.totalMatch,
-                    params: paramMatcher.params
-                });
-            }
+export function findMostMatchingComponent(pathArray, routing) {
+    const keys = Object.keys(routing);
+    const paths = [...pathArray];
+    for (let i = paths.length; i >= 0; i--) {
+        const pathMatch = paths.splice(i - 1, 1).join('/');
+        if (keys.indexOf(pathMatch) >= 0) {
+            pathArray = pathArray.slice(i,pathArray.length);
+            return {Element: routing[pathMatch], params: pathArray, key: pathMatch}
         }
     }
-    if (allMatchCriteria.length === 0) {
-        return {Element: InvalidRoute, params: {route: pathArray.join('/')}};
-    }
-    const mostMatchingMap = allMatchCriteria.sort((a, b) => a.score === b.score ? 0 : a.score > b.score ? -1 : 1)[0];
-    return {Element: routing[mostMatchingMap.pathMap], params: mostMatchingMap.params,key:mostMatchingMap.pathMap};
+    return {Element: InvalidRoute, params:[],key:pathArray.join('/')};
+
 }
 
 function getElementToMount() {

@@ -130,6 +130,22 @@ export function useObserverValue(key, observer) {
     return state;
 }
 
+export function useObserverListener(key,observer,listener){
+    if(listener === undefined){
+        listener = observer;
+        observer = key;
+        key = undefined;
+    }
+    debugger;
+    const listenerRef = useRef(listener);
+    listenerRef.current = listener;
+    observer = observer ?? EMPTY_OBSERVER;
+    useEffect(() => observer.addListener(key,(value) => {
+        debugger;
+        listenerRef.current.call();
+    }),[]);
+}
+
 const EMPTY_OBSERVER = {
     current: undefined,
     stateListenerEffect: (key, state) => {
