@@ -13,7 +13,6 @@ export default function LoginScreen() {
     });
     return <Vertical color={"light"} height={'100%'} hAlign={'center'} vAlign={'center'}>
         <form action="" onSubmit={handleSubmit((data) => {
-            debugger;
         })}>
             <Vertical gap={3} color={"light"} brightness={-0.5} p={5} pT={7} r={5} b={0.5} width={200}>
                 <Controller validateOn={'change'} label={"User Name"} controller={controller} render={Input}

@@ -8,7 +8,7 @@ import Label from "components/label/Label";
 export default function SampleSideBar() {
     const [$value, setValue] = useObserver('');
     const [$error] = useObserver();
-    return <Vertical p={3} width={'100%'} height={'100%'}>
+    return <Vertical width={'100%'} height={'100%'}>
         <Sidebar sidePanel={MySidePanel}>
             <Vertical color={"light"} height={'100%'} p={5}>
                 This is the actual content

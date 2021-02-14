@@ -9,19 +9,28 @@ import AppShell from "components/app-shell/AppShell";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {v4 as uuid} from "uuid";
 import Pages from "components/page/Pages";
-import useObserver from "components/useObserver";
+import useObserver, {useObserverListener} from "components/useObserver";
 
 function handleOnChange(setActiveTab) {
     return (index) => setActiveTab(index);
 }
 
-function handleOnClose(setBooks) {
+function handleOnClose(setBooks, setActiveTab) {
     return (index) => {
         setBooks(oldBooks => {
             const newBooks = [...oldBooks];
             newBooks.splice(index, 1);
+            setActiveTab((currentActiveTab) => {
+                if (index === newBooks.length && index > 0) {
+                    return index - 1;
+                } else if (oldBooks.length - 1 === currentActiveTab) {
+                    return currentActiveTab - 1;
+                }
+                return currentActiveTab;
+            })
+
             return newBooks;
-        })
+        });
     };
 }
 
@@ -33,11 +42,12 @@ function App() {
         title: $element.current.Element.title,
         id: uuid()
     }]);
-    useEffect(() => $element.addListener((NewElement) => {
+
+    useObserverListener($element, (NewElement) => {
         setBooks(pages => {
             return [...pages, {pages: [NewElement], title: NewElement.Element.title, id: uuid()}];
         })
-    }), [$element]);
+    })
 
     const [$activeTab, setActiveTab] = useObserver(0);
     const bookTitles = JSON.stringify(books.map(book => book.title));
@@ -48,7 +58,7 @@ function App() {
                 // eslint-disable-next-line
                      onChange={useCallback(handleOnChange(setActiveTab), [])}
                 // eslint-disable-next-line
-                     onClose={useCallback(handleOnClose(setBooks), [])}/>
+                     onClose={useCallback(handleOnClose(setBooks, setActiveTab), [])}/>
             <Vertical height={'100%'}>
                 {books.map((book, index) => {
                     return <Pages key={book.id} index={index} $activeIndex={$activeTab} {...book}/>
@@ -59,7 +69,7 @@ function App() {
 }
 
 function TabButton({index, $selectedIndex, onChange, onClose, title}) {
-    const [brightness, setBrightness] = useState(-12);
+    const [brightness, setBrightness] = useState(index === $selectedIndex.current ? -1 : -12);
     useEffect(() => {
         return $selectedIndex.addListener(selectedIndex => {
             setBrightness(selectedIndex === index ? -1 : -12);

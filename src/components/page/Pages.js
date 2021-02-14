@@ -1,6 +1,6 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {Horizontal, Vertical} from "components/layout/Layout";
-import useObserver, {useObserverListener} from "components/useObserver";
+import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
 import useGradient from "components/useGradient";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
@@ -13,13 +13,15 @@ function Page({Element, index, $activeIndex}) {
     useObserverListener($activeIndex, (activeIndex) => {
         setVisible(activeIndex === index);
     });
-    return <Vertical $visible={$visible}><Element.Element {...Element.params} path={Element.key}/></Vertical>;
+    return <Vertical $visible={$visible} height={'100%'}><Element.Element {...Element.params}
+                                                                          path={Element.key}/></Vertical>;
 }
 
 export default function Pages({pages, activePage, title, id, $activeIndex, index}) {
     const {controller, handleSubmit} = useForm({address: ''});
     const [$visible, setVisible] = useObserver(index === $activeIndex.current);
-    const [pagesToRender, setPagesToRender] = useState(pages);
+    useEffect(() => setVisible(index === $activeIndex.current), [index, $activeIndex, setVisible]);
+    const [$pagesToRender, setPagesToRender] = useObserver(pages);
     useEffect(() => $activeIndex.addListener((activeIndex) => setVisible(activeIndex === index)), [$activeIndex, index, setVisible]);
     const PANEL_GRADIENT = useGradient(180).stop(0, 'light', -1).stop(0.1, 'light', -2).stop(0.9, 'light', -2).stop(1, 'light', -3).toString();
     const [$pageActiveIndex, setPageActiveIndex] = useObserver(0);
@@ -60,9 +62,14 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
                 </Horizontal>
             </form>
         </Horizontal>
-        {pagesToRender.map((Element, index) => {
-            const key = Element.key || '/';
-            return <Page $activeIndex={$pageActiveIndex} index={index} Element={Element} key={key}/>
-        })}
+
+        <ObserverValue render={RenderPages} $observer={$pagesToRender} $pageActiveIndex={$pageActiveIndex}/>
     </Vertical>
+}
+
+function RenderPages({value, $pageActiveIndex}) {
+    return value.map((Element, index) => {
+        const key = Element.key || '/';
+        return <Page $activeIndex={$pageActiveIndex} index={index} Element={Element} key={key}/>
+    })
 }

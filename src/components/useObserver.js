@@ -129,6 +129,20 @@ export function useObserverValue(key, observer) {
 }
 
 /**
+ *
+ * @param {string} key
+ * @param {{current,addListener,stateListenerEffect}} $observer
+ * @param {React.Element} render
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export function ObserverValue({key, $observer, render, ...props}) {
+    const value = useObserverValue(key, $observer);
+    const Render = render;
+    return <Render value={value} {...props}/>
+}
+
+/**
  * hook to listen when observer is changed, this is an alternative then using the addListener in observer.
  * @param {string|{current,addListener,stateListenerEffect}} key
  * @param {{current,addListener,stateListenerEffect}|function(newValue,oldValue)} $observer
