@@ -9,7 +9,7 @@ import {findMostMatchingComponent} from "../useRouter";
 import routing from "../../routing";
 import {PageDimensionProvider} from "components/page/usePageDimension";
 import {PageLayerContextProvider} from "components/page/usePageLayers";
-
+import {SlideDownStackPanelContextProvider} from "components/page/useSlideDownStackPanel";
 
 function Page({Element, index, $activeIndex}) {
     const [$visible, setVisible] = useObserver($activeIndex.current === index);
@@ -19,9 +19,11 @@ function Page({Element, index, $activeIndex}) {
     const pageRef = useRef();
     return <Vertical domRef={pageRef} $visible={$visible} height={'100%'}>
         <PageDimensionProvider pageRef={pageRef}>
-            <PageLayerContextProvider>
-                <Element.Element {...Element.params} path={Element.key}/>
-            </PageLayerContextProvider>
+            <SlideDownStackPanelContextProvider>
+                <PageLayerContextProvider>
+                    <Element.Element {...Element.params} path={Element.key}/>
+                </PageLayerContextProvider>
+            </SlideDownStackPanelContextProvider>
         </PageDimensionProvider>
     </Vertical>
 }
