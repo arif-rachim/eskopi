@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
 import useGradient from "components/useGradient";
@@ -7,14 +7,22 @@ import Input from "components/input/Input";
 import Button from "components/button/Button";
 import {findMostMatchingComponent} from "../useRouter";
 import routing from "../../routing";
+import {PageDimensionProvider} from "components/page/usePageDimension";
+import {PageLayerContextProvider} from "components/page/usePageLayers";
 
 function Page({Element, index, $activeIndex}) {
     const [$visible, setVisible] = useObserver($activeIndex.current === index);
     useObserverListener($activeIndex, (activeIndex) => {
         setVisible(activeIndex === index);
     });
-    return <Vertical $visible={$visible} height={'100%'}><Element.Element {...Element.params}
-                                                                          path={Element.key}/></Vertical>;
+    const pageRef = useRef();
+    return <PageLayerContextProvider>
+        <Vertical domRef={pageRef} $visible={$visible} height={'100%'}>
+            <PageDimensionProvider pageRef={pageRef}>
+                <Element.Element {...Element.params} path={Element.key}/>
+            </PageDimensionProvider>
+        </Vertical>
+    </PageLayerContextProvider>;
 }
 
 export default function Pages({pages, activePage, title, id, $activeIndex, index}) {
@@ -62,8 +70,9 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
                 </Horizontal>
             </form>
         </Horizontal>
-
-        <ObserverValue render={RenderPages} $observer={$pagesToRender} $pageActiveIndex={$pageActiveIndex}/>
+        <Vertical height={'100%'}>
+            <ObserverValue render={RenderPages} $observer={$pagesToRender} $pageActiveIndex={$pageActiveIndex}/>
+        </Vertical>
     </Vertical>
 }
 

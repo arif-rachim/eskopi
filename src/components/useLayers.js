@@ -1,5 +1,6 @@
-import {createContext, useCallback, useContext, useState} from "react";
+import {createContext, useCallback, useContext} from "react";
 import {v4} from "uuid";
+import useObserver, {ObserverValue} from "components/useObserver";
 
 /**
  *
@@ -16,7 +17,7 @@ export default function useLayers() {
  * @param setStacks
  * @returns {function(*=): Promise<unknown>}
  */
-function createShowPanel(setStacks) {
+export function createShowPanel(setStacks) {
     const showPanel = (panelCreatorFunction) => {
         return new Promise(resolve => {
             const key = v4();
@@ -40,12 +41,11 @@ const LayerContext = createContext({});
  * @constructor
  */
 export function LayerContextProvider({children}) {
-    const [stacks, setStacks] = useState([]);
+    const [$stacks, setStacks] = useObserver([]);
     return <LayerContext.Provider value={setStacks}>
         {children}
-        {stacks.map((stack) => {
-            return <Layer key={stack.key}>{stack.panel}</Layer>
-        })}
+        <ObserverValue $observer={$stacks}
+                       render={({value}) => value.map((stack) => <Layer key={stack.key}>{stack.panel}</Layer>)}/>
     </LayerContext.Provider>
 }
 

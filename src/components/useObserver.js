@@ -107,16 +107,16 @@ export default function useObserver(defaultValue) {
         $value.addListener = addListener;
         $value.stateListenerEffect = stateListenerEffect;
         return [$value, setValue];
-    },[]);
+    }, []);
 }
 
 /**
  * hook to extract the value of observer.
- * @param {string | React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>} key
- * @param {React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>|null} observer
+ * @param {string | {current,addListener,stateListenerEffect}} key
+ * @param {{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()} | null} observer
  * @returns {*}
  */
-export function useObserverValue(key, observer) {
+export function useObserverValue(key, observer = undefined) {
     if (observer === undefined || observer === null) {
         observer = key;
         key = undefined;
@@ -133,6 +133,7 @@ export function useObserverValue(key, observer) {
  * @param {string} key
  * @param {{current,addListener,stateListenerEffect}} $observer
  * @param {React.Element} render
+ * @param props
  * @returns {JSX.Element}
  * @constructor
  */
@@ -165,6 +166,7 @@ export function useObserverListener(key, $observer, listener = undefined) {
 const EMPTY_OBSERVER = {
     current: undefined,
     stateListenerEffect: (key, state) => {
+        console.warn('Missing implementation of state listener effect', key, state);
     },
     addListener: () => {
     },

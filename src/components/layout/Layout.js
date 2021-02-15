@@ -201,6 +201,7 @@ function handleMouse(hasMouseDownOrHoverBrightness, setMouseOver, action) {
  * @param {{current:boolean}} $visible
  *
  * @param {function(e)} onClick
+ * @param {number} flex
  *
  * @returns {JSX.Element}
  * @constructor
@@ -235,6 +236,7 @@ function Layout({
                     cursor,
                     onClick,
                     $visible,
+                    flex,
                     ...props
                 }) {
     const classNames = [styles.layout];
@@ -257,6 +259,7 @@ function Layout({
     if (mouseDown) {
         brightness = brightness + brightnessMouseDown;
     }
+
     const colorStyle = parseColorStyle({color, brightness, opacity}, theme);
     const childrenPositionStyle = parseChildrenPosition({vAlign, hAlign, horizontal});
     const dimensionStyle = {width, height, overflow, position, top, left, right, bottom, transition};
@@ -269,6 +272,9 @@ function Layout({
     }
     if (cursor) {
         internalStyle.cursor = cursor;
+    }
+    if (flex) {
+        internalStyle.flex = flex;
     }
     const [visible, setVisible] = useState(() => $visible ? $visible.current : true);
     useEffect(() => {
@@ -380,6 +386,7 @@ function Layout({
  * @param {{current:boolean}} $visible
  *
  * @param {function(e)} onClick
+ * @param {number} flex
  *
  * @returns {JSX.Element}
  * @constructor
@@ -411,6 +418,7 @@ export function Horizontal({
                                cursor,
                                onClick,
                                $visible,
+                               flex,
                                ...props
                            }) {
     const prop = {
@@ -438,7 +446,8 @@ export function Horizontal({
         blur, elevation, background,
         cursor,
         onClick,
-        $visible
+        $visible,
+        flex
     }
     const [theme] = useTheme();
     const layoutProps = {theme, ...prop, ...props}
@@ -499,7 +508,7 @@ export function Horizontal({
  * @param {string} background
  * @param {'pointer'|'default'} cursor
  * @param {{current:boolean}} $visible
- *
+ * @param {number} flex
  * @param {function(e)} onClick
  *
  * @returns {JSX.Element}
@@ -532,6 +541,7 @@ export function Vertical({
                              cursor,
                              onClick,
                              $visible,
+                             flex,
                              ...props
                          }) {
     const prop = {
@@ -559,7 +569,8 @@ export function Vertical({
         elevation, background,
         cursor,
         $visible,
-        onClick
+        onClick,
+        flex
     }
     const [theme] = useTheme();
     const layoutProps = {theme, ...prop, ...props}
