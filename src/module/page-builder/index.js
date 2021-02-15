@@ -1,11 +1,10 @@
 import {Horizontal, Vertical} from "../../components/layout/Layout";
 import Button from "components/button/Button";
 import useObserver, {ObserverValue} from "components/useObserver";
-import {useState} from "react";
+import React, {useState} from "react";
 import useLayers from "components/useLayers";
-import PageDetail from "module/page-builder/PageDetail";
 import usePageDimension from "components/page/usePageDimension";
-import usePageLayers from "components/page/usePageLayers";
+import useSlideDownPanel from "components/page/useSlideDownPanel";
 
 function DataTree({data = [], level = 0, $selectedItem, setSelectedItem}) {
     const [$_selectedItem, _setSelectedItem] = useObserver();
@@ -32,14 +31,14 @@ function PagesTree() {
     const [$selectedItem, setSelectedItem] = useObserver();
     const [pages, setPages] = useState([]);
     const showPanel = useLayers();
-    const showPageLayer = usePageLayers();
+    const showSlideDown = useSlideDownPanel();
     const $pageDimension = usePageDimension();
     return <Vertical height={'100%'}>
         <Horizontal color={"light"} brightness={-1} p={1} vAlign={'center'}>
             Pages
             <Horizontal flex={1}/>
             <Button onClick={async () => {
-                await showPageLayer(closePanel => <PageDetail closePanel={closePanel}/>)
+                await showSlideDown(({closePanel}) => <MyPage closePanel={closePanel}/>);
             }}>Add</Button>
         </Horizontal>
         {<DataTree data={pages} setSelectedItem={setSelectedItem} $selectedItem={$selectedItem} level={0}/>}
@@ -47,7 +46,6 @@ function PagesTree() {
 }
 
 function PageBuilder() {
-
     return <Vertical color={'primary'} height={'100%'}>
         <Horizontal height={'100%'}>
             <Vertical height={'100%'} width={200} color={"light"}>
@@ -60,4 +58,16 @@ function PageBuilder() {
 }
 
 PageBuilder.title = 'Page Builder';
-export default PageBuilder;
+export default React.memo(PageBuilder);
+
+function MyPage({closePanel}) {
+    const showSlideDown = useSlideDownPanel();
+    return <Vertical height={300} width={300} color={"secondary"} vAlign={'center'} hAlign={'center'}>
+        <Horizontal gap={5}>
+            <Button onClick={() => closePanel()}>Close Me</Button>
+            <Button onClick={async () => {
+                await showSlideDown(({closePanel}) => <MyPage closePanel={closePanel}/>);
+            }}>Add more slider</Button>
+        </Horizontal>
+    </Vertical>
+}

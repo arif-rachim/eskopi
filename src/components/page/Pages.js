@@ -1,4 +1,4 @@
-import {useEffect, useRef} from "react";
+import {memo, useEffect, useRef} from "react";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
 import useGradient from "components/useGradient";
@@ -10,20 +10,23 @@ import routing from "../../routing";
 import {PageDimensionProvider} from "components/page/usePageDimension";
 import {PageLayerContextProvider} from "components/page/usePageLayers";
 
+
 function Page({Element, index, $activeIndex}) {
     const [$visible, setVisible] = useObserver($activeIndex.current === index);
     useObserverListener($activeIndex, (activeIndex) => {
         setVisible(activeIndex === index);
     });
     const pageRef = useRef();
-    return <PageLayerContextProvider>
-        <Vertical domRef={pageRef} $visible={$visible} height={'100%'}>
-            <PageDimensionProvider pageRef={pageRef}>
+    return <Vertical domRef={pageRef} $visible={$visible} height={'100%'}>
+        <PageDimensionProvider pageRef={pageRef}>
+            <PageLayerContextProvider>
                 <Element.Element {...Element.params} path={Element.key}/>
-            </PageDimensionProvider>
-        </Vertical>
-    </PageLayerContextProvider>;
+            </PageLayerContextProvider>
+        </PageDimensionProvider>
+    </Vertical>
 }
+
+const MemoPage = memo(Page);
 
 export default function Pages({pages, activePage, title, id, $activeIndex, index}) {
     const {controller, handleSubmit} = useForm({address: ''});
@@ -79,6 +82,6 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
 function RenderPages({value, $pageActiveIndex}) {
     return value.map((Element, index) => {
         const key = Element.key || '/';
-        return <Page $activeIndex={$pageActiveIndex} index={index} Element={Element} key={key}/>
+        return <MemoPage $activeIndex={$pageActiveIndex} index={index} Element={Element} key={key}/>
     })
 }
