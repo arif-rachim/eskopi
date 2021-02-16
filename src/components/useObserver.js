@@ -12,15 +12,14 @@ export function isObserver(observer) {
     return observer !== null && observer !== undefined &&
         typeof observer === 'object' &&
         'current' in observer &&
-        'addListener' in observer &&
-        'stateListenerEffect' in observer
+        'addListener' in observer
 
 }
 
 /**
  * Hook to store the value, use useObserver instead use useState.
  * @param defaultValue
- * @returns {[React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=)}>, function (value) ]}
+ * @returns {[{current:*,addListener:function(*=):function()}, function (value) ]}
  */
 export default function useObserver(defaultValue) {
     const defaultValueRef = useRef(defaultValue);
@@ -101,19 +100,15 @@ export default function useObserver(defaultValue) {
             }
 
         };
-
-        const stateListenerEffect = (key, listener) => () => addListener(key, listener);
-
         $value.addListener = addListener;
-        $value.stateListenerEffect = stateListenerEffect;
         return [$value, setValue];
     }, []);
 }
 
 /**
  * hook to extract the value of observer.
- * @param {string | {current,addListener,stateListenerEffect}} key
- * @param {{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()} | null} observer
+ * @param {string | {current,addListener}} key
+ * @param {{current:*,addListener:function(*=):function()} | null} observer
  * @returns {*}
  */
 export function useObserverValue(key, observer = undefined) {
@@ -121,17 +116,17 @@ export function useObserverValue(key, observer = undefined) {
         observer = key;
         key = undefined;
     }
-    observer = observer ?? EMPTY_OBSERVER;
-    const [state, setState] = useState(key ? observer.current[key] : observer.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(observer.stateListenerEffect(key, setState), [observer]);
+    const [state, setState] = useState(observer && observer.current && key ? observer.current[key] : observer.current);
+    useObserverListener(key, observer, (value) => {
+        setState(value);
+    })
     return state;
 }
 
 /**
  *
  * @param {string} key
- * @param {{current,addListener,stateListenerEffect}} $observer
+ * @param {{current,addListener}} $observer
  * @param {React.Element} render
  * @param props
  * @returns {JSX.Element}
@@ -145,8 +140,8 @@ export function ObserverValue({key, $observer, render, ...props}) {
 
 /**
  * hook to listen when observer is changed, this is an alternative then using the addListener in observer.
- * @param {string|{current,addListener,stateListenerEffect}} key
- * @param {{current,addListener,stateListenerEffect}|function(newValue,oldValue)} $observer
+ * @param {string|{current,addListener}} key
+ * @param {{current,addListener}|function(newValue,oldValue)} $observer
  * @param {function(newValue,oldValue)} listener
  */
 export function useObserverListener(key, $observer, listener = undefined) {
@@ -155,20 +150,15 @@ export function useObserverListener(key, $observer, listener = undefined) {
         $observer = key;
         key = undefined;
     }
+
     const listenerRef = useRef(listener);
     listenerRef.current = listener;
-    $observer = $observer ?? EMPTY_OBSERVER;
-    useEffect(() => $observer.addListener(key, (newValue, oldValue) => {
-        listenerRef.current.call(listenerRef.current, newValue, oldValue);
-    }), [key, $observer]);
-}
-
-const EMPTY_OBSERVER = {
-    current: undefined,
-    stateListenerEffect: (key, state) => {
-        console.warn('Missing implementation of state listener effect', key, state);
-    },
-    addListener: () => {
-    },
-    id: 'EMPTY'
+    useEffect(() => {
+        if ($observer === null || $observer === undefined || listenerRef.current === undefined) {
+            return;
+        }
+        return $observer.addListener(key, (newValue, oldValue) => {
+            listenerRef.current.call(listenerRef.current, newValue, oldValue);
+        })
+    }, [key, $observer]);
 }

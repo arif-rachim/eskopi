@@ -12,7 +12,7 @@ const replacedAutoCapsKey = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', '
 
 /**
  *
- * @param {React.MutableRefObject<{current:*,addListener:function(*=),stateListenerEffect:function(*=)}>} $disabled
+ * @param {{current:*,addListener:function(function(value))}} $disabled
  * @param {function():void} setIsDisabled
  * @returns {function(): deregisterListener}
  */
@@ -21,7 +21,6 @@ function effectOnDisabled($disabled, setIsDisabled) {
         let deregisterListener = () => {
         };
         if (isObserver($disabled)) {
-
             deregisterListener = $disabled.addListener((disabled) => setIsDisabled(disabled));
         }
         return deregisterListener;
@@ -32,7 +31,7 @@ function effectOnDisabled($disabled, setIsDisabled) {
  *
  * @param {useRef} inputRef
  * @param {string} name
- * @param {boolean | React.MutableRefObject<{current:*,addListener:function(callback):function(),stateListenerEffect:function(*=)}>} disabled
+ * @param {boolean | {current:*,addListener:function(function(event)}):function()}} disabled
  * @param {string} className
  * @param {string} color
  * @param {Object} style
@@ -65,8 +64,8 @@ function effectOnDisabled($disabled, setIsDisabled) {
  *
  * @param {function(value)} onChange,
  * @param {function()} onBlur,
- * @param {React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>} $value,
- * @param {React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>} $errors
+ * @param {{current:*,addListener:function(*=):function()}} $value,
+ * @param {{current:*,addListener:function(*=):function()}} $errors
  *
  * @param props
  * @returns {JSX.Element}

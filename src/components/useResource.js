@@ -105,7 +105,7 @@ const EMPTY_RESOURCE = {
 /**
  *
  * @param setIsPending
- * @param {React.MutableRefObject<{current:*,addListener:function(*=):function(),stateListenerEffect:function(*=,*=):function()}>} isPendingObserver
+ * @param {React.MutableRefObject<{current:*,addListener:function(*=):function()}>} isPendingObserver
  * @param {function(*=):void} setResource
  * @param {string} token
  * @param {number} timeout
