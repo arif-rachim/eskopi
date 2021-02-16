@@ -6,7 +6,7 @@ import RegistrationScreen from "module/registration";
 import Input from "components/input/Input";
 import Button from "components/button/Button";
 import useLayers from "components/useLayers";
-import Dialog from "components/dialog/Dialog";
+import {useErrorMessage} from "components/dialog/Dialog";
 import useGradient from "components/useGradient";
 import useUser from "components/authentication/useUser";
 
@@ -35,15 +35,18 @@ export default function LoginScreen() {
     const [$signIn, getSignIn, $isPending] = useResource();
     const showPanel = useLayers();
     const [, setUser] = useUser();
+    const errorMessage = useErrorMessage();
     useResourceListener($signIn, (status, result) => {
         if (status === 'success') {
             setUser(result);
         }
         if (status === 'error') {
-            showPanel(closePanel => <Dialog closePanel={closePanel} message={result.message}
-                                            buttons={{OK: {color: 'primary'}}}/>).then()
+            (async () => {
+                await errorMessage(result.message);
+            })();
         }
     });
+
     const background = useGradient(-1).stop(0, 'light', 0, 1).stop(1, 'light', -1, 1).toString();
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'} background={background}>
         <form action="" onSubmit={handleSubmit(onSubmit(getSignIn))}>

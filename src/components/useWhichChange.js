@@ -1,9 +1,16 @@
 import {useRef} from "react";
 
+const EMPTY_VALUE = [];
+/**
+ * Hooks to detect the changes in the dependencies.
+ * @param {string} log
+ * @param {any[]} dependencies
+ */
 export default function useWhichChange(log, dependencies) {
-    const prevValueRef = useRef();
+
+    const prevValueRef = useRef(EMPTY_VALUE);
     const prevValue = prevValueRef.current;
-    if (prevValue === undefined) {
+    if (prevValue === EMPTY_VALUE) {
         console.log('[UseWhichChange]', log, 'initial rendering');
         prevValueRef.current = dependencies;
         return;

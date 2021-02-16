@@ -3,7 +3,6 @@ import {createShowPanel} from "components/useLayers";
 import useObserver, {ObserverValue} from "components/useObserver";
 
 /**
- *
  * @returns {function(*=): Promise<ValidationOptions.unknown>}
  */
 export default function usePageLayers() {

@@ -40,7 +40,7 @@ function Sidebar({sidePanel: SidePanel, ...props}) {
                     left={showSidebar ? 0 : -(calculateWidth(sidePanelRef) - 10)} onClick={(e) => e.stopPropagation()}>
             {<SidePanel setShowSidebar={setShowSidebar}/>}
 
-            <Vertical width={10} color={"light"} opacity={0} onMouseEnter={() => {
+            <Vertical width={10} color={"light"} alpha={0} onMouseEnter={() => {
                 timeoutWhenMouseOverHandlerRef.current = setTimeout(() => {
                     setShowSidebar(true);
                 }, 300);

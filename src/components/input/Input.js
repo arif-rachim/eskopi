@@ -113,7 +113,7 @@ function Input({
     const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB}, theme);
     const borderStyle = parseBorder({b, bL, bR, bT, bB}, color, theme);
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
-    const colorStyle = parseColorStyle({color, brightness: isDisabled ? -0.1 : 0.71, opacity: 1}, theme);
+    const colorStyle = parseColorStyle({color, brightness: isDisabled ? -0.1 : 0.71, alpha: 1}, theme);
 
     return <input ref={inputRef} type={type} name={name}
                   className={[...className, styles.button].join(' ')}

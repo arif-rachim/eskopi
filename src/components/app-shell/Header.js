@@ -130,7 +130,7 @@ function ChangePasswordDialog({closePanel}) {
             closePanel();
         }
     })
-    return <Vertical height={'100%'} hAlign={'center'} vAlign={'center'} color={"dark"} opacity={0.2} blur={1} top={0}
+    return <Vertical height={'100%'} hAlign={'center'} vAlign={'center'} color={"dark"} alpha={0.2} blur={1} top={0}
                      position={'absolute'} width={'100%'}>
         <form action="" onSubmit={handleSubmit((data) => setResource('authentication/change-password', {
             oldPassword: data.oldPassword,

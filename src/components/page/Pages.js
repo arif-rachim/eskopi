@@ -17,6 +17,8 @@ function Page({Element, index, $activeIndex}) {
         setVisible(activeIndex === index);
     });
     const pageRef = useRef();
+
+
     return <Vertical domRef={pageRef} $visible={$visible} height={'100%'}>
         <PageDimensionProvider pageRef={pageRef}>
             <SlideDownStackPanelContextProvider>

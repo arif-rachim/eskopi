@@ -57,8 +57,10 @@ function effectOnDisabled(disabled, setIsDisabled) {
  * @param {function(event)} onMouseOver
  * @param {boolean} disabled
  * @param domRef
- *
- * @param style
+ * @param {number} flex
+ * @param {'left'|'center'|'right'} align
+ * @param {any} style
+ * @param {{current:boolean}} $visible
  * @param props
  * @returns {JSX.Element}
  */
@@ -78,6 +80,9 @@ export default function Button({
                                    hoverBrightness, mouseDownBrightness,
                                    onMouseOver,
                                    minWidth,
+                                   flex,
+                                   align,
+                                   $visible,
                                    ...props
                                }) {
     const [theme] = useTheme();
@@ -114,12 +119,31 @@ export default function Button({
     const colorStyle = parseColorStyle({
         color,
         brightness: mouseOver ? mouseDown ? mouseDownBrightness : hoverBrightness : brightness,
-        opacity: isDisabled ? 0.5 : opacity
+        alpha: isDisabled ? 0.5 : opacity
     }, theme);
-    const internalStyle = {};
+
+    const [visible, setVisible] = useState(() => $visible ? $visible.current : true);
+    useEffect(() => {
+        if (!$visible) {
+            return;
+        }
+        return $visible.addListener((visible) => {
+            setVisible(visible);
+        });
+    }, [$visible]);
+
+
+    const internalStyle = {
+        display: visible ? 'flex' : 'none',
+        flexDirection: 'column'
+    };
     if (minWidth >= 0) {
         internalStyle.minWidth = minWidth;
     }
+    if (flex) {
+        internalStyle.flex = flex;
+    }
+    internalStyle.alignItems = align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
     return <button ref={domRef}
                    onMouseEnter={() => setMouseOver(true)}
                    onMouseLeave={() => setMouseOver(false)}

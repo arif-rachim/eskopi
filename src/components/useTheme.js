@@ -2,15 +2,16 @@ import {createContext, useContext, useState} from "react";
 import {Horizontal, Vertical} from "./layout/Layout";
 import useLayers from "./useLayers";
 
-const ThemeContext = createContext({
-    surfaceColor: '#DDE6E0',
-    accentColor: '#612A05',
-    radiusMultiplier: 0,
-    paddingMultiplier: 2.5,
-    darkTextColor: '#333',
-    lightTextColor: '#FAFAFA'
-});
+/**
+ * ThemeContext key
+ * @type {React.Context<{}>}
+ */
+const ThemeContext = createContext({});
 
+/**
+ * Hooks to get the application theme
+ * @returns {[*, (function(): Promise<void>)]}
+ */
 export default function useTheme() {
     const showPanel = useLayers();
     const [theme, setTheme] = useContext(ThemeContext);
@@ -20,7 +21,11 @@ export default function useTheme() {
     return [theme, openPanel];
 }
 
-
+/**
+ * unction to map the elements and convert them into json.
+ * @param {React.Element[]} elements
+ * @returns {*|(function(*, *): *)}
+ */
 const formToJSON = (elements) =>
 
     [].reduce.call(
@@ -47,6 +52,14 @@ function handleOnSubmit(setTheme, closePanel) {
     }
 }
 
+/**
+ * Element to modify the theme information
+ * @param {function()} closePanel
+ * @param {any} theme
+ * @param {function(*):void} setTheme
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function Theme({closePanel, theme, setTheme}) {
     return <Vertical style={{width: '100%', height: '100%', position: 'absolute', top: 0}} hAlign={'center'}
                      vAlign={'center'}>
@@ -65,6 +78,12 @@ function Theme({closePanel, theme, setTheme}) {
     </Vertical>
 }
 
+/**
+ * ThemeContextProvider is the element to hold the theme state.
+ * @param children
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function ThemeContextProvider({children}) {
     const [theme, setTheme] = useState({
         radiusMultiplier: 0,

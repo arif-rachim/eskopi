@@ -6,13 +6,14 @@ import useTheme from "../useTheme";
  * @param {string} name
  * @param {string} color
  * @param style
- * @param {{current,stateListenerEffect}} $value
+ * @param {{current,stateListenerEffect,addListener}} $value
  * @param props
  * @returns {JSX.Element}
  * @constructor
  */
 export default function Label({name, color, $value, style, ...props}) {
-    $value.current = $value.current || {};
+    $value = $value || {current: ''};
+    $value.current = $value.current || '';
     name = name || ''
     const [value, setValue] = useState($value.current[name]);
     const [theme] = useTheme();

@@ -80,15 +80,15 @@ export function parseRadius(style, theme) {
     return result;
 }
 
-export function calculateBrightness(color, brightness, opacity) {
+export function calculateBrightness(color, brightness, alpha) {
     let tc = tinycolor(color);
     const currentBrightnessPercentage = (tc.getBrightness() / 255) * 100;
     tc.lighten((100 - currentBrightnessPercentage) * brightness);
-    tc.setAlpha(opacity);
+    tc.setAlpha(alpha);
     return tc;
 }
 
-export function parseColorStyle({color, brightness, opacity}, theme) {
+export function parseColorStyle({color, brightness, alpha}, theme) {
     const result = {};
     if (color === undefined || color === null) {
         return result;
@@ -97,7 +97,7 @@ export function parseColorStyle({color, brightness, opacity}, theme) {
     if (color in theme) {
         color = theme[color];
     }
-    let tc = calculateBrightness(color, brightness, opacity);
+    let tc = calculateBrightness(color, brightness, alpha);
     result.background = tc.toRgbString();
     if (tc.isDark()) {
         result.color = theme.light;
@@ -175,6 +175,7 @@ function handleMouse(hasMouseDownOrHoverBrightness, setMouseOver, action) {
  * @param {number} brightnessMouseDown - negative or positive value
  *
  * @param {number} opacity - opacity - zero to one
+ * @param {number} alpha - alpha background - zero to one
  *
  * @param style - style for the panel
  * @param {number} gap - gap between array
@@ -202,7 +203,7 @@ function handleMouse(hasMouseDownOrHoverBrightness, setMouseOver, action) {
  *
  * @param {function(e)} onClick
  * @param {number} flex
- *
+ * @param {number} fSize - fontSize
  * @returns {JSX.Element}
  * @constructor
  */
@@ -221,6 +222,7 @@ function Layout({
                     brightnessHover,
                     brightnessMouseDown,
                     opacity,
+                    alpha,
                     style,
                     gap,
                     hAlign,
@@ -237,6 +239,7 @@ function Layout({
                     onClick,
                     $visible,
                     flex,
+                    fSize,
                     ...props
                 }) {
     const classNames = [styles.layout];
@@ -260,7 +263,7 @@ function Layout({
         brightness = brightness + brightnessMouseDown;
     }
 
-    const colorStyle = parseColorStyle({color, brightness, opacity}, theme);
+    const colorStyle = parseColorStyle({color, brightness, alpha}, theme);
     const childrenPositionStyle = parseChildrenPosition({vAlign, hAlign, horizontal});
     const dimensionStyle = {width, height, overflow, position, top, left, right, bottom, transition};
     const blurStyle = blur ? {backdropFilter: `blur(${blur}px)`} : {};
@@ -275,6 +278,12 @@ function Layout({
     }
     if (flex) {
         internalStyle.flex = flex;
+    }
+    if (fSize) {
+        internalStyle.fontSize = fSize;
+    }
+    if (opacity !== undefined) {
+        internalStyle.opacity = opacity
     }
     const [visible, setVisible] = useState(() => $visible ? $visible.current : true);
     useEffect(() => {
@@ -361,6 +370,7 @@ function Layout({
  * @param {number} brightnessMouseDown - negative or positive value
  *
  * @param {number} opacity - opacity - zero to one
+ * @param {number} alpha - alpha background - zero to one
  * @param style - style for the panel
  * @param {number} gap - gap between array
  *
@@ -403,6 +413,7 @@ export function Horizontal({
                                brightnessHover,
                                brightnessMouseDown,
                                opacity,
+                               alpha,
                                style,
                                gap,
                                hAlign,
@@ -419,6 +430,7 @@ export function Horizontal({
                                onClick,
                                $visible,
                                flex,
+                               fSize,
                                ...props
                            }) {
     const prop = {
@@ -433,6 +445,7 @@ export function Horizontal({
         brightnessHover,
         brightnessMouseDown,
         opacity,
+        alpha,
         style,
         gap,
         hAlign,
@@ -447,7 +460,8 @@ export function Horizontal({
         cursor,
         onClick,
         $visible,
-        flex
+        flex,
+        fSize
     }
     const [theme] = useTheme();
     const layoutProps = {theme, ...prop, ...props}
@@ -485,6 +499,7 @@ export function Horizontal({
  * @param {number} brightnessHover - negative or positive value
  * @param {number} brightnessMouseDown - negative or positive value
  * @param {number} opacity - opacity - zero to one
+ * @param {number} alpha - alpha background - zero to one
  * @param  style - style for the panel
  * @param {number} gap - gap between array
  *
@@ -510,7 +525,7 @@ export function Horizontal({
  * @param {{current:boolean}} $visible
  * @param {number} flex
  * @param {function(e)} onClick
- *
+ * @param {number} fSize - fontSize
  * @returns {JSX.Element}
  * @constructor
  */
@@ -526,6 +541,7 @@ export function Vertical({
                              brightnessHover,
                              brightnessMouseDown,
                              opacity,
+                             alpha,
                              style,
                              gap,
                              hAlign,
@@ -542,6 +558,7 @@ export function Vertical({
                              onClick,
                              $visible,
                              flex,
+                             fSize,
                              ...props
                          }) {
     const prop = {
@@ -556,6 +573,7 @@ export function Vertical({
         brightnessHover,
         brightnessMouseDown,
         opacity,
+        alpha,
         style,
         gap,
         hAlign,
@@ -570,7 +588,8 @@ export function Vertical({
         cursor,
         $visible,
         onClick,
-        flex
+        flex,
+        fSize
     }
     const [theme] = useTheme();
     const layoutProps = {theme, ...prop, ...props}

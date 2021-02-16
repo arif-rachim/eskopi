@@ -44,15 +44,15 @@ function SlideDownContainer({closePanel, animationDuration = 300, render, action
             return;
         }
         disableAnimationRef.current = false;
-        setShow(true);
+        requestAnimationFrame(() => setShow(true));
     }, [contentHeight]);
     const Render = render;
 
     return <Vertical height={'100%'} width={'100%'} left={0} top={0} color={"light"}
-                     opacity={show ? 0.6 : 0} blur={0.5} brightness={-10}
+                     alpha={show ? 0.6 : 0} blur={0.5} brightness={-10}
                      position={"absolute"} hAlign={'center'} overflow={"hidden"}
                      transition={`all ${animationDuration}ms cubic-bezier(0,0,0.7,0.9)`}>
-        <Vertical domRef={contentContainerRef} color={"primary"} top={show ? 0 : (contentHeight * -1)}
+        <Vertical domRef={contentContainerRef} color={"light"} top={show ? 0 : (contentHeight * -1)}
                   transition={`top ${disableAnimationRef.current ? 0 : animationDuration}ms cubic-bezier(0,0,0.7,0.9)`}
                   elevation={2}>
             <Render closePanel={handleClose}/>
