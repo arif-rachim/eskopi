@@ -1,4 +1,4 @@
-import useObserver from "components/useObserver";
+import useObserver, {useObserverListener} from "components/useObserver";
 import {Horizontal, Vertical} from "../../../components/layout/Layout";
 import {useEffect, useState} from "react";
 
@@ -17,9 +17,7 @@ export default function UseObserver() {
 
 function MyComponent({observer}) {
     const [state, setState] = useState(observer.current);
-    useEffect(() => {
-        return observer.addListener(setState);
-    }, [observer]);
+    useObserverListener(observer, setState);
 
     return <Horizontal>
         {JSON.stringify(state)}

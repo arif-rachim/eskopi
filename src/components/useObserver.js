@@ -19,7 +19,7 @@ export function isObserver(observer) {
 /**
  * Hook to store the value, use useObserver instead use useState.
  * @param defaultValue
- * @returns {[{current:*,addListener:function(*=):function()}, function (value) ]}
+ * @returns {[{current:*}, function (value) ]}
  */
 export default function useObserver(defaultValue) {
     const defaultValueRef = useRef(defaultValue);
@@ -107,8 +107,8 @@ export default function useObserver(defaultValue) {
 
 /**
  * hook to extract the value of observer.
- * @param {string | {current,addListener}} key
- * @param {{current:*,addListener:function(*=):function()} | null} observer
+ * @param {string | {current}} key
+ * @param {{current:*} | null} observer
  * @returns {*}
  */
 export function useObserverValue(key, observer = undefined) {
@@ -126,7 +126,7 @@ export function useObserverValue(key, observer = undefined) {
 /**
  *
  * @param {string} key
- * @param {{current,addListener}} $observer
+ * @param {{current}} $observer
  * @param {React.Element} render
  * @param props
  * @returns {JSX.Element}
@@ -140,8 +140,8 @@ export function ObserverValue({key, $observer, render, ...props}) {
 
 /**
  * hook to listen when observer is changed, this is an alternative then using the addListener in observer.
- * @param {string|{current,addListener}} key
- * @param {{current,addListener}|function(newValue,oldValue)} $observer
+ * @param {string|{current:*}} key
+ * @param {{current}|function(newValue,oldValue)} $observer
  * @param {function(newValue,oldValue)} listener
  */
 export function useObserverListener(key, $observer, listener = undefined) {

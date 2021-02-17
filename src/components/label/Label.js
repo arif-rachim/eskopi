@@ -6,7 +6,7 @@ import {useObserverValue} from "components/useObserver";
  * @param {string} name
  * @param {string} color
  * @param style
- * @param {{current,addListener}} $value
+ * @param {{current:*}} $value
  * @param props
  * @returns {JSX.Element}
  * @constructor

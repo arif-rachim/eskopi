@@ -1,7 +1,8 @@
 import styles from "./Layout.module.css";
 import tinycolor from "tinycolor2";
-import React, {cloneElement, useEffect, useState} from "react";
+import React, {cloneElement, useState} from "react";
 import useTheme from "../useTheme";
+import {useObserverListener} from "components/useObserver";
 
 
 const STYLE_MAPPING = {
@@ -286,14 +287,9 @@ function Layout({
         internalStyle.opacity = opacity
     }
     const [visible, setVisible] = useState(() => $visible ? $visible.current : true);
-    useEffect(() => {
-        if (!$visible) {
-            return;
-        }
-        return $visible.addListener((visible) => {
-            setVisible(visible);
-        })
-    }, [$visible]);
+    useObserverListener($visible, (visible) => {
+        setVisible(visible);
+    });
 
     if (visible === false) {
         internalStyle.display = 'none';

@@ -13,9 +13,7 @@ import {SlideDownStackPanelContextProvider} from "components/page/useSlideDownSt
 
 function Page({Element, index, $activeIndex}) {
     const [$visible, setVisible] = useObserver($activeIndex.current === index);
-    useObserverListener($activeIndex, (activeIndex) => {
-        setVisible(activeIndex === index);
-    });
+    useObserverListener($activeIndex, (activeIndex) => setVisible(activeIndex === index));
     const pageRef = useRef();
 
 
@@ -37,9 +35,11 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
     const [$visible, setVisible] = useObserver(index === $activeIndex.current);
     useEffect(() => setVisible(index === $activeIndex.current), [index, $activeIndex, setVisible]);
     const [$pagesToRender, setPagesToRender] = useObserver(pages);
-    useEffect(() => $activeIndex.addListener((activeIndex) => setVisible(activeIndex === index)), [$activeIndex, index, setVisible]);
+    useObserverListener($activeIndex, (activeIndex) => setVisible(activeIndex === index));
     const PANEL_GRADIENT = useGradient(180).stop(0, 'light', -1).stop(0.1, 'light', -2).stop(0.9, 'light', -2).stop(1, 'light', -3).toString();
     const [$pageActiveIndex, setPageActiveIndex] = useObserver(0);
+
+
     return <Vertical height={'100%'} width={'100%'} position={'absolute'} $visible={$visible}>
         <Horizontal background={PANEL_GRADIENT} p={1} vAlign={'center'} gap={2}>
             <Horizontal>
@@ -84,6 +84,7 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
 }
 
 function RenderPages({value, $pageActiveIndex}) {
+
     return value.map((Element, index) => {
         const key = Element.key || '/';
         return <MemoPage $activeIndex={$pageActiveIndex} index={index} Element={Element} key={key}/>

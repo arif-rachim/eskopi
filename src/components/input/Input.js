@@ -12,7 +12,7 @@ const replacedAutoCapsKey = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', '
 
 /**
  *
- * @param {{current:*,addListener:function(function(value))}} $disabled
+ * @param {{current:*}} $disabled
  * @param {function():void} setIsDisabled
  * @returns {function(): deregisterListener}
  */
@@ -31,7 +31,7 @@ function effectOnDisabled($disabled, setIsDisabled) {
  *
  * @param {useRef} inputRef
  * @param {string} name
- * @param {boolean | {current:*,addListener:function(function(event)}):function()}} disabled
+ * @param {boolean | {current:*}} disabled
  * @param {string} className
  * @param {string} color
  * @param {Object} style
@@ -64,8 +64,8 @@ function effectOnDisabled($disabled, setIsDisabled) {
  *
  * @param {function(value)} onChange,
  * @param {function()} onBlur,
- * @param {{current:*,addListener:function(*=):function()}} $value,
- * @param {{current:*,addListener:function(*=):function()}} $errors
+ * @param {{current:*}} $value,
+ * @param {{current:*}} $errors
  *
  * @param props
  * @returns {JSX.Element}

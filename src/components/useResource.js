@@ -1,5 +1,5 @@
-import useObserver, {useObserverValue} from "components/useObserver";
-import {useCallback, useEffect, useRef} from "react";
+import useObserver, {useObserverListener, useObserverValue} from "components/useObserver";
+import {useCallback, useRef} from "react";
 import useUser from "components/authentication/useUser";
 
 const API_SERVER = 'http://localhost:4000'
@@ -105,7 +105,7 @@ const EMPTY_RESOURCE = {
 /**
  *
  * @param setIsPending
- * @param {React.MutableRefObject<{current:*,addListener:function(*=):function()}>} isPendingObserver
+ * @param {React.MutableRefObject<{current:*}>} isPendingObserver
  * @param {function(*=):void} setResource
  * @param {string} token
  * @param {number} timeout
@@ -167,7 +167,7 @@ export default function useResource(url, data, timeout = 1000) {
 export function useResourceListener($resource, listener) {
     const callbackRef = useRef(listener);
     callbackRef.current = listener;
-    useEffect(() => $resource.addListener(handleListener(callbackRef)), [$resource]);
+    useObserverListener($resource, handleListener(callbackRef));
 }
 
 const handleListener = (listenerRef) => {

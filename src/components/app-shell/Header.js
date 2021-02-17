@@ -1,6 +1,6 @@
-import {useEffect, useRef} from "react";
+import {useRef} from "react";
 import useUser, {EMPTY_USER} from "components/authentication/useUser";
-import useObserver from "components/useObserver";
+import useObserver, {useObserverListener} from "components/useObserver";
 import usePopup from "components/usePopup";
 import useResource, {useResourceListener} from "components/useResource";
 import useGradient from "components/useGradient";
@@ -35,31 +35,26 @@ export function Header({setShowMenu, menuButtonRef}) {
         }
     });
 
-    useEffect(() => {
-        return $user.addListener((user) => {
-            if (user !== EMPTY_USER) {
-                setVisible(true);
-            } else {
-                setVisible(false);
+    useObserverListener($user, (user) => {
+        if (user !== EMPTY_USER) {
+            setVisible(true);
+        } else {
+            setVisible(false);
+        }
+    });
+    useObserverListener($showPopup, (isShowPopup) => {
+        (async () => {
+            if (isShowPopup) {
+                await showPopup(closePanel => <UserProfileMenu closePanel={closePanel} parentRef={buttonRef}
+                                                               setLogout={setLogout}/>, {
+                    anchorRef: buttonRef,
+                    matchWithAnchorWidth: true
+                })
+                setShowPopup(false);
             }
-        });
-    }, [$user, setVisible]);
+        })();
+    });
 
-
-    useEffect(() => {
-        return $showPopup.addListener((isShowPopup) => {
-            (async () => {
-                if (isShowPopup) {
-                    await showPopup(closePanel => <UserProfileMenu closePanel={closePanel} parentRef={buttonRef}
-                                                                   setLogout={setLogout}/>, {
-                        anchorRef: buttonRef,
-                        matchWithAnchorWidth: true
-                    })
-                    setShowPopup(false);
-                }
-            })();
-        })
-    }, [$showPopup, setLogout, setShowPopup, showPopup]);
     const PANEL_GRADIENT = useGradient(180).stop(0, 'light', -1).stop(0.1, 'light', -2).stop(0.9, 'light', -2).stop(1, 'light', -4).toString();
 
     return <Vertical background={PANEL_GRADIENT} $visible={$visible}>

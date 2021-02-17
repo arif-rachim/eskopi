@@ -1,7 +1,7 @@
 import {ThemeContextProvider} from "components/useTheme";
 import {LayerContextProvider} from "components/useLayers";
 import useRouter, {RouterProvider} from "./components/useRouter";
-import {Suspense, useCallback, useEffect, useMemo, useState} from "react";
+import {Suspense, useCallback, useMemo, useState} from "react";
 import LoginScreen from "module/login";
 import {AuthCheck, UserProvider} from "components/authentication/useUser";
 import ErrorBoundary from "components/error-boundary/ErrorBoundary"
@@ -51,7 +51,6 @@ function App() {
 
     const [$activeTab, setActiveTab] = useObserver(0);
     const bookTitles = JSON.stringify(books.map(book => book.title));
-
     return <AuthCheck fallback={<LoginScreen/>}>
         <Vertical height={'100%'}>
             <TabMenu data={useMemo(() => JSON.parse(bookTitles), [bookTitles])} $value={$activeTab}
@@ -70,11 +69,9 @@ function App() {
 
 function TabButton({index, $selectedIndex, onChange, onClose, title}) {
     const [brightness, setBrightness] = useState(index === $selectedIndex.current ? -1 : -12);
-    useEffect(() => {
-        return $selectedIndex.addListener(selectedIndex => {
-            setBrightness(selectedIndex === index ? -1 : -12);
-        });
-    }, [$selectedIndex, index]);
+    useObserverListener($selectedIndex, selectedIndex => {
+        setBrightness(selectedIndex === index ? -1 : -12);
+    });
     return <Horizontal color={"light"}
                        gap={2}
                        vAlign={'center'}

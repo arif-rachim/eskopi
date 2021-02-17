@@ -1,8 +1,8 @@
-import {useEffect, useRef} from "react";
+import {useRef} from "react";
 import {Vertical} from "components/layout/Layout";
 import useUser, {EMPTY_USER} from "components/authentication/useUser";
 import useGradient from "components/useGradient";
-import useObserver, {useObserverValue} from "components/useObserver";
+import useObserver, {useObserverListener, useObserverValue} from "components/useObserver";
 import {Header} from "components/app-shell/Header";
 import useClickOutside from "components/useClickOutside";
 import Input from "../input/Input";
@@ -69,15 +69,13 @@ function Menu({$showMenu, setShowMenu, menuButtonRef}) {
 function Footer() {
     const [$user] = useUser();
     const [$visible, setVisible] = useObserver($user.current !== EMPTY_USER);
-    useEffect(() => {
-        return $user.addListener((user) => {
-            if (user !== EMPTY_USER) {
-                setVisible(true);
-            } else {
-                setVisible(false);
-            }
-        });
-    }, [$user, setVisible]);
+    useObserverListener($user, (user) => {
+        if (user !== EMPTY_USER) {
+            setVisible(true);
+        } else {
+            setVisible(false);
+        }
+    });
     const PANEL_GRADIENT = useGradient(180).stop(0, 'light', 0).stop(0.9, 'light', -3).stop(1, 'light', -5).toString();
     return <Vertical background={PANEL_GRADIENT} p={2} $visible={$visible}>
         My Footer
