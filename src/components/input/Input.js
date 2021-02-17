@@ -1,8 +1,8 @@
 import styles from "./Input.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
-import React, {useCallback, useEffect, useState} from "react";
-import {isObserver, useObserverValue} from "components/useObserver";
+import React, {useCallback} from "react";
+import {useObserverValue} from "components/useObserver";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
@@ -12,26 +12,9 @@ const replacedAutoCapsKey = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', '
 
 /**
  *
- * @param {{current:*}} $disabled
- * @param {function():void} setIsDisabled
- * @returns {function(): deregisterListener}
- */
-function effectOnDisabled($disabled, setIsDisabled) {
-    return () => {
-        let deregisterListener = () => {
-        };
-        if (isObserver($disabled)) {
-            deregisterListener = $disabled.addListener((disabled) => setIsDisabled(disabled));
-        }
-        return deregisterListener;
-    };
-}
-
-/**
- *
  * @param {useRef} inputRef
  * @param {string} name
- * @param {boolean | {current:*}} disabled
+ * @param {{current:boolean}} $disabled
  * @param {string} className
  * @param {string} color
  * @param {Object} style
@@ -74,7 +57,7 @@ function effectOnDisabled($disabled, setIsDisabled) {
 function Input({
                    inputRef,
                    name,
-                   disabled,
+                   $disabled,
                    className = [],
                    color,
                    style,
@@ -92,10 +75,8 @@ function Input({
     const [theme] = useTheme();
     const value = useObserverValue(name, $value);
     const errorMessage = useObserverValue(name, $errors);
-    const [isDisabled, setIsDisabled] = useState(isObserver(disabled) ? false : disabled);
+    const isDisabled = useObserverValue($disabled);
 
-    // eslint-disable-next-line
-    useEffect(effectOnDisabled(disabled, setIsDisabled), [disabled]);
     const buttonStyle = {
         background: 'none',
         borderRadius: 5,

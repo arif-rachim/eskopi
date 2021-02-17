@@ -15,10 +15,13 @@ export default function Label({name, color, $value, style, ...props}) {
     $value = $value || {current: ''};
     $value.current = $value.current ?? '';
     name = name || ''
-    const value = useObserverValue(name, $value)
+    let value = useObserverValue(name, $value)
     const [theme] = useTheme();
     if (color in theme) {
         color = calculateBrightness(theme[color], -0.6, 1);
+    }
+    if (typeof value !== 'string') {
+        value = JSON.stringify(value);
     }
     return <Vertical {...props} style={{color: color, ...style}}>{value}</Vertical>
 }

@@ -1,10 +1,7 @@
 import React, {createContext, useContext, useEffect} from "react";
 import useObserver from "components/useObserver";
 
-const PageDimensionContext = createContext({
-    current: null, addListener: () => {
-    }
-});
+const PageDimensionContext = createContext(null);
 const TOP_BAR_HEIGHT = 85;
 
 export default function usePageDimension() {

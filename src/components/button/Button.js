@@ -1,22 +1,11 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import styles from "./Button.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
-import {isObserver, useObserverListener} from "components/useObserver";
+import {useObserverListener, useObserverValue} from "components/useObserver";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
-}
-
-function effectOnDisabled(disabled, setIsDisabled) {
-    return () => {
-        let deregisterListener = () => {
-        };
-        if (isObserver(disabled)) {
-            deregisterListener = disabled.addListener((disabled) => setIsDisabled(disabled));
-        }
-        return deregisterListener;
-    };
 }
 
 /**
@@ -55,7 +44,7 @@ function effectOnDisabled(disabled, setIsDisabled) {
  * @param {string[]} className
  * @param {function(event)} onClick
  * @param {function(event)} onMouseOver
- * @param {boolean} disabled
+ * @param {{current:boolean}} $disabled
  * @param domRef
  * @param {number} flex
  * @param {'left'|'center'|'right'} align
@@ -68,7 +57,7 @@ export default function Button({
                                    domRef,
                                    type,
                                    onClick,
-                                   disabled,
+                                   $disabled,
                                    className = [],
                                    color,
                                    style,
@@ -111,11 +100,8 @@ export default function Button({
     const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB}, theme);
     const borderStyle = parseBorder({b, bL, bR, bT, bB}, color, theme);
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
+    const isDisabled = useObserverValue($disabled);
 
-    const [isDisabled, setIsDisabled] = useState(isObserver(disabled) ? false : disabled);
-
-    // eslint-disable-next-line
-    useEffect(effectOnDisabled(disabled, setIsDisabled), [disabled]);
     const colorStyle = parseColorStyle({
         color,
         brightness: mouseOver ? mouseDown ? mouseDownBrightness : hoverBrightness : brightness,

@@ -54,7 +54,7 @@ export default function RegistrationScreen({onClose}) {
         <form action="" onSubmit={handleSubmit(onSubmit(getRegistrationResource))}>
             <Vertical gap={2} b={1} p={4} r={5} brightness={0} color={"light"} elevation={1}>
                 <Controller controller={controller} render={Input} name={"name"} label={'Name'}
-                            validator={requiredValidator('Name required')} disabled={$isPending}/>
+                            validator={requiredValidator('Name required')} $disabled={$isPending}/>
                 <Controller controller={controller} render={Input} name={"email"} label={'Email'}
                             validator={requiredValidator('Email Required')} autoCaps={false}/>
 

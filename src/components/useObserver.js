@@ -116,7 +116,16 @@ export function useObserverValue(key, observer = undefined) {
         observer = key;
         key = undefined;
     }
-    const [state, setState] = useState(observer && observer.current && key ? observer.current[key] : observer.current);
+    const [state, setState] = useState(() => {
+
+        if (observer === undefined) {
+            return undefined;
+        }
+        if (key && observer.current) {
+            return observer.current[key];
+        }
+        return observer.current;
+    });
     useObserverListener(key, observer, (value) => {
         setState(value);
     })
