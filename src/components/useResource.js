@@ -103,48 +103,10 @@ const EMPTY_RESOURCE = {
 };
 
 /**
- *
- * @param setIsPending
- * @param {React.MutableRefObject<{current:*}>} isPendingObserver
- * @param {function(*=):void} setResource
- * @param {string} token
- * @param {number} timeout
- * @returns {function(*=, *=): void}
- */
-function getCallback(setIsPending, isPendingObserver, setResource, timeout, token) {
-    return (url, data) => {
-        let timer = null;
-        let suspenseObject = null;
-        if (data === undefined) {
-            suspenseObject = suspensify(get(url, token), setIsPending);
-        } else {
-            suspenseObject = suspensify(post(url, data, token), setIsPending);
-        }
-
-        const deregisterListener = isPendingObserver.addListener((isPending) => {
-            if (isPending) {
-                return;
-            }
-            if (timer) {
-                clearTimeout(timer);
-                timer = null;
-                setResource(suspenseObject);
-            }
-            deregisterListener();
-        });
-
-        timer = setTimeout(() => {
-            timer = null;
-            setResource(suspenseObject);
-            deregisterListener();
-        }, timeout);
-    };
-}
-
-/**
+ * timeoutMs property specifies how long we’re willing to wait for the transition to finish.
  * @returns {[React.MutableRefObject<{read:function():*}>, function(url:string,body:*), React.MutableRefObject<{current:*}>]}
  */
-export default function useResource(url, data, timeout = 1000) {
+export default function useResource({url, data, timeoutMs = 100} = {timeoutMs: 100}) {
     const [$user] = useUser();
     const token = useObserverValue($user)?.token;
     const [$resource, setResource] = useObserver(() => {
@@ -154,9 +116,32 @@ export default function useResource(url, data, timeout = 1000) {
         return EMPTY_RESOURCE;
     });
     const [$isPending, setIsPending] = useObserver(false);
-
+    const propsRef = useRef({
+        timer: null,
+        suspenseObject: null
+    });
+    useObserverListener($isPending, (isPending) => {
+        if (isPending) {
+            return;
+        }
+        if (propsRef.current.timer) {
+            clearTimeout(propsRef.current.timer);
+            propsRef.current.timer = null;
+            setResource(propsRef.current.suspenseObject);
+        }
+    });
     // eslint-disable-next-line
-    const getResource = useCallback(getCallback(setIsPending, $isPending, setResource, timeout, token), [token]);
+    const getResource = useCallback((url, data) => {
+        if (data === undefined) {
+            propsRef.current.suspenseObject = suspensify(get(url, token), setIsPending);
+        } else {
+            propsRef.current.suspenseObject = suspensify(post(url, data, token), setIsPending);
+        }
+        propsRef.current.timer = setTimeout(() => {
+            propsRef.current.timer = null;
+            setResource(propsRef.current.suspenseObject);
+        }, timeoutMs);
+    }, [setIsPending, setResource, timeoutMs, token]);
     return [
         $resource,
         getResource,
