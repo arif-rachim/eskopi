@@ -43,7 +43,7 @@ export default function List({
 
                 {data.map((data, index) => {
                     return <Vertical index={index} key={dataKey.apply(data, [data])}>
-                        <Renderer data={data} index={index} {...props}/>
+                        <Renderer data={data} index={index} dataKey={dataKey} {...props}/>
                     </Vertical>
                 })}
             </Vertical>

@@ -29,6 +29,8 @@ export default function ListExample() {
                        setSelectedItem={setSelectedItem}
                        onKeyboardDown={() => setSelectedItem($data.current[$data.current.indexOf($selectedItem.current) + 1])}
                        onKeyboardUp={() => setSelectedItem($data.current[$data.current.indexOf($selectedItem.current) - 1])}/>
+
+
     </Vertical>
 }
 

@@ -130,7 +130,7 @@ export default function useResource({url, data, timeoutMs = 100} = {timeoutMs: 1
             setResource(propsRef.current.suspenseObject);
         }
     });
-    // eslint-disable-next-line
+
     const getResource = useCallback((url, data) => {
         if (data === undefined) {
             propsRef.current.suspenseObject = suspensify(get(url, token), setIsPending);
