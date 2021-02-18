@@ -1,9 +1,9 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import Tree from "components/tree/Tree";
-import useObserver, {useObserverListener} from "components/useObserver";
+import useObserver, {ObserverValue, useObserverListener, useObserverValue} from "components/useObserver";
 import {v4 as uuid} from "uuid";
 import Button from "components/button/Button";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 export default function TreeSample() {
     const [$data, setData] = useObserver([{
@@ -46,17 +46,43 @@ function findTreeDataFromKey(oldData = [], key = [], dataKey) {
     return filteredData;
 }
 
+function ToggleButton({$open, setOpen, width}) {
+    const open = useObserverValue($open);
+    return <Button p={0} pT={0} pB={0} vAlign={"center"} color={'light'} opacity={0} b={0} width={width}
+                   onClick={() => setOpen(val => !val)}>
+        {open &&
+        <svg viewBox='0 0 512 512'>
+            <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='48'
+                  d='M112 184l144 144 144-144'/>
+        </svg>
+        }
+        {!open &&
+        <svg viewBox='0 0 512 512'>
+            <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='48'
+                  d='M184 112l144 144-144 144'/>
+        </svg>
+        }
+    </Button>;
+}
+
 function DataItemRenderer({$selectedItem, setSelectedItem, index, data, setData, dataKey}) {
     const level = data.key_.length;
     const [selected, setSelected] = useState(false);
-    useObserverListener($selectedItem, (selectedItem) => {
-        setSelected(selectedItem === data);
-    });
-    return <Horizontal onClick={() => setSelectedItem(data)} color={"light"} brightness={selected ? -10 : -2}>
-        <Vertical flex={1}>{level}</Vertical>
-        <Vertical flex={5}>{data.name}</Vertical>
+    const [$expand, setExpand] = useObserver(true);
+    const [$toggleButtonVisible, setToggleButtonVisible] = useObserver(data.children > 0);
+    useObserverListener($selectedItem, (selectedItem) => setSelected(selectedItem === data));
+    useEffect(() => setToggleButtonVisible(data.children > 0), [data, setToggleButtonVisible]);
 
-        <Button onClick={(event) => {
+    return <Horizontal onClick={() => setSelectedItem(data)} color={"light"} brightness={selected ? -10 : -2}>
+        <Horizontal width={(level - 1) * 15}/>
+        <ObserverValue $observer={$toggleButtonVisible} render={({value}) => {
+            if (!value) {
+                return <Horizontal width={15}/>
+            }
+            return <ToggleButton $open={$expand} setOpen={setExpand} width={15}/>
+        }}/>
+        <Vertical flex={5} pT={0.5}>{data.name}</Vertical>
+        <Button p={0} pL={2} pR={2} onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
             setData(oldData => {

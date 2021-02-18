@@ -43,16 +43,16 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
     return <Vertical height={'100%'} width={'100%'} position={'absolute'} $visible={$visible}>
         <Horizontal background={PANEL_GRADIENT} p={1} vAlign={'center'} gap={2}>
             <Horizontal>
-                <Button p={0} style={{height: 30}} color={'light'} brightness={-2}>
-                    <svg viewBox='0 0 512 512' width={20} height={20}>
+                <Button p={0} color={'light'} brightness={-2}>
+                    <svg viewBox='0 0 512 512' width={16} height={16}>
                         <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round'
-                              strokeWidth='20' d='M244 400L100 256l144-144M120 256h292'/>
+                              strokeWidth='22' d='M244 400L100 256l144-144M120 256h292'/>
                     </svg>
                 </Button>
-                <Button p={0} style={{height: 30}} color={'light'} brightness={-2}>
-                    <svg viewBox='0 0 512 512' width={20} height={20}>
+                <Button p={0} color={'light'} brightness={-2}>
+                    <svg viewBox='0 0 512 512' width={16} height={16}>
                         <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round'
-                              strokeWidth='20' d='M268 112l144 144-144 144M392 256H100'/>
+                              strokeWidth='22' d='M268 112l144 144-144 144M392 256H100'/>
                     </svg>
                 </Button>
             </Horizontal>

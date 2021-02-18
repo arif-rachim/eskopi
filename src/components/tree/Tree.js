@@ -50,6 +50,7 @@ const flatArray = (array, result, parentKey, dataKey) => {
         const {children, ...item} = next;
         const key = dataKey(item);
         item.key_ = [...parentKey, key];
+        item.children = children ? children.length : 0;
         acc.push(item)
         if (children) {
             acc = flatArray(children, acc, item.key_, dataKey);

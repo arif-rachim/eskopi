@@ -39,6 +39,7 @@ function isUndefinedOrNull(b) {
  * @param {number} mouseDownBrightness - negative or positive value
  * @param {number} opacity - opacity - zero to one
  * @param {number} minWidth - minimum width
+ * @param {width} width
  *
  * @param {'submit' |'reset'|'button'}  type
  * @param {string[]} className
@@ -47,7 +48,8 @@ function isUndefinedOrNull(b) {
  * @param {{current:boolean}} $disabled
  * @param domRef
  * @param {number} flex
- * @param {'left'|'center'|'right'} align
+ * @param {'left'|'center'|'right'} hAlign
+ * @param {'top'|'center'|'bottom'} vAlign
  * @param {any} style
  * @param {{current:boolean}} $visible
  * @param props
@@ -70,7 +72,9 @@ export default function Button({
                                    onMouseOver,
                                    minWidth,
                                    flex,
-                                   align,
+                                   hAlign,
+                                   vAlign,
+                                   width,
                                    $visible,
                                    ...props
                                }) {
@@ -80,17 +84,14 @@ export default function Button({
     const [mouseDown, setMouseDown] = useState(false);
     const buttonStyle = {
         background: 'none',
-        borderRadius: 5,
+        borderRadius: 0,
         outline: 'none'
     };
     color = color || 'light';
 
     b = isUndefinedOrNull(b) ? color === 'light' ? 1.5 : 0.5 : b;
-    r = isUndefinedOrNull(r) ? 2 : r;
-    p = isUndefinedOrNull(p) ? 4 : p;
-    pT = isUndefinedOrNull(pT) ? 2 : pT;
-    pB = isUndefinedOrNull(pB) ? 1.8 : pB;
-
+    pT = isUndefinedOrNull(pT) ? 1 : pT;
+    pB = isUndefinedOrNull(pB) ? 1 : pB;
 
     opacity = opacity ?? 1;
     brightness = brightness ?? 0;
@@ -124,7 +125,11 @@ export default function Button({
     if (flex) {
         internalStyle.flex = flex;
     }
-    internalStyle.alignItems = align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
+    if (width >= 0) {
+        internalStyle.width = width;
+    }
+    internalStyle.alignItems = hAlign === 'left' ? 'flex-start' : hAlign === 'right' ? 'flex-end' : 'center';
+    internalStyle.justifyContent = vAlign === 'top' ? 'flex-start' : vAlign === 'bottom' ? 'flex-end' : 'center';
     return <button ref={domRef}
                    onMouseEnter={() => setMouseOver(true)}
                    onMouseLeave={() => setMouseOver(false)}

@@ -79,15 +79,15 @@ function Input({
 
     const buttonStyle = {
         background: 'none',
-        borderRadius: 5,
+        borderRadius: 0,
         outline: 'none'
     };
     autoCaps = type === 'password' ? false : autoCaps;
     b = isUndefinedOrNull(b) ? 2 : b;
-    r = isUndefinedOrNull(r) ? 2 : r;
+
     p = isUndefinedOrNull(p) ? 2 : p;
-    pT = isUndefinedOrNull(pT) ? 2 : pT;
-    pB = isUndefinedOrNull(pB) ? 1.8 : pB;
+    pT = isUndefinedOrNull(pT) ? 1 : pT;
+    pB = isUndefinedOrNull(pB) ? 1 : pB;
     color = errorMessage && errorMessage.length > 0 ? 'danger' : color || 'light';
 
     const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB}, theme);
