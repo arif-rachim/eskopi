@@ -63,11 +63,11 @@ export function Header({setShowMenu, menuButtonRef}) {
                 Menu
             </Button>
             <Horizontal style={{flex: 1}}/>
-            <Button domRef={buttonRef} brightness={-0.3} b={0} bL={2} bB={3} hoverBrightness={-0.7} minWidth={120}
+            <Button hAlign={'right'} domRef={buttonRef} brightness={-0.3} b={0} bL={2} bB={3} hoverBrightness={-0.7} minWidth={120}
                     onMouseOver={(event) => {
                         setShowPopup(true);
                     }}>
-                <Label name={'name'} $value={$user} style={{textAlign: 'right'}}/>
+                <Label name={'name'} $value={$user} />
             </Button>
 
         </Horizontal>
