@@ -1,5 +1,5 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
-import Tree from "components/tree/Tree";
+import Tree, {findTreeDataFromKey} from "components/tree/Tree";
 import useObserver from "components/useObserver";
 import {v4 as uuid} from "uuid";
 import Button from "components/button/Button";
@@ -7,7 +7,7 @@ import Button from "components/button/Button";
 export default function TreeSample() {
     const [$data, setData] = useObserver([{
         id: uuid(),
-        name: 'Sample',
+        name: uuid(),
         children: []
     }]);
     const [$selectedItem, setSelectedItem] = useObserver(null);
@@ -15,7 +15,7 @@ export default function TreeSample() {
         <Horizontal>
             <Button onClick={() => setData(oldData => ([...oldData, {
                 id: uuid(),
-                name: 'SETANS',
+                name: uuid(),
                 children: []
             }]))}>Add</Button>
             <Button onClick={() => setData(oldData => oldData.filter(d => d !== $selectedItem.current))}>Delete</Button>
@@ -30,7 +30,20 @@ export default function TreeSample() {
 }
 
 function MyComponent(props) {
-    return <Vertical vAlign={'center'} pT={0.5}>
-        {props.data.name}
-    </Vertical>
+    return <Horizontal>
+        <Vertical vAlign={'center'} pT={0.5} flex={1}>
+            {props.data.name}
+        </Vertical>
+        <Button p={0} pL={2} pR={2} onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            props.setData(oldData => {
+                const originalData = findTreeDataFromKey(oldData, props.data.key_, props.dataKey);
+                originalData.children = originalData.children || [];
+                originalData.children.push({id: uuid(), name: uuid(), children: []});
+                return [...oldData];
+            });
+        }}>Add Child</Button>
+    </Horizontal>
+
 }

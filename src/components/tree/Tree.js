@@ -3,7 +3,6 @@ import {Horizontal, Vertical} from "components/layout/Layout";
 import List from "components/list/List";
 import useObserver, {ObserverValue, useObserverListener, useObserverValue} from "components/useObserver";
 import Button from "components/button/Button";
-import {v4 as uuid} from "uuid";
 
 const DEFAULT_DATA_KEY = (data) => data?.id;
 
@@ -79,7 +78,7 @@ const filterWithCollapsedNode = (array, collapsedNode) => {
  * @param {function(data):string} dataKey
  * @returns {any}
  */
-function findTreeDataFromKey(oldData = [], key = [], dataKey) {
+export function findTreeDataFromKey(oldData = [], key = [], dataKey) {
     const [keyPath, ...rest] = key;
     const [filteredData] = oldData.filter(data => dataKey(data) === keyPath);
     if (rest && rest.length > 0) {
@@ -170,15 +169,5 @@ export function DefaultTreeItemRenderer({
                        dataKey={dataKey}
                        {...props}/>
         </Vertical>
-        <Button p={0} pL={2} pR={2} onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            setData(oldData => {
-                const originalData = findTreeDataFromKey(oldData, data.key_, dataKey);
-                originalData.children = originalData.children || [];
-                originalData.children.push({id: uuid(), name: 'ABC 123', children: []});
-                return [...oldData];
-            });
-        }}>Add Child</Button>
     </Horizontal>
 }
