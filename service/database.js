@@ -188,7 +188,6 @@ const onActionRead = (params, queries) => {
     if (!entity) {
         throw new Error(`Entity does not exist in [${params}]`);
     }
-
     for (const prop of props) {
         if (!(prop in entity && entity[prop] !== undefined)) {
             throw new Error(`${prop} does not exist in ${entity.id_}`);
@@ -291,8 +290,8 @@ export function processRequest(params, query) {
 router.get('/*', (req, res) => {
     const {params, query} = getParamsAndQuery(req);
     try {
-        const result = processRequest(params, {a: ACTION_READ, ...query});
-        return res.json({error: false, result});
+        const data = processRequest(params, {a: ACTION_READ, ...query});
+        return res.json({error: false, data});
     } catch (err) {
         return res.json({error: err.message});
     }
@@ -301,21 +300,33 @@ router.get('/*', (req, res) => {
 
 router.post('/*', (req, res) => {
     const {params, query} = getParamsAndQuery(req);
-    const suggestedAction = params.length % 2 === 1 ? ACTION_CREATE : ACTION_UPDATE;
+    let suggestedAction = params.length % 2 === 1 ? ACTION_CREATE : ACTION_UPDATE;
+    const dataAlreadyExist = 'id_' in query && query.id_ in warehouse;
+    if (dataAlreadyExist) {
+        suggestedAction = ACTION_UPDATE;
+        if (params.length === 1) {
+            params.push(query.id_);
+        }
+    }
     try {
-        const result = processRequest(params, {a: suggestedAction, ...query});
-        return res.json({error: false, result});
+        const data = processRequest(params, {a: suggestedAction, ...query});
+        return res.json({error: false, data});
     } catch (err) {
         return res.json({error: err.message});
     }
-
 });
 
 router.delete('/*', (req, res) => {
     const {params, query} = getParamsAndQuery(req);
+
+    const dataAlreadyExist = 'id_' in query && query.id_ in warehouse;
+    if (dataAlreadyExist && params.length === 1) {
+        params.push(query.id_);
+    }
+
     try {
-        const result = processRequest(params, {a: ACTION_DELETE, ...query});
-        return res.json({error: false, result});
+        const data = processRequest(params, {a: ACTION_DELETE, ...query});
+        return res.json({error: false, data});
     } catch (err) {
         return res.json({error: err.message});
     }

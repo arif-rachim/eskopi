@@ -4,7 +4,7 @@ import List from "components/list/List";
 import useObserver, {ObserverValue, useObserverListener, useObserverValue} from "components/useObserver";
 import Button from "components/button/Button";
 
-const DEFAULT_DATA_KEY = (data) => data?.id;
+export const DefaultTreeDataKey = (data) => data?.id;
 
 /**
  * Tree data should contains children which is an array.
@@ -20,7 +20,7 @@ const DEFAULT_DATA_KEY = (data) => data?.id;
 export default function Tree({
                                  $data,
                                  itemRenderer = DefaultTreeItemRenderer,
-                                 dataKey = DEFAULT_DATA_KEY,
+                                 dataKey = DefaultTreeDataKey,
                                  onKeyboardDown,
                                  onKeyboardUp,
                                  ...props
@@ -45,6 +45,7 @@ export default function Tree({
 
 
 const flatArray = (array, result, parentKey, dataKey) => {
+    array = array || [];
     return array.reduce((acc, next) => {
         const {children, ...item} = next;
         const key = dataKey(item);
@@ -85,6 +86,35 @@ export function findTreeDataFromKey(oldData = [], key = [], dataKey) {
         return findTreeDataFromKey(filteredData.children, rest, dataKey);
     }
     return filteredData;
+}
+
+/**
+ * Utilities to remove data from tree using key
+ * @param data
+ * @param key
+ * @param dataKey
+ * @param index
+ * @returns {*[]}
+ */
+export function removeTreeDataFromKey(data = [], key = [], dataKey, index = 0) {
+    if (index === 0) {
+        data = JSON.parse(JSON.stringify(data));
+    }
+    const [keyPath, ...rest] = key;
+    if (rest && rest.length > 0) {
+        for (const item of data) {
+            if (dataKey(item) === keyPath) {
+                removeTreeDataFromKey(item.children, rest, dataKey, index + 1);
+            }
+        }
+    } else {
+        const itemToRemove = data.filter(d => dataKey(d) === keyPath);
+        if (itemToRemove && itemToRemove.length > 0) {
+            const indexToRemove = data.indexOf(itemToRemove[0]);
+            data.splice(indexToRemove, 1);
+        }
+    }
+    return data;
 }
 
 function ToggleButton({$open, setOpen, width}) {
@@ -151,7 +181,7 @@ export function DefaultTreeItemRenderer({
     useObserverListener($selectedItem, (selectedItem) => setSelected(selectedItem === data));
     useEffect(() => setToggleButtonVisible(data.children > 0), [data, setToggleButtonVisible]);
     const Component = listRenderer;
-    return <Horizontal onClick={() => setSelectedItem(data)} color={"light"} brightness={selected ? -10 : -2}>
+    return <Horizontal onClick={() => setSelectedItem(data)} color={"light"} brightness={selected ? -3 : -1}>
         <Horizontal width={(level - 1) * 15}/>
         <ObserverValue $observer={$toggleButtonVisible} render={({value}) => {
             if (!value) {

@@ -24,19 +24,19 @@ function requiredValidator(errorMessage) {
 /**
  * On form submitted
  */
-function onSubmit(getSignIn) {
+function onSubmit(setSignInResource) {
     return (data) => {
-        getSignIn('/authentication/sign-in', {email: data.email, password: data.password});
+        setSignInResource('/authentication/sign-in', {email: data.email, password: data.password});
     }
 }
 
 export default function LoginScreen() {
     const {controller, handleSubmit} = useForm({email: '', password: ''});
-    const [$signIn, getSignIn, $isPending] = useResource();
+    const [$signInResource, setSignInResource, $isPending] = useResource();
     const showPanel = useLayers();
     const [, setUser] = useUser();
     const errorMessage = useErrorMessage();
-    useResourceListener($signIn, (status, result) => {
+    useResourceListener($signInResource, (status, result) => {
         if (status === 'success') {
             setUser(result);
         }
@@ -49,7 +49,7 @@ export default function LoginScreen() {
 
     const background = useGradient(-1).stop(0, 'light', 0, 1).stop(1, 'light', -1, 1).toString();
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'} background={background}>
-        <form action="" onSubmit={handleSubmit(onSubmit(getSignIn))}>
+        <form action="" onSubmit={handleSubmit(onSubmit(setSignInResource))}>
             <Vertical gap={2} width={200} b={1} p={4} r={5} elevation={1}>
                 <Controller controller={controller} render={Input} name={"email"} label={'Email'}
                             validator={requiredValidator('Email Required')} $disabled={$isPending}/>

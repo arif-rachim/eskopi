@@ -19,7 +19,7 @@ export function isObserver(observer) {
 /**
  * Hook to store the value, use useObserver instead use useState.
  * @param defaultValue
- * @returns {[{current:*}, function (value) ]}
+ * @returns {[{current:*,addListener:function(callback:function(value:any)):void}, function (value) ]}
  */
 export default function useObserver(defaultValue) {
     const defaultValueRef = useRef(defaultValue);
@@ -103,6 +103,25 @@ export default function useObserver(defaultValue) {
         $value.addListener = addListener;
         return [$value, setValue];
     }, []);
+}
+
+/**
+ * Map to convert observer to new Observer
+ * @param {{current:any}} $observer
+ * @param {function(oldVal:any):any} map
+ * @returns {{current: *}|(function(value))}
+ */
+export function useObserverMapper($observer, map = (value) => value) {
+    const [$newObserver, setNewObserver] = useObserver(map($observer.current));
+    useObserverListener($observer, (newValue, oldValue) => {
+        const oldMapValue = map(oldValue);
+        const newMapValue = map(newValue);
+        console.log('New value ', newMapValue, ' oldValue ', oldMapValue);
+        if (oldMapValue !== newMapValue) {
+            setNewObserver(newMapValue);
+        }
+    })
+    return $newObserver
 }
 
 /**

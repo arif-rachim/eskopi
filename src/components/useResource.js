@@ -68,7 +68,6 @@ const STATUS_ERROR = 'error';
  */
 function suspensify(promise, setIsPending) {
     let status = STATUS_PENDING;
-
     setIsPending(true);
     let result = null;
     let suspender = promise.then(response => {
@@ -109,17 +108,22 @@ const EMPTY_RESOURCE = {
 export default function useResource({url, data, timeoutMs = 100} = {timeoutMs: 100}) {
     const [$user] = useUser();
     const token = useObserverValue($user)?.token;
-    const [$resource, setResource] = useObserver(() => {
-        if (url) {
-            return data === undefined ? suspensify(get(url, token), setIsPending) : suspensify(post(url, data, token), setIsPending);
-        }
-        return EMPTY_RESOURCE;
-    });
     const [$isPending, setIsPending] = useObserver(false);
+
     const propsRef = useRef({
         timer: null,
         suspenseObject: null
     });
+
+    const [$resource, setResourceObserver] = useObserver(() => {
+        if (url) {
+            const suspenseObject = data === undefined ? suspensify(get(url, token), setIsPending) : suspensify(post(url, data, token), setIsPending);
+            propsRef.current.suspenseObject = suspenseObject;
+            return suspenseObject;
+        }
+        return EMPTY_RESOURCE;
+    });
+
     useObserverListener($isPending, (isPending) => {
         if (isPending) {
             return;
@@ -127,11 +131,11 @@ export default function useResource({url, data, timeoutMs = 100} = {timeoutMs: 1
         if (propsRef.current.timer) {
             clearTimeout(propsRef.current.timer);
             propsRef.current.timer = null;
-            setResource(propsRef.current.suspenseObject);
         }
+        setResourceObserver(propsRef.current.suspenseObject);
     });
 
-    const getResource = useCallback((url, data) => {
+    const setResource = useCallback((url, data) => {
         if (data === undefined) {
             propsRef.current.suspenseObject = suspensify(get(url, token), setIsPending);
         } else {
@@ -139,12 +143,12 @@ export default function useResource({url, data, timeoutMs = 100} = {timeoutMs: 1
         }
         propsRef.current.timer = setTimeout(() => {
             propsRef.current.timer = null;
-            setResource(propsRef.current.suspenseObject);
+            setResourceObserver(propsRef.current.suspenseObject);
         }, timeoutMs);
-    }, [setIsPending, setResource, timeoutMs, token]);
+    }, [setIsPending, setResourceObserver, timeoutMs, token]);
     return [
         $resource,
-        getResource,
+        setResource,
         $isPending
     ]
 }

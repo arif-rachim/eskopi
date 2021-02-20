@@ -35,7 +35,7 @@ const token = (req, res, next) => {
     const token = authHeader && authHeader.split(' ')[1]
 
     if (token == null) {
-        throw new Error('Access Denied');
+        throw new Error('Sorry you dont have valid token, please sign in to the app first');
     }
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {

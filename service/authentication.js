@@ -42,7 +42,7 @@ router.post('/register', (req, res) => {
         // good we expect error due to no data
     }
     const user = dbCreate('users', {email, password: passwordHash.generate(password), name});
-    return res.json({error: false, user: {...user, password: ''}});
+    return res.json({error: false, data: {...user, password: ''}});
 })
 
 export default router;
