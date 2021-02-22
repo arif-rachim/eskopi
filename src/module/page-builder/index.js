@@ -1,110 +1,24 @@
 import {Horizontal, Vertical} from "../../components/layout/Layout";
-import Button from "components/button/Button";
-import useObserver, {useObserverListener, useObserverMapper} from "components/useObserver";
+import useObserver from "components/useObserver";
 import React from "react";
-import useSlideDownStackPanel from "components/page/useSlideDownStackPanel";
-import useForm, {Controller} from "components/useForm";
-import {useConfirmMessage} from "components/dialog/Dialog";
-import {v4 as uuid} from "uuid";
+import PageTree from "module/page-builder/PageTree";
 import Input from "components/input/Input";
-import Tree, {DefaultTreeDataKey, findTreeDataFromKey, removeTreeDataFromKey} from "../../components/tree/Tree";
-import useResource, {useResourceListener} from "components/useResource";
-
-
-function PagesTree() {
-    const [$selectedItem, setSelectedItem] = useObserver();
-    const [$pages, setPages] = useObserver({children: []});
-    const [$pageResource, setPageResource] = useResource({url: '/db/pages'});
-
-    useResourceListener($pageResource, (status, data) => {
-        if (status === 'success') {
-            if (Array.isArray(data)) {
-                setPageResource('/db/pages/' + data[0])
-            } else {
-                setPages(data);
-            }
-        }
-    });
-
-    const [$showDelete, setShowDelete] = useObserver(false);
-    useObserverListener($selectedItem, (item) => {
-        setShowDelete(item !== null)
-    });
-    const showSlideDown = useSlideDownStackPanel();
-    const showConfirmation = useConfirmMessage();
-    return <Vertical height={'100%'}>
-        <Horizontal color={"light"} brightness={-1} p={1} vAlign={'center'} onClick={() => {
-            setSelectedItem(null);
-        }}>
-            Pages
-            <Horizontal flex={1}/>
-            <Button $visible={$showDelete} p={0} onClick={async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const result = await showConfirmation(`Are you sure you want to delete ${$selectedItem.current.name}`);
-                if (result === 'YES' && $selectedItem.current) {
-                    const pages = JSON.parse(JSON.stringify($pages.current));
-                    const selectedItem = $selectedItem.current;
-                    pages.children = removeTreeDataFromKey(pages.children, selectedItem.key_, DefaultTreeDataKey);
-                    setPageResource('/db/pages', pages);
-                    // setPages(pages => {
-                    //     pages = JSON.parse(JSON.stringify(pages));
-                    //     const selectedItem = $selectedItem.current;
-                    //     pages.children = removeTreeDataFromKey(pages.children,selectedItem.key_,DefaultTreeDataKey);
-                    //     return pages;
-                    // });
-                }
-            }}>
-                <svg viewBox='0 0 512 512' width={16} height={16}>
-                    <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round'
-                          strokeWidth='32' d='M400 256H112'/>
-                </svg>
-            </Button>
-            <Button p={0} onClick={async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const name = await showSlideDown(({closePanel}) => <PageDetail closePanel={closePanel}/>)
-                const oldPages = JSON.parse(JSON.stringify($pages.current));
-                if ($selectedItem.current) {
-                    const selectedItem = findTreeDataFromKey(oldPages.children, $selectedItem.current.key_, DefaultTreeDataKey);
-                    if (!selectedItem) {
-                        return;
-                    }
-                    selectedItem.children = selectedItem.children || [];
-                    selectedItem.children.push({id: uuid(), name, children: []});
-                } else {
-                    oldPages.children.push({id: uuid(), name, children: []});
-                }
-                setPageResource('/db/pages', oldPages);
-            }}>
-                <svg viewBox='0 0 512 512' width={16} height={16}>
-                    <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round'
-                          strokeWidth='32' d='M256 112v288M400 256H112'/>
-                </svg>
-            </Button>
-        </Horizontal>
-        <Vertical height={'100%'} color={"light"} brightness={-2} overflow={'auto'}>
-            <Tree $data={useObserverMapper($pages, page => page.children)} itemRenderer={PageTreeItemRenderer}
-                  $selectedItem={$selectedItem} setSelectedItem={setSelectedItem}/>
-        </Vertical>
-    </Vertical>;
-}
-
-
-function PageTreeItemRenderer(props) {
-    return <Vertical>
-        {props.data.name}
-    </Vertical>
-}
-
+import useForm, {Controller} from "components/useForm";
+import TextArea from "components/input/TextArea";
+import Button from "components/button/Button";
 
 export default function PageBuilder() {
+    const [$selectedPage, setSelectedPage] = useObserver();
+
     return <Vertical height={'100%'}>
         <Horizontal height={'100%'}>
-            <Vertical height={'100%'} width={200} color={"light"}>
-                <PagesTree/>
+            <Vertical height={'100%'} width={200} color={"light"} bR={4}>
+                <PageTree $selectedPage={$selectedPage} setSelectedPage={setSelectedPage}/>
+                <ControlsComponent/>
             </Vertical>
-            <Vertical flex={1}></Vertical>
+            <Vertical flex={1}>
+                <PageEditor $page={$selectedPage}/>
+            </Vertical>
             <Vertical width={200} color={"light"} brightness={-3}></Vertical>
         </Horizontal>
     </Vertical>
@@ -112,41 +26,63 @@ export default function PageBuilder() {
 
 PageBuilder.title = 'Page Builder';
 
-function PageDetail({closePanel}) {
-    const {controller, handleSubmit} = useForm({name: ''});
-    const confirmation = useConfirmMessage();
-    return <Vertical vAlign={'center'} hAlign={'center'} p={3} gap={2}>
-        <Vertical fSize={16} p={3}>Add New Page</Vertical>
-        <form action="" onSubmit={handleSubmit((value) => {
-            closePanel(value.name);
-        })}>
-            <Vertical gap={10}>
-                <Controller render={Input} label={'Page Name'} name={'name'} controller={controller}
-                            validator={requiredValidator('Name is mandatory')} autoFocus={true}/>
-                <Horizontal gap={5}>
-                    <Button color={"primary"} type={'submit'} flex={1}>Save</Button>
-                    <Button type={'button'} onClick={async () => {
-                        const modified = Object.keys(controller.current.modified).length > 0;
-                        if (modified) {
-                            const result = await confirmation('Are you sure you want to cancel changes ?')
-                            if (result === 'YES') {
-                                closePanel(false);
-                            }
-                        } else {
-                            closePanel(false);
-                        }
-                    }}>Cancel</Button>
-                </Horizontal>
-            </Vertical>
-        </form>
+function PageEditor() {
+    return <Vertical color={"light"} brightness={-3} p={3} flex={1}>
+
+        <Vertical color={"light"} brightness={0} flex={1} elevation={1}>
+
+        </Vertical>
     </Vertical>
 }
 
-function requiredValidator(message) {
-    return (value) => {
-        if (value === null || value === undefined || value === '') {
-            return message;
-        }
-        return '';
-    }
+function ControlsComponent() {
+    const {controller} = useForm({input: '', textArea: ''});
+    return <Vertical flex={1} color={'light'} brightness={0.1} bB={3}>
+        <Horizontal color={"light"} brightness={-2} bB={3} p={1} vAlign={'center'}>
+            Controls
+        </Horizontal>
+        <Vertical color={"light"} brightness={0.3}>
+            <Vertical p={2} gap={3}>
+                <DraggableControls type={Controls.HORIZONTAL}>
+                    <Horizontal height={30} flex={1} gap={3}>
+                        <Horizontal b={3} flex={1}/>
+                        <Horizontal b={3} flex={1}/>
+                        <Horizontal b={3} flex={1}/>
+                        <Horizontal b={3} flex={1}/>
+                    </Horizontal>
+                </DraggableControls>
+
+                <DraggableControls type={Controls.LABEL}>
+                    <Vertical>Label</Vertical>
+                </DraggableControls>
+                <DraggableControls type={Controls.TEXT}>
+                    <Controller render={Input} type={"input"} label={"Input"} controller={controller} name={"input"}
+                                disabled={true}/>
+                </DraggableControls>
+                <DraggableControls hAlign={'center'} type={Controls.TEXT_AREA}>
+                    <Controller render={TextArea} rows={3} label={"Text Area"} controller={controller}
+                                name={"textarea"} disabled={true}/>
+                </DraggableControls>
+                <DraggableControls hAlign={'center'} type={Controls.BUTTON}>
+                    <Button color={"primary"}>Button</Button>
+                </DraggableControls>
+
+            </Vertical>
+
+        </Vertical>
+    </Vertical>
+}
+
+export const Controls = {
+    TEXT: 'text',
+    TEXT_AREA: 'textArea',
+    BUTTON: 'button',
+    HORIZONTAL: 'horizontal',
+    LABEL: 'label'
+};
+
+function DraggableControls({type, ...props}) {
+    return <Vertical draggable={true} p={2} style={{fontSize: 18}} b={1}  {...props}>
+        {props.children}
+    </Vertical>
 }

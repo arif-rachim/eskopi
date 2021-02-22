@@ -70,6 +70,7 @@ function Input({
                    autoCaps = true,
                    $value,
                    $errors,
+                   rows = 3,
                    ...props
                }) {
     const [theme] = useTheme();
@@ -94,33 +95,34 @@ function Input({
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
     const colorStyle = parseColorStyle({color, brightness: isDisabled ? -0.1 : 0.71, alpha: 1}, theme);
 
-    return <input ref={inputRef} type={type} name={name}
-                  className={[...className, styles.button].join(' ')}
-                  readOnly={isDisabled}
-                  onKeyDownCapture={useCallback(e => {
-                      if (isDisabled) {
-                          e.preventDefault();
-                          return;
-                      }
-                      if (autoCaps && !e.ctrlKey && !e.shiftKey && replacedAutoCapsKey.indexOf(e.key) >= 0) {
-                          e.preventDefault();
-                          const position = e.target.selectionStart;
+    return <textarea ref={inputRef} type={type} name={name}
+                     className={[...className, styles.button].join(' ')}
+                     readOnly={isDisabled}
+                     onKeyDownCapture={useCallback(e => {
+                         if (isDisabled) {
+                             e.preventDefault();
+                             return;
+                         }
+                         if (autoCaps && !e.ctrlKey && !e.shiftKey && replacedAutoCapsKey.indexOf(e.key) >= 0) {
+                             e.preventDefault();
+                             const position = e.target.selectionStart;
 
-                          const currentValue = e.target.value;
-                          const newValue = currentValue.substring(0, position) + e.key.toUpperCase() + currentValue.substring(position, currentValue.length);
+                             const currentValue = e.target.value;
+                             const newValue = currentValue.substring(0, position) + e.key.toUpperCase() + currentValue.substring(position, currentValue.length);
 
-                          let nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
-                          nativeInputValueSetter.call(e.target, newValue);
-                          e.target.setSelectionRange(position + 1, position + 1);
-                          const event = new Event('input', {bubbles: true});
-                          e.target.dispatchEvent(event);
-                      }
-                  }, [autoCaps, isDisabled])}
-                  style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...style}}
-                  onChange={(e) => onChange(e.target.value)}
-                  onBlur={onBlur}
-                  value={value}
-                  {...props}/>
+                             let nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+                             nativeInputValueSetter.call(e.target, newValue);
+                             e.target.setSelectionRange(position + 1, position + 1);
+                             const event = new Event('input', {bubbles: true});
+                             e.target.dispatchEvent(event);
+                         }
+                     }, [autoCaps, isDisabled])}
+                     style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...style}}
+                     onChange={(e) => onChange(e.target.value)}
+                     onBlur={onBlur}
+                     value={value}
+                     rows={rows}
+                     {...props}/>
 }
 
 export default React.memo(Input);

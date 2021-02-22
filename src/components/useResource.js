@@ -124,6 +124,7 @@ export default function useResource({url, data, timeoutMs = 100} = {timeoutMs: 1
         return EMPTY_RESOURCE;
     });
 
+
     useObserverListener($isPending, (isPending) => {
         if (isPending) {
             return;

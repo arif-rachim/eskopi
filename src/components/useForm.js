@@ -2,6 +2,7 @@ import React, {useCallback, useRef} from "react";
 import useObserver from "components/useObserver";
 import {Horizontal, Vertical} from "./layout/Layout";
 import Label from "./label/Label";
+import {isNullOrUndefined} from "components/utils";
 
 /**
  * Create onSubmit handler
@@ -174,6 +175,9 @@ const callbackOnChange = (propsRef) => (value) => {
  * @constructor
  */
 export function Controller({name, label, validator, validateOn = 'blur', render, controller, flex, ...props}) {
+    if (isNullOrUndefined(controller)) {
+        throw Error('Please define controller object from useForm');
+    }
     controller.current.validateOn[name] = validateOn;
     controller.current.validator[name] = validator;
     if (!controller.current.modified[name]) {

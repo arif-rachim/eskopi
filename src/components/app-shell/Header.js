@@ -99,7 +99,7 @@ function UserProfileMenu({closePanel, parentRef, setLogout}) {
     const confirmAction = useConfirmMessage();
 
 
-    return <Vertical domRef={domRef} color={"light"} elevation={0} top={-5} bL={2} bR={2} bB={2} brightness={-0.3}
+    return <Vertical domRef={domRef} color={"light"} elevation={1} top={-5} bL={2} bR={2} bB={2} brightness={-0.3}
                      rBL={2} rBR={2}>
         <Horizontal p={2} pL={3} pR={3} bT={1} mT={3} color={'light'} brightness={-0.3} brightnessHover={-1}
                     hAlign={"right"} cursor={'pointer'} onClick={handleChangePassword(showPanel)}>Change

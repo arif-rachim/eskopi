@@ -181,7 +181,7 @@ export function DefaultTreeItemRenderer({
     useObserverListener($selectedItem, (selectedItem) => setSelected(selectedItem === data));
     useEffect(() => setToggleButtonVisible(data.children > 0), [data, setToggleButtonVisible]);
     const Component = listRenderer;
-    return <Horizontal onClick={() => setSelectedItem(data)} color={"light"} brightness={selected ? -3 : -1}>
+    return <Horizontal onClick={() => setSelectedItem(data)} color={"light"} brightness={selected ? -3 : 0}>
         <Horizontal width={(level - 1) * 15}/>
         <ObserverValue $observer={$toggleButtonVisible} render={({value}) => {
             if (!value) {
