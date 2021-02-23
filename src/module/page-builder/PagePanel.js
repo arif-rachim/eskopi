@@ -9,7 +9,7 @@ import {v4 as uuid} from "uuid";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 
-export default function PageTree({$selectedPage, setSelectedPage}) {
+export default function PagePanel({$selectedPage, setSelectedPage}) {
     const $selectedItem = $selectedPage;
     const setSelectedItem = setSelectedPage;
     const [$pages, setPages] = useObserver({children: []});
