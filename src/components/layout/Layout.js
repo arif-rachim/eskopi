@@ -330,6 +330,7 @@ function Layout({
                 onMouseLeave={handleMouse(hasMouseHover, setMouseOver, false)}
                 onMouseDown={handleMouse(hasMouseDown, setMouseDown, true)}
                 onMouseUp={handleMouse(hasMouseDown, setMouseDown, false)}
+                data-layout={horizontal ? 'horizontal' : 'vertical'}
                 onClick={onClick}
     >{childrenClone}</div>
 }

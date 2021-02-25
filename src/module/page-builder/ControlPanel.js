@@ -55,6 +55,7 @@ function DraggableControls({type, ...props}) {
     const handleDragStart = (event) => {
         setIsDragging(true);
         event.dataTransfer.effectAllowed = 'copy';
+        console.log('We got type ', type);
         event.dataTransfer.setData('text/plain', JSON.stringify({type}));
         dropListener.current = () => {
             setIsDragging(false);
