@@ -93,7 +93,7 @@ function Input({
     const borderStyle = parseBorder({b, bL, bR, bT, bB}, color, theme);
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
     const colorStyle = parseColorStyle({color, brightness: isDisabled ? -0.1 : 0.71, alpha: 1}, theme);
-
+    const defaultStyle = {minWidth: 0};
     return <input ref={inputRef} type={type} name={name}
                   className={[...className, styles.button].join(' ')}
                   readOnly={isDisabled}
@@ -116,7 +116,7 @@ function Input({
                           e.target.dispatchEvent(event);
                       }
                   }, [autoCaps, isDisabled])}
-                  style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...style}}
+                  style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...defaultStyle, ...style}}
                   onChange={(e) => onChange(e.target.value)}
                   onBlur={onBlur}
                   value={value}

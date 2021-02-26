@@ -1,15 +1,16 @@
-import {Horizontal, Vertical} from "components/layout/Layout";
-import {memo, useContext, useEffect, useRef,createContext} from "react";
+import {Vertical} from "components/layout/Layout";
+import {memo, useContext, useEffect, useRef} from "react";
 import {DropListenerContext} from "module/page-builder/index";
 import useObserver, {ObserverValue, useObserverMapper} from "components/useObserver";
 import {v4 as uuid} from "uuid";
 import {Controls} from "module/page-builder/ControlPanel";
-import Input from "components/input/Input";
-import useForm, {Controller} from "components/useForm";
-import TextArea from "components/input/TextArea";
-import Button from "components/button/Button";
+import useForm from "components/useForm";
 import {styleToString} from "components/utils";
-import Space from "./controller/Space";
+import SpaceController from "./controller/SpaceController";
+import LabelController from "module/page-builder/controller/LabelController";
+import ButtonController from "module/page-builder/controller/ButtonController";
+import TextInputController from "module/page-builder/controller/TextInputController";
+import TextAreaController from "module/page-builder/controller/TextAreaController";
 
 /**
  * Function to return placeHolder object
@@ -220,28 +221,19 @@ export const handleDragOver = () => {
 
 export function renderChild(child, controller) {
     if (child.type === Controls.SPACE) {
-        return <Space key={child.id} data={child} controller={controller} />
+        return <SpaceController key={child.id} data={child} formController={controller}/>
     }
     if (child.type === Controls.LABEL) {
-        return <Vertical key={child.id} onDragOver={handleDragOver()} p={2} pT={1}
-                         pB={1}>Label</Vertical>
+        return <LabelController key={child.id} data={child} formController={controller}/>
     }
     if (child.type === Controls.BUTTON) {
-        return <Vertical key={child.id} onDragOver={handleDragOver()} p={2} pT={1} pB={1}>
-            <Button color={"primary"}>Button</Button>
-        </Vertical>
+        return <ButtonController key={child.id} data={child} formController={controller}/>
     }
-    if (child.type === Controls.TEXT) {
-        return <Vertical key={child.id} onDragOver={handleDragOver()} p={2} pT={1} pB={1}>
-            <Controller render={Input} type={"input"} label={"Input"} controller={controller}
-                        name={"input"} disabled={false}/>
-        </Vertical>
+    if (child.type === Controls.TEXT_INPUT) {
+        return <TextInputController key={child.id} data={child} formController={controller}/>
     }
     if (child.type === Controls.TEXT_AREA) {
-        return <Vertical key={child.id} onDragOver={handleDragOver()} p={2} pT={1} pB={1}>
-            <Controller render={TextArea} rows={3} label={"Text Area"} controller={controller}
-                        name={"textarea"} disabled={false}/>
-        </Vertical>
+        return <TextAreaController key={child.id} data={child} formController={controller}/>
     }
 
 }

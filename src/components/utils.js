@@ -26,3 +26,13 @@ export function styleToString(style) {
         acc + key.split(/(?=[A-Z])/).join('-').toLowerCase() + ':' + style[key] + ';'
     ), '');
 }
+
+/**
+ * Function to convert camelCase into sentence case.
+ * @param text
+ * @returns {string}
+ */
+export function camelCaseToSentenceCase(text) {
+    const result = text.replace(/([A-Z])/g, " $1");
+    return result.charAt(0).toUpperCase() + result.slice(1);
+}

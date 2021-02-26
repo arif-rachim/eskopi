@@ -25,7 +25,7 @@ export default function ControlPanel() {
                 <DraggableControls type={Controls.LABEL}>
                     <Vertical>Label</Vertical>
                 </DraggableControls>
-                <DraggableControls type={Controls.TEXT}>
+                <DraggableControls type={Controls.TEXT_INPUT}>
                     <Controller render={Input} type={"input"} label={"Input"} controller={controller} name={"input"}
                                 disabled={true}/>
                 </DraggableControls>
@@ -42,7 +42,7 @@ export default function ControlPanel() {
 }
 
 export const Controls = {
-    TEXT: 'text',
+    TEXT_INPUT: 'textInput',
     TEXT_AREA: 'textArea',
     BUTTON: 'button',
     SPACE: 'space',

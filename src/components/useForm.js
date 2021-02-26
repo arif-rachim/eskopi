@@ -170,11 +170,22 @@ const callbackOnChange = (propsRef) => (value) => {
  * @param {'change'|'blur'} validateOn
  * @param {number} flex
  * @param {React.Element} render
+ * @param {number} horizontalLabelPositionWidth
  * @param {React.MutableRefObject<{validateOn: {}, $errors: (React.MutableRefObject<*>|setObserver), $value: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>} controller
  * @returns {JSX.Element}
  * @constructor
  */
-export function Controller({name, label, validator, validateOn = 'blur', render, controller, flex, ...props}) {
+export function Controller({
+                               name,
+                               label,
+                               validator,
+                               validateOn = 'blur',
+                               render,
+                               controller,
+                               flex,
+                               horizontalLabelPositionWidth,
+                               ...props
+                           }) {
     if (isNullOrUndefined(controller)) {
         throw Error('Please define controller object from useForm');
     }
@@ -194,12 +205,25 @@ export function Controller({name, label, validator, validateOn = 'blur', render,
     if (flex) {
         containerStyle.flex = flex;
     }
+    const isHorizontal = horizontalLabelPositionWidth > 0;
     return <Vertical overflow={'visible'} style={containerStyle}>
         <label>
             <Vertical overflow={'visible'}>
-                <Horizontal style={{fontSize: '0.8rem'}}>{label}</Horizontal>
-                <Render name={name} onBlur={onBlur} onChange={onChange} $value={controller.current.$value}
-                        $errors={controller.current.$errors} {...props}/>
+                {isHorizontal &&
+                <Horizontal flex={'1 0 auto'} vAlign={'center'}>
+                    <Horizontal style={{fontSize: '0.8rem', whiteSpace: 'nowrap'}}
+                                flex={`1 0 ${horizontalLabelPositionWidth}px`}>{label}</Horizontal>
+                    <Render name={name} onBlur={onBlur} onChange={onChange} $value={controller.current.$value}
+                            $errors={controller.current.$errors} {...props} style={{flex: '1 1 auto'}}/>
+                </Horizontal>
+                }
+                {!isHorizontal &&
+                <Vertical>
+                    <Horizontal style={{fontSize: '0.8rem'}}>{label}</Horizontal>
+                    <Render name={name} onBlur={onBlur} onChange={onChange} $value={controller.current.$value}
+                            $errors={controller.current.$errors} {...props}/>
+                </Vertical>
+                }
                 <Label name={name} color={'danger'} $value={controller.current.$errors}
                        style={{fontSize: '0.7rem', position: 'absolute', bottom: -12, right: 0}}/>
             </Vertical>

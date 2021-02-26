@@ -203,7 +203,7 @@ function handleMouse(hasMouseDownOrHoverBrightness, setMouseOver, action) {
  * @param {{current:boolean}} $visible
  *
  * @param {function(e)} onClick
- * @param {number} flex
+ * @param {string} flex
  * @param {number} fSize - fontSize
  * @returns {JSX.Element}
  * @constructor
@@ -392,7 +392,7 @@ function Layout({
  * @param {{current:boolean}} $visible
  *
  * @param {function(e)} onClick
- * @param {number} flex
+ * @param {string} flex
  *
  * @returns {JSX.Element}
  * @constructor
@@ -519,7 +519,7 @@ export function Horizontal({
  * @param {string} background
  * @param {'pointer'|'default'} cursor
  * @param {{current:boolean}} $visible
- * @param {number} flex
+ * @param {string} flex
  * @param {function(e)} onClick
  * @param {number} fSize - fontSize
  * @returns {JSX.Element}
