@@ -1,5 +1,5 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {memo, useContext, useEffect, useRef, useState} from "react";
+import {memo, useContext, useEffect, useRef} from "react";
 import {DropListenerContext} from "module/page-builder/index";
 import useObserver, {ObserverValue, useObserverMapper} from "components/useObserver";
 import {v4 as uuid} from "uuid";
@@ -8,35 +8,60 @@ import Input from "components/input/Input";
 import useForm, {Controller} from "components/useForm";
 import TextArea from "components/input/TextArea";
 import Button from "components/button/Button";
+import {styleToString} from "components/utils";
 
-let placeHolder = (() => {
-    const element = document.createElement('div');
-    element.setAttribute('style', 'border:1px solid #666;width:100%;height:30px;box-sizing:border-box;');
-    element.setAttribute('id', 'my-element');
-    document.body.appendChild(element);
-    return document.getElementById('my-element');
-})();
+/**
+ * Function to return placeHolder object
+ * @param style
+ * @returns {HTMLElement}
+ */
+function getPlaceHolder(style = undefined) {
+    const innerStyle = {
+        border: '1px solid #666',
+        minWidth: '30px',
+        minHeight: '30px',
+        boxSizing: 'border-box',
+        display: 'none'
+    }
+    if (document.getElementById('my-element') === null) {
+        const element = document.createElement('div');
+        element.setAttribute('style', styleToString(innerStyle));
+        element.setAttribute('id', 'my-element');
+        document.body.appendChild(element);
+    }
+    const placeHolder = document.getElementById('my-element');
+    if (style) {
+        placeHolder.setAttribute('style', styleToString({...innerStyle, ...style}));
+    }
+    return placeHolder;
+}
 
 
 /**
- *
- * @param {placeHolder} placeHolder
  * @param {'dragover','dragleave','dragenter','drag','drop','dragend','dragexit'} event
  * @param {function(event)} listener
  */
-function usePlaceHolderListener(placeHolder, event, listener) {
+function usePlaceHolderListener(event, listener) {
     useEffect(() => {
+        const placeHolder = getPlaceHolder();
         placeHolder.addEventListener(event, listener);
         return () => {
             placeHolder.removeEventListener(event, listener);
         }
-    }, [event, listener, placeHolder]);
+    }, [event, listener]);
 }
 
-function traceParentId(parentElement, root) {
+/**
+ * Function to get parent element ids from current parentElement
+ * @param element
+ * @param root
+ * @returns {string[]|*[]}
+ */
+function traceParentId(element, root) {
+    const parentElement = element.parentElement;
     const dataId = parentElement.getAttribute('data-id');
     if (parentElement.parentElement !== root) {
-        const newResult = traceParentId(parentElement.parentElement, root);
+        const newResult = traceParentId(parentElement, root);
         return [...newResult, dataId];
     } else {
         return [dataId];
@@ -44,14 +69,12 @@ function traceParentId(parentElement, root) {
 }
 
 export default function LayoutPanel({data = {}}) {
-    const [isDragOver, setIsDragOver] = useState();
-
     const dropListener = useContext(DropListenerContext);
     const [$data, setData] = useObserver(data);
-    usePlaceHolderListener(placeHolder, "drop", (event) => {
+    usePlaceHolderListener("drop", (event) => {
         const data = JSON.parse(event.dataTransfer.getData('text/plain'));
-        debugger;
         // we need to know the parent first
+        const placeHolder = getPlaceHolder();
         const childIndex = Array.prototype.indexOf.call(placeHolder.parentElement.children, placeHolder);
         if (placeHolder.parentElement === rootRef.current) {
             setData(oldData => {
@@ -65,7 +88,7 @@ export default function LayoutPanel({data = {}}) {
                 return newData;
             });
         } else {
-            const parentIds = traceParentId(placeHolder.parentElement, rootRef.current);
+            const parentIds = traceParentId(placeHolder, rootRef.current);
             setData(oldData => {
                 let newData = oldData;
                 for (const id of parentIds) {
@@ -85,11 +108,12 @@ export default function LayoutPanel({data = {}}) {
     });
     const dragHoverCountRef = useRef(0);
     const handleDragEnter = (event) => {
+        const placeHolder = getPlaceHolder({display: 'block'});
         dragHoverCountRef.current++;
         if (dragHoverCountRef.current <= 0) {
             return;
         }
-        setIsDragOver(true);
+
         // activating placeholder
         if (placeHolder.parentElement !== event.currentTarget) {
             event.currentTarget.append(placeHolder);
@@ -98,17 +122,16 @@ export default function LayoutPanel({data = {}}) {
     const handleDragLeave = () => {
         dragHoverCountRef.current--;
         if (dragHoverCountRef.current > 0) {
-            return;
+
         }
-        setIsDragOver(false);
     }
     const handleDrop = (event) => {
-        setIsDragOver(false);
+        getPlaceHolder({display: 'none'});
         event.preventDefault();
         event.stopPropagation();
         dragHoverCountRef.current = 0;
         dropListener.current.call();
-        placeHolder.remove();
+
     }
     const handleDragOver = (event) => {
         event.preventDefault();
@@ -117,18 +140,18 @@ export default function LayoutPanel({data = {}}) {
     const rootRef = useRef();
     const {controller} = useForm();
     return <Vertical color={"light"} brightness={-3} p={3} flex={1}>
-        <Vertical domRef={rootRef} color={"light"} brightness={isDragOver ? -1 : 0} flex={1} elevation={1}
+        <Vertical domRef={rootRef} color={"light"} brightness={0} flex={1} elevation={1}
                   onDragEnter={handleDragEnter}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
-                  onDrop={handleDrop} p={2}>
-            <ObserverValue $observer={useObserverMapper($data, data => data.children)} render={RenderLayout}
+                  onDrop={handleDrop} p={2} data-layout={'vertical'}>
+            <ObserverValue $observer={useObserverMapper($data, data => data.children)} render={RenderLayoutMemo}
                            controller={controller}/>
         </Vertical>
     </Vertical>
 }
 
-const handleDragOver = (placeHolder) => {
+const handleDragOver = () => {
     return (event) => {
         event.stopPropagation();
         event.preventDefault();
@@ -136,14 +159,15 @@ const handleDragOver = (placeHolder) => {
         const parentTarget = currentTarget.parentNode;
         const elementPosition = currentTarget.getBoundingClientRect();
         const isLayout = currentTarget.getAttribute('data-layout');
-
-        const mouseIsUp = event.clientY < (elementPosition.top + 10);
-        const mouseIsDown = event.clientY > (elementPosition.top + (elementPosition.height - 10));
-        const mouseIsLeft = event.clientX < (elementPosition.left + 10);
-        const mouseIsRight = event.clientX > (elementPosition.left + (elementPosition.width - 10));
+        const heightPad = isLayout ? 5 : 0.3 * elementPosition.height;
+        const widthPad = isLayout ? 5 : 0.3 * elementPosition.width;
+        const mouseIsUp = event.clientY < (elementPosition.top + heightPad);
+        const mouseIsDown = event.clientY > (elementPosition.top + (elementPosition.height - heightPad));
+        const mouseIsLeft = event.clientX < (elementPosition.left + widthPad);
+        const mouseIsRight = event.clientX > (elementPosition.left + (elementPosition.width - widthPad));
 
         const parentLayout = parentTarget.getAttribute('data-layout');
-
+        const placeHolder = getPlaceHolder({display: 'block'});
         if (parentLayout === 'horizontal') {
             if (mouseIsLeft) {
                 parentTarget.insertBefore(placeHolder, currentTarget);
@@ -152,11 +176,15 @@ const handleDragOver = (placeHolder) => {
                 if (nextSibling) {
                     parentTarget.insertBefore(placeHolder, nextSibling);
                 } else {
+                    console.log('a');
                     parentTarget.appendChild(placeHolder);
                 }
             } else if (isLayout === 'horizontal') {
+                console.log('b');
                 currentTarget.appendChild(placeHolder);
+
             } else if (isLayout === 'vertical') {
+                console.log('c');
                 currentTarget.appendChild(placeHolder);
             }
         }
@@ -168,69 +196,80 @@ const handleDragOver = (placeHolder) => {
                 if (nextSibling) {
                     parentTarget.insertBefore(placeHolder, nextSibling);
                 } else {
+                    console.log('d');
                     parentTarget.appendChild(placeHolder);
                 }
             } else if (isLayout === 'horizontal') {
-                currentTarget.appendChild(placeHolder);
+                console.log('e');
+                if (placeHolder.parentElement !== currentTarget) {
+                    currentTarget.appendChild(placeHolder);
+                }
             } else if (isLayout === 'vertical') {
-                currentTarget.appendChild(placeHolder);
+                console.log('f');
+                if (placeHolder.parentElement !== currentTarget) {
+                    currentTarget.appendChild(placeHolder);
+                }
             }
         }
-        console.log(elementPosition);
-        console.log(currentTarget);
-        console.log(event);
     }
 }
 
 function renderChild(child, controller) {
-    switch (child.type) {
-        case Controls.HORIZONTAL : {
-            return <Horizontal
-                key={child.id} onDragOver={handleDragOver(placeHolder)}
-                p={2}
-                style={{minHeight: 30}} brightness={-2} color={"light"}
-                data-id={child.id}
-                onDragEnter={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    if (placeHolder.parentElement !== event.currentTarget) {
-                        event.currentTarget.append(placeHolder);
-                    }
-                }}
-            >{child.children && child.children.map(child => renderChild(child, controller))}</Horizontal>
-
-        }
-        case Controls.LABEL : {
-            return <Vertical key={child.id} onDragOver={handleDragOver(placeHolder)} p={2} pT={1}
-                             pB={1}>Label</Vertical>
-        }
-        case Controls.TEXT : {
-            return <Vertical key={child.id} onDragOver={handleDragOver(placeHolder)} p={2} pT={1} pB={1}>
-                <Controller render={Input} type={"input"} label={"Input"} controller={controller}
-                            name={"input"} disabled={false}/>
-            </Vertical>
-        }
-        case Controls.TEXT_AREA : {
-            return <Vertical key={child.id} onDragOver={handleDragOver(placeHolder)} p={2} pT={1} pB={1}>
-                <Controller render={TextArea} rows={3} label={"Text Area"} controller={controller}
-                            name={"textarea"} disabled={false}/>
-            </Vertical>
-        }
-        case Controls.BUTTON : {
-            return <Vertical key={child.id} onDragOver={handleDragOver(placeHolder)} p={2} pT={1} pB={1}>
-                <Button color={"primary"}>Button</Button>
-            </Vertical>
-        }
-        default : {
-            return <Vertical onDragOver={handleDragOver(placeHolder)}/>
-        }
+    if (child.type === Controls.SPACE) {
+        const isHorizontal = true;
+        const Component = isHorizontal ? Horizontal : Vertical;
+        return <Component
+            key={child.id}
+            onDragOver={handleDragOver()}
+            p={2}
+            m={2}
+            style={{minHeight: 30}}
+            brightness={-2}
+            color={"light"}
+            data-id={child.id}
+            onDragEnter={(event) => {
+                const placeHolder = getPlaceHolder({display: 'block'});
+                event.preventDefault();
+                event.stopPropagation();
+                if (placeHolder.parentElement !== event.currentTarget) {
+                    event.currentTarget.append(placeHolder);
+                }
+            }}
+            data-layout={isHorizontal ? 'horizontal' : 'vertical'}
+            onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+            }}
+        >{child.children && child.children.map(child => renderChild(child, controller))}</Component>
     }
+    if (child.type === Controls.LABEL) {
+        return <Vertical key={child.id} onDragOver={handleDragOver()} p={2} pT={1}
+                         pB={1}>Label</Vertical>
+    }
+    if (child.type === Controls.BUTTON) {
+        return <Vertical key={child.id} onDragOver={handleDragOver()} p={2} pT={1} pB={1}>
+            <Button color={"primary"}>Button</Button>
+        </Vertical>
+    }
+    if (child.type === Controls.TEXT) {
+        return <Vertical key={child.id} onDragOver={handleDragOver()} p={2} pT={1} pB={1}>
+            <Controller render={Input} type={"input"} label={"Input"} controller={controller}
+                        name={"input"} disabled={false}/>
+        </Vertical>
+    }
+    if (child.type === Controls.TEXT_AREA) {
+        return <Vertical key={child.id} onDragOver={handleDragOver()} p={2} pT={1} pB={1}>
+            <Controller render={TextArea} rows={3} label={"Text Area"} controller={controller}
+                        name={"textarea"} disabled={false}/>
+        </Vertical>
+    }
+
 }
 
-const RenderLayout = memo(({value, controller}) => {
-
+const RenderLayout = ({value, controller}) => {
     if (value === undefined) {
         return false;
     }
     return value.map(child => renderChild(child, controller));
-});
+}
+const RenderLayoutMemo = memo(RenderLayout);

@@ -14,7 +14,7 @@ export default function ControlPanel() {
         </Horizontal>
         <Vertical color={"light"} brightness={0.3}>
             <Vertical p={2} gap={3}>
-                <DraggableControls type={Controls.HORIZONTAL}>
+                <DraggableControls type={Controls.SPACE}>
                     <Horizontal height={30} flex={1} gap={3}>
                         <Horizontal b={3} flex={1}/>
                         <Horizontal b={3} flex={1}/>
@@ -45,7 +45,7 @@ export const Controls = {
     TEXT: 'text',
     TEXT_AREA: 'textArea',
     BUTTON: 'button',
-    HORIZONTAL: 'horizontal',
+    SPACE: 'space',
     LABEL: 'label'
 };
 
@@ -69,7 +69,6 @@ function DraggableControls({type, ...props}) {
     return <Vertical draggable={true}
                      onDragStart={handleDragStart}
                      onDragEnd={handleDragEnd}
-
                      opacity={isDragging ? 0.5 : 1}
                      p={2}
                      style={{fontSize: 18}} b={1}  {...props}>

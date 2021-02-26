@@ -116,7 +116,6 @@ export function useObserverMapper($observer, map = (value) => value) {
     useObserverListener($observer, (newValue, oldValue) => {
         const oldMapValue = map(oldValue);
         const newMapValue = map(newValue);
-        console.log('New value ', newMapValue, ' oldValue ', oldMapValue);
         if (oldMapValue !== newMapValue) {
             setNewObserver(newMapValue);
         }

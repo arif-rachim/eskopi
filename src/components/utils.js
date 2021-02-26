@@ -15,3 +15,14 @@ export function isFunction(functionToCheck) {
 export function isNullOrUndefined(param) {
     return param === undefined || param === null;
 }
+
+/**
+ * Function to convert json object into style
+ * @param style
+ * @returns {string}
+ */
+export function styleToString(style) {
+    return Object.keys(style).reduce((acc, key) => (
+        acc + key.split(/(?=[A-Z])/).join('-').toLowerCase() + ':' + style[key] + ';'
+    ), '');
+}
