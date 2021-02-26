@@ -1,5 +1,5 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {memo, useContext, useEffect, useRef} from "react";
+import {memo, useContext, useEffect, useRef,createContext} from "react";
 import {DropListenerContext} from "module/page-builder/index";
 import useObserver, {ObserverValue, useObserverMapper} from "components/useObserver";
 import {v4 as uuid} from "uuid";
@@ -9,13 +9,14 @@ import useForm, {Controller} from "components/useForm";
 import TextArea from "components/input/TextArea";
 import Button from "components/button/Button";
 import {styleToString} from "components/utils";
+import Space from "./controller/Space";
 
 /**
  * Function to return placeHolder object
  * @param style
  * @returns {HTMLElement}
  */
-function getPlaceHolder(style = undefined) {
+export function getPlaceHolder(style = undefined) {
     const innerStyle = {
         border: '1px solid #666',
         minWidth: '30px',
@@ -68,10 +69,10 @@ function traceParentId(element, root) {
     }
 }
 
+
 export default function LayoutPanel({data = {}}) {
     const dropListener = useContext(DropListenerContext);
     const [$data, setData] = useObserver(data);
-
     usePlaceHolderListener("drop", (event) => {
         const data = JSON.parse(event.dataTransfer.getData('text/plain'));
         // we need to know the parent first
@@ -146,13 +147,14 @@ export default function LayoutPanel({data = {}}) {
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop} p={2} data-layout={'vertical'}>
+
             <ObserverValue $observer={useObserverMapper($data, data => data.children)} render={RenderLayoutMemo}
                            controller={controller}/>
         </Vertical>
     </Vertical>
 }
 
-const handleDragOver = () => {
+export const handleDragOver = () => {
     return (event) => {
         event.stopPropagation();
         event.preventDefault();
@@ -215,33 +217,10 @@ const handleDragOver = () => {
     }
 }
 
-function renderChild(child, controller) {
+
+export function renderChild(child, controller) {
     if (child.type === Controls.SPACE) {
-        const isHorizontal = true;
-        const Component = isHorizontal ? Horizontal : Vertical;
-        return <Component
-            key={child.id}
-            onDragOver={handleDragOver()}
-            p={2}
-            m={2}
-            style={{minHeight: 30}}
-            brightness={-2}
-            color={"light"}
-            data-id={child.id}
-            onDragEnter={(event) => {
-                const placeHolder = getPlaceHolder({display: 'block'});
-                event.preventDefault();
-                event.stopPropagation();
-                if (placeHolder.parentElement !== event.currentTarget) {
-                    event.currentTarget.append(placeHolder);
-                }
-            }}
-            data-layout={isHorizontal ? 'horizontal' : 'vertical'}
-            onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-            }}
-        >{child.children && child.children.map(child => renderChild(child, controller))}</Component>
+        return <Space key={child.id} data={child} controller={controller} />
     }
     if (child.type === Controls.LABEL) {
         return <Vertical key={child.id} onDragOver={handleDragOver()} p={2} pT={1}
