@@ -1,5 +1,4 @@
 import {useEffect, useMemo, useRef, useState} from "react";
-import {v4 as uuid} from "uuid";
 import {isFunction} from "components/utils";
 
 
@@ -13,8 +12,9 @@ export function isObserver(observer) {
         typeof observer === 'object' &&
         'current' in observer &&
         'addListener' in observer
-
 }
+
+const OBSERVER_LISTENER_DB = new Map();
 
 /**
  * Hook to store the value, use useObserver instead use useState.
@@ -22,13 +22,12 @@ export function isObserver(observer) {
  * @returns {[{current:*,addListener:function(callback:function(value:any)):void}, function (value) ]}
  */
 export default function useObserver(defaultValue) {
-    const defaultValueRef = useRef(defaultValue);
-
+    const $value = useRef(isFunction(defaultValue) ? defaultValue.call() : defaultValue);
+    useEffect(() => () => {
+        OBSERVER_LISTENER_DB.delete($value);
+    }, []);
     return useMemo(() => {
-
         let listeners = {_global: []};
-        const current = isFunction(defaultValueRef.current) ? defaultValueRef.current.call() : defaultValueRef.current;
-        const $value = {current, id: uuid()}
         /**
          * @param {string | function(value)} key
          * @param {function(value)} callbackOrValue
@@ -40,7 +39,7 @@ export default function useObserver(defaultValue) {
                 key = undefined;
             }
 
-            const oldVal = key ? defaultValueRef.current[key] : defaultValueRef.current;
+            const oldVal = key ? $value.current[key] : $value.current;
             let newVal = callbackOrValue;
             if (isFunction(callbackOrValue)) {
                 newVal = callbackOrValue.apply(this, [oldVal]);
@@ -49,14 +48,14 @@ export default function useObserver(defaultValue) {
                 return;
             }
             if (key) {
-                defaultValueRef.current[key] = newVal;
+                $value.current[key] = newVal;
                 $value.current[key] = newVal;
                 listeners[key] = listeners[key] || [];
                 listeners[key].forEach((l) => {
                     l.apply(l, [newVal, oldVal]);
                 });
             } else {
-                defaultValueRef.current = newVal;
+                $value.current = newVal;
                 $value.current = newVal;
                 Object.keys(listeners).forEach((key) => {
                     if (key === '_global') {
@@ -98,9 +97,9 @@ export default function useObserver(defaultValue) {
                     listeners._global.splice(listeners._global.indexOf(listener), 1);
                 }
             }
-
         };
-        $value.addListener = addListener;
+        // here we register the listener
+        OBSERVER_LISTENER_DB.set($value, addListener);
         return [$value, setValue];
     }, []);
 }
@@ -121,6 +120,15 @@ export function useObserverMapper($observer, map = (value) => value) {
         }
     })
     return $newObserver
+}
+
+/**
+ * Function to get observer listener
+ * @param $observer
+ * @returns {any}
+ */
+export const getObserverListener = ($observer) => {
+    return OBSERVER_LISTENER_DB.get($observer);
 }
 
 /**
@@ -180,11 +188,12 @@ export function useObserverListener(key, $observer, listener = undefined) {
 
     const listenerRef = useRef(listener);
     listenerRef.current = listener;
+
     useEffect(() => {
         if ($observer === null || $observer === undefined || listenerRef.current === undefined) {
             return;
         }
-        return $observer.addListener(key, (newValue, oldValue) => {
+        return getObserverListener($observer)(key, (newValue, oldValue) => {
             listenerRef.current.call(listenerRef.current, newValue, oldValue);
         })
     }, [key, $observer]);

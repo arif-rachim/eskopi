@@ -71,6 +71,7 @@ function traceParentId(element, root) {
 export default function LayoutPanel({data = {}}) {
     const dropListener = useContext(DropListenerContext);
     const [$data, setData] = useObserver(data);
+
     usePlaceHolderListener("drop", (event) => {
         const data = JSON.parse(event.dataTransfer.getData('text/plain'));
         // we need to know the parent first
