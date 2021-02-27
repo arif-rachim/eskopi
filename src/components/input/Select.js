@@ -1,8 +1,8 @@
 import Input from "components/input/Input";
 import usePopup from "components/usePopup";
-import useObserver, {useObserverListener, useObserverValue} from "components/useObserver";
+import useObserver, {useObserverListener} from "components/useObserver";
 import List from "components/list/List";
-import {useEffect, useRef} from 'react';
+import {useRef} from 'react';
 import useClickOutside from "components/useClickOutside";
 import {Vertical} from "components/layout/Layout";
 
@@ -124,11 +124,9 @@ function PopupMenu({parentRef, closePanel, itemRenderer, dataKey, $data, $value}
     useClickOutside([parentRef, domRef], () => {
         closePanel(false);
     });
-    useEffect(() => {
-        console.log('Mounted');
-    }, []);
-    const [$selectedItem, setSelectedItem] = useObserver($value.current);
-    useObserverValue($selectedItem, (selectedItem) => {
+
+    const [$selectedItem, setSelectedItem] = useObserver($data.current);
+    useObserverListener($selectedItem, (selectedItem) => {
         closePanel(selectedItem);
     });
     return <Vertical domRef={domRef} pL={0.5} pR={0.5}>
