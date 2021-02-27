@@ -178,18 +178,21 @@ export default function ControllerPropertiesPanel() {
 function PropertyItemRenderer({data, formController}) {
     const type = data.type;
     let Render = Input;
+    const props = {
+        horizontalLabelPositionWidth: 80
+    };
+    const [$data] = useObserver(data.data);
     if (type === 'select') {
         Render = Select;
+        props.dataKey = data => data;
+        props.$data = $data;
     }
-    const [$data] = useObserver(data.data);
     return <Vertical color={"light"} brightness={-0.5} p={1} pB={0.5} pT={0.5}>
         <Controller controller={formController}
                     render={Render}
                     label={camelCaseToSentenceCase(data.label)}
                     name={data.label}
-                    $data={$data}
-                    dataKey={data => data?.label}
-                    horizontalLabelPositionWidth={80}
+                    {...props}
         />
     </Vertical>
 }

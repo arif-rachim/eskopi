@@ -1,7 +1,6 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import {isFunction} from "components/utils";
 
-
 /**
  * Utilities to check if an object is an observer.
  * @param {any} observer
@@ -23,6 +22,7 @@ const OBSERVER_LISTENER_DB = new Map();
  */
 export default function useObserver(defaultValue) {
     const $value = useRef(isFunction(defaultValue) ? defaultValue.call() : defaultValue);
+
     useEffect(() => () => {
         OBSERVER_LISTENER_DB.delete($value);
     }, []);
@@ -193,8 +193,13 @@ export function useObserverListener(key, $observer, listener = undefined) {
         if ($observer === null || $observer === undefined || listenerRef.current === undefined) {
             return;
         }
-        return getObserverListener($observer)(key, (newValue, oldValue) => {
+        const listener = getObserverListener($observer);
+        if (!listener) {
+            console.warn('It seems $observer does not registered, this might happen because the component remounted');
+            return;
+        }
+        return listener.call(key, (newValue, oldValue) => {
             listenerRef.current.call(listenerRef.current, newValue, oldValue);
-        })
+        });
     }, [key, $observer]);
 }

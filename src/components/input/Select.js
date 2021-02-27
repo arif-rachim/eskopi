@@ -1,8 +1,8 @@
 import Input from "components/input/Input";
 import usePopup from "components/usePopup";
-import useObserver, {useObserverListener} from "components/useObserver";
+import useObserver, {useObserverListener, useObserverValue} from "components/useObserver";
 import List from "components/list/List";
-import {useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import useClickOutside from "components/useClickOutside";
 import {Vertical} from "components/layout/Layout";
 
@@ -79,21 +79,22 @@ export default function Select({
     domRef = inputRef || domRef;
     const [$showPopup, setShowPopup] = useObserver(false);
     const showPopup = usePopup();
-    const [$selectedItem, setSelectedItem] = useObserver(null);
-    useObserverListener($selectedItem, (selectedItem) => {
-        console.log('We got selected item', selectedItem)
-    })
+
+
     useObserverListener($showPopup, (isShowPopup) => {
         (async () => {
             if (isShowPopup) {
-                await showPopup(closePanel => <PopupMenu parentRef={domRef} closePanel={closePanel}
-                                                         itemRenderer={itemRenderer} dataKey={dataKey}
-                                                         $data={$data} $selectedItem={$selectedItem}
-                                                         setSelectedItem={setSelectedItem}/>, {
+                const selectedItem = await showPopup(closePanel => <PopupMenu parentRef={domRef} closePanel={closePanel}
+                                                                              itemRenderer={itemRenderer}
+                                                                              dataKey={dataKey}
+                                                                              $data={$data} $value={$value}/>, {
                     anchorRef: domRef,
                     matchWithAnchorWidth: true
                 })
                 setShowPopup(false);
+                if (selectedItem) {
+                    onChange(selectedItem);
+                }
             }
         })();
     });
@@ -118,10 +119,17 @@ export default function Select({
     />
 }
 
-function PopupMenu({parentRef, closePanel, itemRenderer, dataKey, $data, $selectedItem, setSelectedItem}) {
+function PopupMenu({parentRef, closePanel, itemRenderer, dataKey, $data, $value}) {
     const domRef = useRef();
     useClickOutside([parentRef, domRef], () => {
         closePanel(false);
+    });
+    useEffect(() => {
+        console.log('Mounted');
+    }, []);
+    const [$selectedItem, setSelectedItem] = useObserver($value.current);
+    useObserverValue($selectedItem, (selectedItem) => {
+        closePanel(selectedItem);
     });
     return <Vertical domRef={domRef} pL={0.5} pR={0.5}>
         <List itemRenderer={itemRenderer} dataKey={dataKey} $data={$data} $selectedItem={$selectedItem}

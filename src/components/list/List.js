@@ -2,7 +2,12 @@ import {Vertical} from "components/layout/Layout";
 import {ObserverValue, useObserverListener} from "components/useObserver";
 import {useState} from "react";
 
-const DEFAULT_DATA_KEY = (data) => data?.id;
+const DEFAULT_DATA_KEY = (data) => {
+    if (data && !('id' in data)) {
+        console.error('There is no `id` key in ', data);
+    }
+    return data?.id
+};
 
 /**
  *
@@ -67,7 +72,7 @@ function DefaultItemRender({data, setSelectedItem, $selectedItem, dataKey}) {
     useObserverListener($selectedItem, (selectedItem) => {
         setSelected(dataKey(selectedItem) === dataKey(data))
     })
-    return <Vertical p={1} color={"light"} brightness={selected ? -2 : -1} onClick={() => {
+    return <Vertical p={1} color={"light"} brightness={selected ? -1 : 0} onClick={() => {
         setSelectedItem(data);
     }}>{data}</Vertical>
 }
