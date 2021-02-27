@@ -33,13 +33,13 @@ export default function useObserver(defaultValue) {
          * @param {function(value)} callbackOrValue
          */
         const setValue = (key, callbackOrValue) => {
-
             if (callbackOrValue === undefined) {
                 callbackOrValue = key;
                 key = undefined;
             }
 
             const oldVal = key ? defaultValueRef.current[key] : defaultValueRef.current;
+
             let newVal = callbackOrValue;
             if (isFunction(callbackOrValue)) {
                 newVal = callbackOrValue.apply(this, [oldVal]);
@@ -48,11 +48,15 @@ export default function useObserver(defaultValue) {
                 return;
             }
             if (key) {
+                const oldValCopy = JSON.parse(JSON.stringify(defaultValueRef.current));
                 defaultValueRef.current[key] = newVal;
                 $value.current[key] = newVal;
                 listeners[key] = listeners[key] || [];
                 listeners[key].forEach((l) => {
                     l.apply(l, [newVal, oldVal]);
+                });
+                listeners._global.forEach((l) => {
+                    l.apply(l, [defaultValueRef.current, oldValCopy]);
                 });
             } else {
                 defaultValueRef.current = newVal;

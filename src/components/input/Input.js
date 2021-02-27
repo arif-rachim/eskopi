@@ -73,7 +73,8 @@ function Input({
                    ...props
                }) {
     const [theme] = useTheme();
-    const value = useObserverValue(name, $value);
+    let value = useObserverValue(name, $value);
+    value = value || '';
     const errorMessage = useObserverValue(name, $errors);
     const isDisabled = useObserverValue($disabled);
     const buttonStyle = {

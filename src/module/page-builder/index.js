@@ -6,13 +6,14 @@ import ControlPanel from "module/page-builder/ControlPanel";
 import LayoutPanel from "module/page-builder/LayoutPanel";
 import ControllerPropertiesPanel from "./ControllerPropertiesPanel";
 
-export const SelectedControlContext = createContext();
 export const DropListenerContext = createContext(null);
 export default function PageBuilder() {
     const [$selectedPage, setSelectedPage] = useObserver();
+    const [$data, setData] = useObserver({});
+    const [$selectedController,setSelectedController] = useObserver();
     const dropListener = useRef();
     return <DropListenerContext.Provider value={dropListener}>
-        <SelectedControlContext.Provider value={useObserver()}>
+
             <Vertical height={'100%'}>
                 <Horizontal height={'100%'}>
                     <Vertical height={'100%'} width={200} color={"light"} bR={4}>
@@ -20,14 +21,17 @@ export default function PageBuilder() {
                         <ControlPanel/>
                     </Vertical>
                     <Vertical flex={1}>
-                        <LayoutPanel/>
+                        <LayoutPanel $data={$data} setData={setData} setSelectedController={setSelectedController}/>
                     </Vertical>
                     <Vertical width={200} color={"light"} brightness={-3}>
-                        <ControllerPropertiesPanel/>
+                        <ControllerPropertiesPanel
+                            $layout={$data}
+                            setLayout={setData}
+                            $selectedController={$selectedController}
+                        />
                     </Vertical>
                 </Horizontal>
             </Vertical>
-        </SelectedControlContext.Provider>
     </DropListenerContext.Provider>
 }
 

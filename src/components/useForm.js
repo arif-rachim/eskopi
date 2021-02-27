@@ -27,29 +27,6 @@ const handleSubmitFactory = (controller) => (callback) => (event) => {
 
 }
 
-/**
- * Create register method
- * @param {React.MutableRefObject<{validateOn: {}, $errors: (React.MutableRefObject<*>|setObserver), $value: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>} controller
- * @returns {function(*=): function(*): void}
- */
-const registerFactory = (controller) => (validator) => {
-    const propsRef = useRef({});
-    propsRef.current.validator = validator;
-    propsRef.current.controller = controller;
-    return useCallback((input) => {
-        if (!input) {
-            return;
-        }
-        propsRef.current.name = input.getAttribute('name');
-        const onBlur = callbackOnBlur(propsRef);
-        const onChange = callbackOnChange(propsRef, () => {
-        });
-        input.addEventListener('input', (event) => {
-            onChange(event.target.value);
-        });
-        input.addEventListener('blur', onBlur);
-    }, []);
-}
 
 /**
  * @param {Object} defaultValue
@@ -68,12 +45,10 @@ export default function useForm(defaultValue = {}) {
         $errors,
         setErrors,
         validateOn: {},
-        validator: {}
+        validator: {},
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleSubmit = useCallback(handleSubmitFactory(controller), []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const register = useCallback(registerFactory(controller), []);
     const reset = useCallback((defaultValue) => {
 
         const {setErrors, setValue} = controller.current;
@@ -96,7 +71,6 @@ export default function useForm(defaultValue = {}) {
     }, []);
     return {
         handleSubmit,
-        register,
         controller,
         $value,
         setValue,

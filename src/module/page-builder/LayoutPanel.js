@@ -1,7 +1,7 @@
 import {Vertical} from "components/layout/Layout";
 import {memo, useContext, useEffect, useRef} from "react";
 import {DropListenerContext} from "module/page-builder/index";
-import useObserver, {ObserverValue, useObserverMapper} from "components/useObserver";
+import {ObserverValue, useObserverMapper} from "components/useObserver";
 import {v4 as uuid} from "uuid";
 import {Controls} from "module/page-builder/ControlPanel";
 import useForm from "components/useForm";
@@ -71,9 +71,8 @@ function traceParentId(element, root) {
 }
 
 
-export default function LayoutPanel({data = {}}) {
+export default function LayoutPanel({$data,setData,setSelectedController}) {
     const dropListener = useContext(DropListenerContext);
-    const [$data, setData] = useObserver(data);
     usePlaceHolderListener("drop", (event) => {
         const data = JSON.parse(event.dataTransfer.getData('text/plain'));
         // we need to know the parent first
@@ -150,7 +149,7 @@ export default function LayoutPanel({data = {}}) {
                   onDrop={handleDrop} p={2} data-layout={'vertical'}>
 
             <ObserverValue $observer={useObserverMapper($data, data => data.children)} render={RenderLayoutMemo}
-                           controller={controller}/>
+                           controller={controller} setSelectedController={setSelectedController} path={[]}/>
         </Vertical>
     </Vertical>
 }
@@ -180,15 +179,12 @@ export const handleDragOver = () => {
                 if (nextSibling) {
                     parentTarget.insertBefore(placeHolder, nextSibling);
                 } else {
-                    console.log('a');
                     parentTarget.appendChild(placeHolder);
                 }
             } else if (isLayout === 'horizontal') {
-                console.log('b');
                 currentTarget.appendChild(placeHolder);
 
             } else if (isLayout === 'vertical') {
-                console.log('c');
                 currentTarget.appendChild(placeHolder);
             }
         }
@@ -200,16 +196,13 @@ export const handleDragOver = () => {
                 if (nextSibling) {
                     parentTarget.insertBefore(placeHolder, nextSibling);
                 } else {
-                    console.log('d');
                     parentTarget.appendChild(placeHolder);
                 }
             } else if (isLayout === 'horizontal') {
-                console.log('e');
                 if (placeHolder.parentElement !== currentTarget) {
                     currentTarget.appendChild(placeHolder);
                 }
             } else if (isLayout === 'vertical') {
-                console.log('f');
                 if (placeHolder.parentElement !== currentTarget) {
                     currentTarget.appendChild(placeHolder);
                 }
@@ -219,29 +212,29 @@ export const handleDragOver = () => {
 }
 
 
-export function renderChild(child, controller) {
+export function renderChild(path,child, controller,setSelectedController) {
+
     if (child.type === Controls.SPACE) {
-        return <SpaceController key={child.id} data={child} formController={controller}/>
+        return <SpaceController key={child.id} data={child} path={path} formController={controller} setSelectedController={setSelectedController}/>
     }
     if (child.type === Controls.LABEL) {
-        return <LabelController key={child.id} data={child} formController={controller}/>
+        return <LabelController key={child.id} data={child} path={path} formController={controller} setSelectedController={setSelectedController}/>
     }
     if (child.type === Controls.BUTTON) {
-        return <ButtonController key={child.id} data={child} formController={controller}/>
+        return <ButtonController key={child.id} data={child} path={path} formController={controller} setSelectedController={setSelectedController}/>
     }
     if (child.type === Controls.TEXT_INPUT) {
-        return <TextInputController key={child.id} data={child} formController={controller}/>
+        return <TextInputController key={child.id} data={child} path={path} formController={controller} setSelectedController={setSelectedController}/>
     }
     if (child.type === Controls.TEXT_AREA) {
-        return <TextAreaController key={child.id} data={child} formController={controller}/>
+        return <TextAreaController key={child.id} data={child} path={path} formController={controller} setSelectedController={setSelectedController}/>
     }
-
 }
 
-const RenderLayout = ({value, controller}) => {
+const RenderLayout = ({value, controller,setSelectedController,path}) => {
     if (value === undefined) {
         return false;
     }
-    return value.map(child => renderChild(child, controller));
+    return value.map(child => renderChild(path,child, controller,setSelectedController));
 }
 const RenderLayoutMemo = memo(RenderLayout);

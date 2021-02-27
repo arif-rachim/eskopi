@@ -1,18 +1,15 @@
 import {Vertical} from "components/layout/Layout";
-import {SelectedControlContext} from "./index";
-import {useContext} from "react";
-import useObserver, {useObserverListener} from "components/useObserver";
+import useObserver from "components/useObserver";
 import List from "components/list/List";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import {camelCaseToSentenceCase} from "components/utils";
 import {Controls} from "module/page-builder/ControlPanel";
 import Select from "components/input/Select";
-
-const IGNORED_PROPERTIES = ['children', 'type', 'id'];
+import {useObserverListener} from "components/useObserver";
+import Button from "components/button/Button";
 
 /**
-
  @param {useRef} inputRef
  * @param {string} name
  * @param {{current:boolean}} $disabled
@@ -137,10 +134,25 @@ const controllerPropertiesCatalog = {
         }
     }
 }
-export default function ControllerPropertiesPanel() {
-    const [$selectedController, setSelectedController] = useContext(SelectedControlContext);
+export default function ControllerPropertiesPanel({$layout,setLayout,$selectedController}) {
+
     const [$listData, setListData] = useObserver();
-    const {controller: formController, handleSubmit, reset} = useForm();
+    const {controller: formController, handleSubmit, reset,$value} = useForm();
+    useObserverListener($value,(value) => {
+        const selectedController = $selectedController.current;
+        const path = selectedController.path;
+        setLayout(layout => {
+            const newLayout = JSON.parse(JSON.stringify(layout));
+            let nodeToUpdate = newLayout;
+            for (const pathId of path) {
+                nodeToUpdate = nodeToUpdate.children.filter(c => c.id === pathId)[0];
+            }
+            Object.keys(value).forEach(key => {
+                nodeToUpdate[key] = value[key];
+            })
+            return newLayout;
+        });
+    });
     useObserverListener($selectedController, (selectedController) => {
         const common = controllerPropertiesCatalog.common;
         const specific = controllerPropertiesCatalog[selectedController.type];
@@ -168,9 +180,11 @@ export default function ControllerPropertiesPanel() {
     // ok lets do something here /// lets render the properties over here !
     return <Vertical color={'light'} brightness={1} height={'100%'} overflow={'auto'}>
         <form action="" onSubmit={handleSubmit((data) => {
+            debugger;
         })}>
             <List $data={$listData} dataKey={data => data.label} formController={formController}
                   itemRenderer={PropertyItemRenderer}/>
+                  <Button type={'submit'}> Save </Button>
         </form>
     </Vertical>
 }

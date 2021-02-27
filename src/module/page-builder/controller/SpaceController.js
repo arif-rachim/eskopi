@@ -1,12 +1,10 @@
 import {Horizontal, Vertical} from "../../../components/layout/Layout";
-import {useContext} from "react";
 import {getPlaceHolder, handleDragOver, renderChild} from "../LayoutPanel";
-import {SelectedControlContext} from "../index";
 
-export default function SpaceController({data, formController}) {
-    const isHorizontal = !!data.isHorizontal;
+export default function SpaceController({data,path, formController,setSelectedController}) {
+    const isHorizontal = data.layout === 'horizontal';
     const Component = isHorizontal ? Horizontal : Vertical;
-    const [$controller, setController] = useContext(SelectedControlContext);
+    path = [...path,data.id];
     return <Component
         onDragOver={handleDragOver()}
         p={2}
@@ -27,7 +25,7 @@ export default function SpaceController({data, formController}) {
         onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
-            setController(data);
+            setSelectedController({...data,path});
         }}
-    >{data.children && data.children.map(child => renderChild(child, formController))}</Component>
+    >{data.children && data.children.map(child => renderChild(path,child, formController,setSelectedController))}</Component>
 }
