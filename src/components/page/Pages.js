@@ -84,7 +84,6 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
 }
 
 function RenderPages({value, $pageActiveIndex}) {
-
     return value.map((Element, index) => {
         const key = Element.key || '/';
         return <MemoPage $activeIndex={$pageActiveIndex} index={index} Element={Element} key={key}/>

@@ -1,7 +1,7 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "../../../components/useForm";
 import Button from "../../../components/button/Button";
-import {useObserverValue} from "components/useObserver";
+import {useObserverMapper, useObserverValue} from "components/useObserver";
 import Input from "components/input/Input";
 
 export default function LoginScreen() {
@@ -39,7 +39,9 @@ export default function LoginScreen() {
 
 
 function Checkbox({name, data, $value, $errors, onChange, onBlur}) {
-    const value = useObserverValue(name, $value);
+    const $nameValue = useObserverMapper($value, value => value[name]);
+    let value = useObserverValue($nameValue);
+
     return <input type={'checkbox'}
                   name={name}
                   value={data}

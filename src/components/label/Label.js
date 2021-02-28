@@ -1,6 +1,6 @@
 import {calculateBrightness, Vertical} from "../layout/Layout";
 import useTheme from "../useTheme";
-import {useObserverValue} from "components/useObserver";
+import {useObserverMapper, useObserverValue} from "components/useObserver";
 
 /**
  * @param {string} name
@@ -14,8 +14,9 @@ import {useObserverValue} from "components/useObserver";
 export default function Label({name, color, $value, style, ...props}) {
     $value = $value || {current: ''};
     $value.current = $value.current ?? '';
-    name = name || ''
-    let value = useObserverValue(name, $value)
+    name = name || '';
+    const $nameValue = useObserverMapper($value, value => value[name]);
+    let value = useObserverValue($nameValue)
     const [theme] = useTheme();
     if (color in theme) {
         color = calculateBrightness(theme[color], -0.6, 1);

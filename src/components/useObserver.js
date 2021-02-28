@@ -22,24 +22,15 @@ export function isObserver(observer) {
  */
 export default function useObserver(defaultValue) {
     const defaultValueRef = useRef(defaultValue);
-
     return useMemo(() => {
-
-        let listeners = {_global: []};
+        let listeners = [];
         const current = isFunction(defaultValueRef.current) ? defaultValueRef.current.call() : defaultValueRef.current;
         const $value = {current}
         /**
-         * @param {string | function(value)} key
          * @param {function(value)} callbackOrValue
          */
-        const setValue = (key, callbackOrValue) => {
-            if (callbackOrValue === undefined) {
-                callbackOrValue = key;
-                key = undefined;
-            }
-
-            const oldVal = key ? defaultValueRef.current[key] : defaultValueRef.current;
-
+        const setValue = (callbackOrValue) => {
+            const oldVal = defaultValueRef.current;
             let newVal = callbackOrValue;
             if (isFunction(callbackOrValue)) {
                 newVal = callbackOrValue.apply(this, [oldVal]);
@@ -47,61 +38,25 @@ export default function useObserver(defaultValue) {
             if (newVal === oldVal) {
                 return;
             }
-            if (key) {
-                const oldValCopy = JSON.parse(JSON.stringify(defaultValueRef.current));
-                defaultValueRef.current[key] = newVal;
-                $value.current[key] = newVal;
-                listeners[key] = listeners[key] || [];
-                listeners[key].forEach((l) => {
-                    l.apply(l, [newVal, oldVal]);
-                });
-                listeners._global.forEach((l) => {
-                    l.apply(l, [defaultValueRef.current, oldValCopy]);
-                });
-            } else {
-                defaultValueRef.current = newVal;
-                $value.current = newVal;
-                Object.keys(listeners).forEach((key) => {
-                    if (key === '_global') {
-                        listeners._global.forEach((l) => {
-                            l.apply(l, [newVal, oldVal]);
-                        });
-                    } else {
-                        if (newVal[key] === oldVal[key]) {
-                            return;
-                        }
-                        listeners[key].forEach((l) => {
-                            l.apply(l, [newVal[key], oldVal[key]]);
-                        })
-                    }
-                })
-            }
+            defaultValueRef.current = newVal;
+            $value.current = newVal;
+            listeners.forEach((l) => {
+                if (newVal === oldVal) {
+                    return;
+                }
+                l.apply(l, [newVal, oldVal]);
+            })
         };
 
         /**
-         *
-         * @param {string | function()}key
          * @param {function()} listener
          * @returns {function(): void}
          */
-        const addListener = (key, listener) => {
-            if (listener === undefined && isFunction(key)) {
-                listener = key;
-                key = undefined;
+        const addListener = (listener) => {
+            listeners.push(listener);
+            return () => {
+                listeners.splice(listeners.indexOf(listener), 1);
             }
-            if (key) {
-                listeners[key] = listeners[key] || [];
-                listeners[key].push(listener);
-                return () => {
-                    listeners[key].splice(listeners[key].indexOf(listener), 1);
-                }
-            } else {
-                listeners._global.push(listener);
-                return () => {
-                    listeners._global.splice(listeners._global.indexOf(listener), 1);
-                }
-            }
-
         };
         $value.addListener = addListener;
         return [$value, setValue];
@@ -128,26 +83,18 @@ export function useObserverMapper($observer, map = (value) => value) {
 
 /**
  * hook to extract the value of observer.
- * @param {string | {current}} key
  * @param {{current:*} | null} observer
  * @returns {*}
  */
-export function useObserverValue(key, observer = undefined) {
-    if (observer === undefined || observer === null) {
-        observer = key;
-        key = undefined;
-    }
-    const [state, setState] = useState(() => {
+export function useObserverValue(observer = undefined) {
 
+    const [state, setState] = useState(() => {
         if (observer === undefined) {
             return undefined;
         }
-        if (key && observer.current) {
-            return observer.current[key];
-        }
         return observer.current;
     });
-    useObserverListener(key, observer, (value) => {
+    useObserverListener(observer, (value) => {
         setState(value);
     })
     return state;
@@ -162,32 +109,26 @@ export function useObserverValue(key, observer = undefined) {
  * @returns {JSX.Element}
  * @constructor
  */
-export function ObserverValue({key, $observer, render, ...props}) {
-    const value = useObserverValue(key, $observer);
+export function ObserverValue({$observer, render, ...props}) {
+    const value = useObserverValue($observer);
     const Render = render;
     return <Render value={value} {...props}/>
 }
 
 /**
  * hook to listen when observer is changed, this is an alternative then using the addListener in observer.
- * @param {string|{current:*}} key
  * @param {{current}|function(newValue,oldValue)} $observer
  * @param {function(newValue,oldValue)} listener
  */
-export function useObserverListener(key, $observer, listener = undefined) {
-    if (listener === undefined) {
-        listener = $observer;
-        $observer = key;
-        key = undefined;
-    }
+export function useObserverListener($observer, listener = undefined) {
     const listenerRef = useRef(listener);
     listenerRef.current = listener;
     useEffect(() => {
         if ($observer === null || $observer === undefined || listenerRef.current === undefined) {
             return;
         }
-        return $observer.addListener(key, (newValue, oldValue) => {
+        return $observer.addListener((newValue, oldValue) => {
             listenerRef.current.call(listenerRef.current, newValue, oldValue);
         })
-    }, [key, $observer]);
+    }, [$observer]);
 }

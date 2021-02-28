@@ -2,7 +2,7 @@ import styles from "./Input.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
 import React, {useCallback} from "react";
-import {useObserverValue} from "components/useObserver";
+import {useObserverMapper, useObserverValue} from "components/useObserver";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
@@ -74,8 +74,12 @@ function Input({
                    ...props
                }) {
     const [theme] = useTheme();
-    const value = useObserverValue(name, $value);
-    const errorMessage = useObserverValue(name, $errors);
+    const $nameValue = useObserverMapper($value, value => value[name]);
+    let value = useObserverValue($nameValue);
+
+    const $errorValue = useObserverMapper($errors, value => value[name]);
+    let errorMessage = useObserverValue($errorValue);
+
     const isDisabled = useObserverValue($disabled);
     const buttonStyle = {
         background: 'none',

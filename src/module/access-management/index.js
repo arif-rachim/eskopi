@@ -1,6 +1,6 @@
 import {Vertical} from "../../components/layout/Layout";
 
-function AccessManagement(){
+function AccessManagement() {
     return <Vertical height={'100%'}>
         This is access management
     </Vertical>

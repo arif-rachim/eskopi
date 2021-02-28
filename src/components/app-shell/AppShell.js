@@ -27,14 +27,16 @@ function Content({children, $showMenu, setShowMenu, menuButtonRef}) {
         <Menu $showMenu={$showMenu} setShowMenu={setShowMenu} menuButtonRef={menuButtonRef}/>
     </Vertical>
 }
+
 const defaultMenus = {
-    'Page Builder' : {
-        path : 'page-builder'
+    'Page Builder': {
+        path: 'page-builder'
     },
-    'Access Management' : {
-        path : 'access-management'
+    'Access Management': {
+        path: 'access-management'
     }
 };
+
 function Menu({$showMenu, setShowMenu, menuButtonRef}) {
     const showMenu = useObserverValue($showMenu);
     const domRef = useRef();
@@ -42,15 +44,16 @@ function Menu({$showMenu, setShowMenu, menuButtonRef}) {
         setShowMenu(false);
     });
     const menus = defaultMenus; // later on we can pull dynamic menus from database.
-    const {controller} = useForm({search:''});
+    const {controller} = useForm({search: ''});
     return <Vertical domRef={domRef}
                      top={0} height={'100%'} brightness={0.5}
                      position={"absolute"}
                      color={"light"}
                      width={200}
                      left={showMenu ? 0 : -200} transition={'left 200ms cubic-bezier(0,0,0.7,0.9)'} bR={1}>
-        <Vertical p={1} bB={1} >
-            <Controller name={'search'} controller={controller} render={Input} validateOn={'change'} placeholder={'Search'}/>
+        <Vertical p={1} bB={1}>
+            <Controller name={'search'} controller={controller} render={Input} validateOn={'change'}
+                        placeholder={'Search'}/>
         </Vertical>
 
         {Object.keys(menus).map(menu => {

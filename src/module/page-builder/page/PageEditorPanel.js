@@ -1,57 +1,17 @@
 import {Vertical} from "components/layout/Layout";
-import {memo, useContext, useEffect, useRef} from "react";
+import {memo, useContext, useRef} from "react";
 import {DropListenerContext} from "module/page-builder/index";
 import {ObserverValue, useObserverMapper} from "components/useObserver";
 import {v4 as uuid} from "uuid";
-import {Controls} from "module/page-builder/ControlPanel";
+import {Controls} from "module/page-builder/controls/ControlListPanel";
 import useForm from "components/useForm";
-import {styleToString} from "components/utils";
-import SpaceController from "./controller/SpaceController";
-import LabelController from "module/page-builder/controller/LabelController";
-import ButtonController from "module/page-builder/controller/ButtonController";
-import TextInputController from "module/page-builder/controller/TextInputController";
-import TextAreaController from "module/page-builder/controller/TextAreaController";
+import SpaceController from "module/page-builder/controls/controller/SpaceController";
+import LabelController from "module/page-builder/controls/controller/LabelController";
+import ButtonController from "module/page-builder/controls/controller/ButtonController";
+import TextInputController from "module/page-builder/controls/controller/TextInputController";
+import TextAreaController from "module/page-builder/controls/controller/TextAreaController";
+import {getPlaceHolder, usePlaceHolderListener} from "module/page-builder/page/getPlaceHolder";
 
-/**
- * Function to return placeHolder object
- * @param style
- * @returns {HTMLElement}
- */
-export function getPlaceHolder(style = undefined) {
-    const innerStyle = {
-        border: '1px solid #666',
-        minWidth: '30px',
-        minHeight: '30px',
-        boxSizing: 'border-box',
-        display: 'none'
-    }
-    if (document.getElementById('my-element') === null) {
-        const element = document.createElement('div');
-        element.setAttribute('style', styleToString(innerStyle));
-        element.setAttribute('id', 'my-element');
-        document.body.appendChild(element);
-    }
-    const placeHolder = document.getElementById('my-element');
-    if (style) {
-        placeHolder.setAttribute('style', styleToString({...innerStyle, ...style}));
-    }
-    return placeHolder;
-}
-
-
-/**
- * @param {'dragover','dragleave','dragenter','drag','drop','dragend','dragexit'} event
- * @param {function(event)} listener
- */
-function usePlaceHolderListener(event, listener) {
-    useEffect(() => {
-        const placeHolder = getPlaceHolder();
-        placeHolder.addEventListener(event, listener);
-        return () => {
-            placeHolder.removeEventListener(event, listener);
-        }
-    }, [event, listener]);
-}
 
 /**
  * Function to get parent element ids from current parentElement
@@ -71,7 +31,7 @@ function traceParentId(element, root) {
 }
 
 
-export default function LayoutPanel({$data,setData,setSelectedController}) {
+export default function PageEditorPanel({$data, setData, setSelectedController}) {
     const dropListener = useContext(DropListenerContext);
     usePlaceHolderListener("drop", (event) => {
         const data = JSON.parse(event.dataTransfer.getData('text/plain'));
@@ -212,29 +172,34 @@ export const handleDragOver = () => {
 }
 
 
-export function renderChild(path,child, controller,setSelectedController) {
+export function renderChild(path, child, controller, setSelectedController) {
 
     if (child.type === Controls.SPACE) {
-        return <SpaceController key={child.id} data={child} path={path} formController={controller} setSelectedController={setSelectedController}/>
+        return <SpaceController key={child.id} data={child} path={path} formController={controller}
+                                setSelectedController={setSelectedController}/>
     }
     if (child.type === Controls.LABEL) {
-        return <LabelController key={child.id} data={child} path={path} formController={controller} setSelectedController={setSelectedController}/>
+        return <LabelController key={child.id} data={child} path={path} formController={controller}
+                                setSelectedController={setSelectedController}/>
     }
     if (child.type === Controls.BUTTON) {
-        return <ButtonController key={child.id} data={child} path={path} formController={controller} setSelectedController={setSelectedController}/>
+        return <ButtonController key={child.id} data={child} path={path} formController={controller}
+                                 setSelectedController={setSelectedController}/>
     }
     if (child.type === Controls.TEXT_INPUT) {
-        return <TextInputController key={child.id} data={child} path={path} formController={controller} setSelectedController={setSelectedController}/>
+        return <TextInputController key={child.id} data={child} path={path} formController={controller}
+                                    setSelectedController={setSelectedController}/>
     }
     if (child.type === Controls.TEXT_AREA) {
-        return <TextAreaController key={child.id} data={child} path={path} formController={controller} setSelectedController={setSelectedController}/>
+        return <TextAreaController key={child.id} data={child} path={path} formController={controller}
+                                   setSelectedController={setSelectedController}/>
     }
 }
 
-const RenderLayout = ({value, controller,setSelectedController,path}) => {
+const RenderLayout = ({value, controller, setSelectedController, path}) => {
     if (value === undefined) {
         return false;
     }
-    return value.map(child => renderChild(path,child, controller,setSelectedController));
+    return value.map(child => renderChild(path, child, controller, setSelectedController));
 }
 const RenderLayoutMemo = memo(RenderLayout);

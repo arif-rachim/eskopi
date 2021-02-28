@@ -50,20 +50,26 @@ export default function useForm(defaultValue = {}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleSubmit = useCallback(handleSubmitFactory(controller), []);
     const reset = useCallback((defaultValue) => {
-
         const {setErrors, setValue} = controller.current;
         Object.keys(controller.current.$errors.current).forEach(key => {
-            setErrors(key, '');
+            setErrors(oldErrors => {
+                const newErrors = {...oldErrors};
+                delete newErrors[key];
+                return newErrors;
+            });
         });
         controller.current.defaultValue = defaultValue ? defaultValue : controller.current.defaultValue;
-        Object.keys(controller.current.$value.current).forEach(key => {
-            if (controller.current?.defaultValue && key in controller.current.defaultValue) {
-                setValue(key, controller.current.defaultValue[key]);
-            } else {
-                setValue(key, '');
-            }
-
-        })
+        setValue(oldValue => {
+            const newValue = {...oldValue};
+            Object.keys(oldValue).forEach(key => {
+                if (controller.current.defaultValue && key in controller.current.defaultValue) {
+                    newValue[key] = controller.current.defaultValue[key];
+                } else {
+                    delete newValue[key];
+                }
+            });
+            return newValue;
+        });
 
         controller.current.userEditingField = {};
         controller.current.previousValue = {};
@@ -92,7 +98,11 @@ function validateError(controller, name, validator, value) {
     if (validator) {
         newError = validator.apply(validator, [value, controller.current.$value.current]);
     }
-    controller.current.setErrors(name, newError);
+    controller.current.setErrors(oldErrors => {
+        const newErrors = {...oldErrors};
+        newErrors[name] = newError;
+        return newErrors;
+    });
 }
 
 /**
@@ -128,7 +138,11 @@ const callbackOnChange = (propsRef) => (value) => {
     // here we flag that the user actually did perform editing
     controller.current.userEditingField[name] = true;
     // here is the flag to store the value
-    controller.current.setValue(name, value);
+    controller.current.setValue(oldValue => {
+        const newValue = {...oldValue};
+        newValue[name] = value;
+        return newValue;
+    });
     // this is the flag indicates that the field has been modified
     controller.current.modified[name] = true;
     if (controller.current.validateOn[name] === 'change') {

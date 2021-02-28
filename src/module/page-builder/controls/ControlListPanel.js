@@ -6,7 +6,7 @@ import Button from "components/button/Button";
 import {useContext, useState} from "react";
 import {DropListenerContext} from "module/page-builder/index";
 
-export default function ControlPanel() {
+export default function ControlListPanel() {
     const {controller} = useForm({input: '', textArea: ''});
     return <Vertical flex={1} color={'light'} brightness={0.1} bB={3}>
         <Horizontal color={"light"} brightness={-2} bB={3} p={1} vAlign={'center'}>

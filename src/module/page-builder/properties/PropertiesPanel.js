@@ -1,13 +1,11 @@
 import {Vertical} from "components/layout/Layout";
-import useObserver from "components/useObserver";
+import useObserver, {useObserverListener} from "components/useObserver";
 import List from "components/list/List";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import {camelCaseToSentenceCase} from "components/utils";
-import {Controls} from "module/page-builder/ControlPanel";
+import {Controls} from "module/page-builder/controls/ControlListPanel";
 import Select from "components/input/Select";
-import {useObserverListener} from "components/useObserver";
-import Button from "components/button/Button";
 
 /**
  @param {useRef} inputRef
@@ -134,11 +132,11 @@ const controllerPropertiesCatalog = {
         }
     }
 }
-export default function ControllerPropertiesPanel({$layout,setLayout,$selectedController}) {
+export default function PropertiesPanel({$layout, setLayout, $selectedController}) {
 
     const [$listData, setListData] = useObserver();
-    const {controller: formController, handleSubmit, reset,$value} = useForm();
-    useObserverListener($value,(value) => {
+    const {controller: formController, reset, $value} = useForm();
+    useObserverListener($value, (value) => {
         const selectedController = $selectedController.current;
         const path = selectedController.path;
         setLayout(layout => {
@@ -179,13 +177,10 @@ export default function ControllerPropertiesPanel({$layout,setLayout,$selectedCo
     })
     // ok lets do something here /// lets render the properties over here !
     return <Vertical color={'light'} brightness={1} height={'100%'} overflow={'auto'}>
-        <form action="" onSubmit={handleSubmit((data) => {
-            debugger;
-        })}>
-            <List $data={$listData} dataKey={data => data.label} formController={formController}
-                  itemRenderer={PropertyItemRenderer}/>
-                  <Button type={'submit'}> Save </Button>
-        </form>
+
+        <List $data={$listData} dataKey={data => data.label} formController={formController}
+              itemRenderer={PropertyItemRenderer}/>
+
     </Vertical>
 }
 

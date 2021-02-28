@@ -15,12 +15,12 @@ export function findMostMatchingComponent(pathArray, routing) {
     for (let i = paths.length; i >= 0; i--) {
         const pathMatch = paths.join('/');
         if (keys.indexOf(pathMatch) >= 0) {
-            pathArray = pathArray.slice(i,pathArray.length);
+            pathArray = pathArray.slice(i, pathArray.length);
             return {Element: routing[pathMatch], params: pathArray, key: pathMatch}
         }
         paths.splice(i - 1, 1);
     }
-    return {Element: InvalidRoute, params:[],key:pathArray.join('/')};
+    return {Element: InvalidRoute, params: [], key: pathArray.join('/')};
 
 }
 
