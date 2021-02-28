@@ -38,10 +38,10 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
     useObserverListener($activeIndex, (activeIndex) => setVisible(activeIndex === index));
     const PANEL_GRADIENT = useGradient(180).stop(0, 'light', -1).stop(0.1, 'light', -2).stop(0.9, 'light', -2).stop(1, 'light', -3).toString();
     const [$pageActiveIndex, setPageActiveIndex] = useObserver(0);
-
-
+    const [$showAddressBar, setShowAddressBar] = useObserver(false);
     return <Vertical height={'100%'} width={'100%'} position={'absolute'} $visible={$visible}>
-        <Horizontal background={PANEL_GRADIENT} p={1} vAlign={'center'} gap={2}>
+
+        <Horizontal background={PANEL_GRADIENT} vAlign={'center'} gap={2} $visible={$showAddressBar}>
             <Horizontal>
                 <Button p={0} color={'light'} brightness={-2}>
                     <svg viewBox='0 0 512 512' width={16} height={16}>
@@ -77,7 +77,7 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
                 </Horizontal>
             </form>
         </Horizontal>
-        <Vertical height={'100%'}>
+        <Vertical flex={'1 0 auto'}>
             <ObserverValue render={RenderPages} $observer={$pagesToRender} $pageActiveIndex={$pageActiveIndex}/>
         </Vertical>
     </Vertical>

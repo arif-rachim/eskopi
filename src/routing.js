@@ -1,8 +1,7 @@
-import access_management from "./module/access-management/index";
 import _ from "./module/index";
 import login from "./module/login/index";
+import login_registration from "./module/login/registration/index";
 import page_builder from "./module/page-builder/index";
-import registration from "./module/registration/index";
 import sample_custom_controller from "./module/sample/custom-controller/index";
 import sample_data_grid_1_data_grid_basic from "./module/sample/data-grid/1-data-grid-basic/index";
 import sample_form from "./module/sample/form/index";
@@ -14,11 +13,10 @@ import sample_use_observer from "./module/sample/use-observer/index";
 import sample_use_observer_two from "./module/sample/use-observer-two/index";
 
 const routing = {
-    'access-management': access_management,
     '': _,
     'login': login,
+    'login/registration': login_registration,
     'page-builder': page_builder,
-    'registration': registration,
     'sample/custom-controller': sample_custom_controller,
     'sample/data-grid/1-data-grid-basic': sample_data_grid_1_data_grid_basic,
     'sample/form': sample_form,

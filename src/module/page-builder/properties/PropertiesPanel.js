@@ -22,86 +22,85 @@ import Select from "components/input/Select";
 
 const controllerPropertiesCatalog = {
     common: {
-        padding: {
+        p: {
             type: 'number',
             defaultValue: undefined
         },
-        paddingLeft: {
+        pL: {
             type: 'number',
             defaultValue: undefined
         },
-        paddingRight: {
+        pR: {
             type: 'number',
             defaultValue: undefined
         },
-        paddingTop: {
+        pT: {
             type: 'number',
             defaultValue: undefined
         },
-        paddingBottom: {
+        pB: {
             type: 'number',
             defaultValue: undefined
         },
-
-        margin: {
+        m: {
             type: 'number',
             defaultValue: undefined
         },
-        marginLeft: {
+        mL: {
             type: 'number',
             defaultValue: undefined
         },
-        marginRight: {
+        mR: {
             type: 'number',
             defaultValue: undefined
         },
-        marginTop: {
+        mT: {
             type: 'number',
             defaultValue: undefined
         },
-        marginBottom: {
-            type: 'number',
-            defaultValue: undefined
-        },
-
-        border: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        borderLeft: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        borderRight: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        borderTop: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        borderBottom: {
+        mB: {
             type: 'number',
             defaultValue: undefined
         },
 
-        radius: {
+        b: {
             type: 'number',
             defaultValue: undefined
         },
-        radiusLeft: {
+        bL: {
             type: 'number',
             defaultValue: undefined
         },
-        radiusRight: {
+        bR: {
             type: 'number',
             defaultValue: undefined
         },
-        radiusTop: {
+        bT: {
             type: 'number',
             defaultValue: undefined
         },
-        radiusBottom: {
+        bB: {
+            type: 'number',
+            defaultValue: undefined
+        },
+
+        r: {
+            type: 'number',
+            defaultValue: undefined
+        },
+        rTL: {
+            type: 'number',
+            defaultValue: undefined
+        },
+        rTR: {
+            type: 'number',
+            defaultValue: undefined
+        },
+        rBL: {
+            type: 'number',
+            defaultValue: undefined
+        },
+        rBR: {
             type: 'number',
             defaultValue: undefined
         },
@@ -129,7 +128,17 @@ const controllerPropertiesCatalog = {
             type: 'select',
             data: ['vertical', 'horizontal'],
             defaultValue: 'vertical'
-        }
+        },
+        vAlign: {
+            type: 'select',
+            data: ['top', 'center', 'bottom'],
+            defaultValue: ''
+        },
+        hAlign: {
+            type: 'select',
+            data: ['left', 'center', 'right'],
+            defaultValue: ''
+        },
     }
 }
 export default function PropertiesPanel({$layout, setLayout, $selectedController}) {

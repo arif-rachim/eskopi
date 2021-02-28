@@ -31,7 +31,7 @@ function traceParentId(element, root) {
 }
 
 
-export default function PageEditorPanel({$data, setData, setSelectedController}) {
+export default function PageEditorPanel({$data, setData, $selectedController, setSelectedController}) {
     const dropListener = useContext(DropListenerContext);
     usePlaceHolderListener("drop", (event) => {
         const data = JSON.parse(event.dataTransfer.getData('text/plain'));
@@ -108,8 +108,11 @@ export default function PageEditorPanel({$data, setData, setSelectedController})
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop} p={2} data-layout={'vertical'}>
 
-            <ObserverValue $observer={useObserverMapper($data, data => data.children)} render={RenderLayoutMemo}
-                           controller={controller} setSelectedController={setSelectedController} path={[]}/>
+            <ObserverValue $observer={useObserverMapper($data, data => data.children)}
+                           render={RenderLayoutMemo}
+                           controller={controller}
+                           $selectedController={$selectedController}
+                           setSelectedController={setSelectedController} path={[]}/>
         </Vertical>
     </Vertical>
 }
@@ -172,34 +175,40 @@ export const handleDragOver = () => {
 }
 
 
-export function renderChild(path, child, controller, setSelectedController) {
+export function renderChild(path, child, controller, $selectedController, setSelectedController) {
 
     if (child.type === Controls.SPACE) {
-        return <SpaceController key={child.id} data={child} path={path} formController={controller}
+        return <SpaceController key={child.id} data={child} path={path}
+                                formController={controller}
+                                $selectedController={$selectedController}
                                 setSelectedController={setSelectedController}/>
     }
     if (child.type === Controls.LABEL) {
         return <LabelController key={child.id} data={child} path={path} formController={controller}
+                                $selectedController={$selectedController}
                                 setSelectedController={setSelectedController}/>
     }
     if (child.type === Controls.BUTTON) {
         return <ButtonController key={child.id} data={child} path={path} formController={controller}
+                                 $selectedController={$selectedController}
                                  setSelectedController={setSelectedController}/>
     }
     if (child.type === Controls.TEXT_INPUT) {
         return <TextInputController key={child.id} data={child} path={path} formController={controller}
+                                    $selectedController={$selectedController}
                                     setSelectedController={setSelectedController}/>
     }
     if (child.type === Controls.TEXT_AREA) {
         return <TextAreaController key={child.id} data={child} path={path} formController={controller}
+                                   $selectedController={$selectedController}
                                    setSelectedController={setSelectedController}/>
     }
 }
 
-const RenderLayout = ({value, controller, setSelectedController, path}) => {
+const RenderLayout = ({value, controller, $selectedController, setSelectedController, path}) => {
     if (value === undefined) {
         return false;
     }
-    return value.map(child => renderChild(path, child, controller, setSelectedController));
+    return value.map(child => renderChild(path, child, controller, $selectedController, setSelectedController));
 }
 const RenderLayoutMemo = memo(RenderLayout);

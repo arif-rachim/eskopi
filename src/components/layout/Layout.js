@@ -129,12 +129,16 @@ export function parseChildrenPosition({vAlign, hAlign, horizontal}) {
     return result;
 }
 
-function handleMouse(hasMouseDownOrHoverBrightness, setMouseOver, action) {
+function handleMouse(hasMouseDownOrHoverBrightness, setMouseOver, action, callback) {
     return () => {
+        if (callback) {
+            callback.call();
+        }
         if (!hasMouseDownOrHoverBrightness) {
             return;
         }
         setMouseOver(action);
+
     };
 }
 
@@ -326,10 +330,10 @@ function Layout({
                     ...internalStyle,
                     ...style
                 }} {...props}
-                onMouseEnter={handleMouse(hasMouseHover, setMouseOver, true)}
-                onMouseLeave={handleMouse(hasMouseHover, setMouseOver, false)}
-                onMouseDown={handleMouse(hasMouseDown, setMouseDown, true)}
-                onMouseUp={handleMouse(hasMouseDown, setMouseDown, false)}
+                onMouseEnter={handleMouse(hasMouseHover, setMouseOver, true, props.onMouseEnter)}
+                onMouseLeave={handleMouse(hasMouseHover, setMouseOver, false, props.onMouseLeave)}
+                onMouseDown={handleMouse(hasMouseDown, setMouseDown, true, props.onMouseDown)}
+                onMouseUp={handleMouse(hasMouseDown, setMouseDown, false, props.onMouseUp)}
                 onClick={onClick}
     >{childrenClone}</div>
 }

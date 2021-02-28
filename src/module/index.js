@@ -2,7 +2,7 @@ import {Vertical} from "components/layout/Layout";
 
 function Home() {
     return <Vertical>
-        Hello World !
+        Welcome to eskopi Project
     </Vertical>
 }
 

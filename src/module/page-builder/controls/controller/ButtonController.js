@@ -4,11 +4,13 @@ import Button from "components/button/Button";
 
 export default function ButtonController({data, path, formController, setSelectedController}) {
     path = [...path, data.id];
-    return <Vertical onDragOver={handleDragOver()} p={2} pT={1} pB={1} onClick={(event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        setSelectedController({...data, path});
-    }}>
-        <Button color={"primary"}>Button</Button>
+    return <Vertical onDragOver={handleDragOver()} p={2} pT={1} pB={1}>
+        <Button color={"primary"} onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            if (setSelectedController) {
+                setSelectedController({...data, path});
+            }
+        }}>Button</Button>
     </Vertical>
 }

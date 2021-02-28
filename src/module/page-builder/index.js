@@ -21,7 +21,11 @@ export default function PageBuilder() {
                     <ControlListPanel/>
                 </Vertical>
                 <Vertical flex={1}>
-                    <PageEditorPanel $data={$data} setData={setData} setSelectedController={setSelectedController}/>
+                    <PageEditorPanel $data={$data}
+                                     setData={setData}
+                                     setSelectedController={setSelectedController}
+                                     $selectedController={$selectedController}
+                    />
                 </Vertical>
                 <Vertical width={200} color={"light"} brightness={-3}>
                     <PropertiesPanel

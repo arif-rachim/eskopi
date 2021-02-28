@@ -2,7 +2,7 @@ import React from "react";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "components/useForm";
 import useResource, {useResourceListener} from "components/useResource";
-import RegistrationScreen from "module/registration";
+import RegistrationScreen from "module/login/registration";
 import Input from "components/input/Input";
 import Button from "components/button/Button";
 import useLayers from "components/useLayers";

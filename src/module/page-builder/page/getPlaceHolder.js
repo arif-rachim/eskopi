@@ -10,7 +10,7 @@ const listeners = [];
  */
 export function getPlaceHolder(style = undefined) {
     const innerStyle = {
-        border: '1px solid #666',
+        border: '1px dashed #666',
         minWidth: '30px',
         minHeight: '30px',
         boxSizing: 'border-box',

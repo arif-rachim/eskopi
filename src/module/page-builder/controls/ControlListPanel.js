@@ -5,13 +5,11 @@ import TextArea from "components/input/TextArea";
 import Button from "components/button/Button";
 import {useContext, useState} from "react";
 import {DropListenerContext} from "module/page-builder/index";
+import Panel from "components/panel/Panel";
 
 export default function ControlListPanel() {
     const {controller} = useForm({input: '', textArea: ''});
-    return <Vertical flex={1} color={'light'} brightness={0.1} bB={3}>
-        <Horizontal color={"light"} brightness={-2} bB={3} p={1} vAlign={'center'}>
-            Controls
-        </Horizontal>
+    return <Panel headerTitle={'Controls'}>
         <Vertical color={"light"} brightness={0.3}>
             <Vertical p={2} gap={3}>
                 <DraggableControls type={Controls.SPACE}>
@@ -38,7 +36,8 @@ export default function ControlListPanel() {
                 </DraggableControls>
             </Vertical>
         </Vertical>
-    </Vertical>
+    </Panel>
+
 }
 
 export const Controls = {

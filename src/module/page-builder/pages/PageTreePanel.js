@@ -8,6 +8,7 @@ import Tree, {DefaultTreeDataKey, findTreeDataFromKey, removeTreeDataFromKey} fr
 import {v4 as uuid} from "uuid";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
+import Panel from "components/panel/Panel";
 
 export default function PageTreePanel({$selectedPage, setSelectedPage}) {
     const $selectedItem = $selectedPage;
@@ -31,59 +32,64 @@ export default function PageTreePanel({$selectedPage, setSelectedPage}) {
     });
     const showSlideDown = useSlideDownStackPanel();
     const showConfirmation = useConfirmMessage();
-    return <Vertical flex={1} color={"light"} brightness={0} bB={3}>
-        <Horizontal color={"light"} brightness={-2} bB={3} p={1} vAlign={'center'} onClick={() => {
-            setSelectedItem(null);
+    return <Panel headerTitle={'Pages'} headerRenderer={HeaderRenderer}
+                  $showDelete={$showDelete}
+                  showConfirmation={showConfirmation}
+                  $selectedItem={$selectedItem}
+                  $pages={$pages}
+                  setPageResource={setPageResource}
+                  showSlideDown={showSlideDown}>
+        <Tree $data={useObserverMapper($pages, page => page.children)} itemRenderer={PageTreeItemRenderer}
+              $selectedItem={$selectedItem} setSelectedItem={setSelectedItem}/>
+    </Panel>
+
+}
+
+function HeaderRenderer({$showDelete, showConfirmation, $selectedItem, $pages, setPageResource, showSlideDown}) {
+    return <>
+        <Button $visible={$showDelete} p={0} onClick={async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const result = await showConfirmation(`Are you sure you want to delete ${$selectedItem.current.name}`);
+            if (result === 'YES' && $selectedItem.current) {
+                const pages = JSON.parse(JSON.stringify($pages.current));
+                const selectedItem = $selectedItem.current;
+                pages.children = removeTreeDataFromKey(pages.children, selectedItem.key_, DefaultTreeDataKey);
+                setPageResource('/db/pages', pages);
+            }
         }}>
-            Pages
-            <Horizontal flex={1}/>
-            <Button $visible={$showDelete} p={0} onClick={async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const result = await showConfirmation(`Are you sure you want to delete ${$selectedItem.current.name}`);
-                if (result === 'YES' && $selectedItem.current) {
-                    const pages = JSON.parse(JSON.stringify($pages.current));
-                    const selectedItem = $selectedItem.current;
-                    pages.children = removeTreeDataFromKey(pages.children, selectedItem.key_, DefaultTreeDataKey);
-                    setPageResource('/db/pages', pages);
-                }
-            }}>
-                <svg viewBox='0 0 512 512' width={16} height={16}>
-                    <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round'
-                          strokeWidth='32' d='M400 256H112'/>
-                </svg>
-            </Button>
-            <Button p={0} onClick={async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const name = await showSlideDown(({closePanel}) => <PageDetail closePanel={closePanel}/>);
-                if (name === false) {
+            <svg viewBox='0 0 512 512' width={16} height={16}>
+                <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round'
+                      strokeWidth='32' d='M400 256H112'/>
+            </svg>
+        </Button>
+        <Button p={0} onClick={async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const name = await showSlideDown(({closePanel}) => <PageDetail closePanel={closePanel}/>);
+            if (name === false) {
+                return;
+            }
+            const oldPages = JSON.parse(JSON.stringify($pages.current));
+            if ($selectedItem.current) {
+                const selectedItem = findTreeDataFromKey(oldPages.children, $selectedItem.current.key_, DefaultTreeDataKey);
+                if (!selectedItem) {
                     return;
                 }
-                const oldPages = JSON.parse(JSON.stringify($pages.current));
-                if ($selectedItem.current) {
-                    const selectedItem = findTreeDataFromKey(oldPages.children, $selectedItem.current.key_, DefaultTreeDataKey);
-                    if (!selectedItem) {
-                        return;
-                    }
-                    selectedItem.children = selectedItem.children || [];
-                    selectedItem.children.push({id: uuid(), name, children: []});
-                } else {
-                    oldPages.children.push({id: uuid(), name, children: []});
-                }
-                setPageResource('/db/pages', oldPages);
-            }}>
-                <svg viewBox='0 0 512 512' width={16} height={16}>
-                    <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round'
-                          strokeWidth='32' d='M256 112v288M400 256H112'/>
-                </svg>
-            </Button>
-        </Horizontal>
-        <Vertical height={'100%'} color={"light"} brightness={0} overflow={'auto'}>
-            <Tree $data={useObserverMapper($pages, page => page.children)} itemRenderer={PageTreeItemRenderer}
-                  $selectedItem={$selectedItem} setSelectedItem={setSelectedItem}/>
-        </Vertical>
-    </Vertical>;
+                selectedItem.children = selectedItem.children || [];
+                selectedItem.children.push({id: uuid(), name, children: []});
+            } else {
+                oldPages.children.push({id: uuid(), name, children: []});
+            }
+            setPageResource('/db/pages', oldPages);
+        }}>
+            <svg viewBox='0 0 512 512' width={16} height={16}>
+                <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round'
+                      strokeWidth='32' d='M256 112v288M400 256H112'/>
+            </svg>
+        </Button>
+    </>
+
 }
 
 
