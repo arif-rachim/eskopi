@@ -4,12 +4,23 @@ import {handleDragOver} from "module/page-builder/page/PageEditorPanel";
 import TextArea from "components/input/TextArea";
 import {useObserverListener} from "components/useObserver";
 import {useState} from "react";
+import {isNullOrUndefined} from "components/utils";
 
-export default function TextAreaController({data, path, formController, $selectedController, setSelectedController}) {
+export default function TextAreaController({
+                                               data,
+                                               path,
+                                               formController,
+                                               $selectedController,
+                                               setSelectedController,
+                                               ...controllerProps
+                                           }) {
     const {id, children, type, ...props} = data;
     path = [...path, id];
     const [isFocused, setFocused] = useState(false);
     useObserverListener($selectedController, selectedController => {
+        if (isNullOrUndefined(selectedController)) {
+            return setFocused(false);
+        }
         setFocused(selectedController.id === id);
     });
     return <Vertical onDragOver={handleDragOver()} p={2} pT={1} pB={1}>
@@ -25,6 +36,6 @@ export default function TextAreaController({data, path, formController, $selecte
                         if (setSelectedController) {
                             setSelectedController({...data, path});
                         }
-                    }} {...props}/>
+                    }} {...controllerProps} {...props}/>
     </Vertical>
 }

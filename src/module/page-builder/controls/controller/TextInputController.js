@@ -4,13 +4,24 @@ import {Vertical} from "components/layout/Layout";
 import {handleDragOver} from "module/page-builder/page/PageEditorPanel";
 import {useObserverListener} from "components/useObserver";
 import {useState} from "react";
+import {isNullOrUndefined} from "components/utils";
 
-export default function TextInputController({data, path, formController, $selectedController, setSelectedController}) {
+export default function TextInputController({
+                                                data,
+                                                path,
+                                                formController,
+                                                $selectedController,
+                                                setSelectedController,
+                                                ...controllerProps
+                                            }) {
     const {id, children, type, ...props} = data;
     path = [...path, id];
 
     const [isFocused, setFocused] = useState(false);
     useObserverListener($selectedController, selectedController => {
+        if (isNullOrUndefined(selectedController)) {
+            return setFocused(false);
+        }
         setFocused(selectedController.id === id);
     });
     return <Vertical onDragOver={handleDragOver()} p={2} pT={1} pB={1}>
@@ -26,6 +37,6 @@ export default function TextInputController({data, path, formController, $select
                         if (setSelectedController) {
                             setSelectedController({...data, path});
                         }
-                    }} {...props}/>
+                    }} {...controllerProps} {...props}/>
     </Vertical>
 }

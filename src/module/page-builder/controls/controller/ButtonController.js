@@ -2,7 +2,7 @@ import {Vertical} from "components/layout/Layout";
 import {handleDragOver} from "module/page-builder/page/PageEditorPanel";
 import Button from "components/button/Button";
 
-export default function ButtonController({data, path, formController, setSelectedController}) {
+export default function ButtonController({data, path, formController, setSelectedController, ...controllerProps}) {
     path = [...path, data.id];
     return <Vertical onDragOver={handleDragOver()} p={2} pT={1} pB={1}>
         <Button color={"primary"} onClick={(event) => {
@@ -11,6 +11,6 @@ export default function ButtonController({data, path, formController, setSelecte
             if (setSelectedController) {
                 setSelectedController({...data, path});
             }
-        }}>Button</Button>
+        }} {...controllerProps}>Button</Button>
     </Vertical>
 }

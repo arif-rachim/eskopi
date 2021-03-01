@@ -3,7 +3,7 @@ import useObserver, {useObserverListener} from "components/useObserver";
 import List from "components/list/List";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
-import {camelCaseToSentenceCase} from "components/utils";
+import {camelCaseToSentenceCase, isNullOrUndefined} from "components/utils";
 import {Controls} from "module/page-builder/controls/ControlListPanel";
 import Select from "components/input/Select";
 
@@ -147,6 +147,10 @@ export default function PropertiesPanel({$layout, setLayout, $selectedController
     const {controller: formController, reset, $value} = useForm();
     useObserverListener($value, (value) => {
         const selectedController = $selectedController.current;
+        if (isNullOrUndefined(value) || isNullOrUndefined(selectedController)) {
+            return;
+        }
+
         const path = selectedController.path;
         setLayout(layout => {
             const newLayout = JSON.parse(JSON.stringify(layout));
@@ -161,6 +165,11 @@ export default function PropertiesPanel({$layout, setLayout, $selectedController
         });
     });
     useObserverListener($selectedController, (selectedController) => {
+        if (isNullOrUndefined(selectedController)) {
+            setListData([]);
+            reset({});
+            return;
+        }
         const common = controllerPropertiesCatalog.common;
         const specific = controllerPropertiesCatalog[selectedController.type];
         const controllerProperties = {...common, ...specific};

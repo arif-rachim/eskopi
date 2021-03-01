@@ -1,10 +1,18 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {handleDragOver, renderChild} from "module/page-builder/page/PageEditorPanel";
+import {ControlMapper, handleDragOver} from "module/page-builder/page/PageEditorPanel";
 import {getPlaceHolder} from "module/page-builder/page/getPlaceHolder";
 import {useState} from "react";
 import {useObserverListener} from "components/useObserver";
+import {isNullOrUndefined} from "components/utils";
 
-export default function SpaceController({data, path, formController, $selectedController, setSelectedController}) {
+export default function SpaceController({
+                                            data,
+                                            path,
+                                            formController,
+                                            $selectedController,
+                                            setSelectedController,
+                                            ...controllerProps
+                                        }) {
     const {id, layout, children, type, ...props} = data;
     path = [...path, id];
     const isHorizontal = layout === 'horizontal';
@@ -12,16 +20,19 @@ export default function SpaceController({data, path, formController, $selectedCo
     const [isHovered, setHovered] = useState(false);
     const [isFocused, setFocused] = useState(false);
     useObserverListener($selectedController, selectedController => {
+        if (isNullOrUndefined(selectedController)) {
+            return setFocused(false);
+        }
         setFocused(selectedController.id === id);
     });
 
     return <Component
         onDragOver={handleDragOver()}
-        p={2}
-        m={2}
+        p={0}
+        m={0}
         style={{
             minHeight: 30,
-            border: isHovered ? '1px dashed #ccc' : 'inherit',
+            border: isHovered ? '1px dashed #ccc' : '1px dashed rgba(0,0,0,0)',
             transition: 'all 100ms cubic-bezier(0,0,0.7,0.9)',
             flexWrap: 'wrap',
             backgroundColor: isFocused ? 'rgba(152,224,173,0.5)' : children && children.length > 0 ? 'inherit' : 'rgba(0,0,0,0.1)'
@@ -44,6 +55,18 @@ export default function SpaceController({data, path, formController, $selectedCo
             event.stopPropagation();
             setSelectedController({...data, path});
         }}
+        {...controllerProps}
         {...props}
-    >{children && children.map(child => renderChild(path, child, formController, $selectedController, setSelectedController))}</Component>
+    >
+        {children && children.map(child => {
+            const ChildRender = ControlMapper[child.type];
+            return <ChildRender key={child.id}
+                                data={child}
+                                path={path}
+                                formController={formController}
+                                $selectedController={$selectedController}
+                                setSelectedController={setSelectedController}
+                                draggable={true}/>
+        })}
+    </Component>
 }
