@@ -35,7 +35,7 @@ export default function List({
                                  ...props
                              }) {
     const Renderer = itemRenderer;
-    return <Vertical domRef={domRef} color={"light"} elevation={1}>
+    return <Vertical domRef={domRef}>
         <Vertical>
             <ObserverValue $observer={$data} render={({value}) => {
                 const data = value || [];

@@ -68,8 +68,8 @@ function DraggableControls({type, ...props}) {
                      onDragStart={handleDragStart}
                      onDragEnd={handleDragEnd}
                      opacity={isDragging ? 0.5 : 1}
-                     p={2}
-                     style={{fontSize: 18}} b={1}  {...props}>
+
+                     {...props}>
 
         {props.children}
     </Vertical>

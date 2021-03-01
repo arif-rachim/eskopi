@@ -6,6 +6,7 @@ import Input from "components/input/Input";
 import {camelCaseToSentenceCase, isNullOrUndefined} from "components/utils";
 import {Controls} from "module/page-builder/controls/ControlListPanel";
 import Select from "components/input/Select";
+import Panel from "components/panel/Panel";
 
 /**
  @param {useRef} inputRef
@@ -194,10 +195,11 @@ export default function PropertiesPanel({$layout, setLayout, $selectedController
         reset(selectedController);
     })
     // ok lets do something here /// lets render the properties over here !
-    return <Vertical color={'light'} brightness={1} height={'100%'} overflow={'auto'}>
-
-        <List $data={$listData} dataKey={data => data.label} formController={formController}
-              itemRenderer={PropertyItemRenderer}/>
+    return <Vertical height={'100%'} bL={3} overflow={'auto'}>
+        <Panel headerTitle={'Properties'}>
+            <List $data={$listData} dataKey={data => data.label} formController={formController}
+                  itemRenderer={PropertyItemRenderer}/>
+        </Panel>
 
     </Vertical>
 }
@@ -214,7 +216,7 @@ function PropertyItemRenderer({data, formController}) {
         props.dataKey = data => data;
         props.$data = $data;
     }
-    return <Vertical color={"light"} brightness={-0.5} p={1} pB={0.5} pT={0.5}>
+    return <Vertical p={1} pB={0.5} pT={0.5}>
         <Controller controller={formController}
                     render={Render}
                     label={camelCaseToSentenceCase(data.label)}
