@@ -3,6 +3,7 @@ import {Horizontal, Vertical} from "components/layout/Layout";
 import {useContext, useState} from "react";
 import {DropListenerContext} from "module/page-builder/index";
 import Panel from "components/panel/Panel";
+import {Controls, ControlsNaming} from "module/page-builder/controls/ControllerMapper";
 
 export default function ControlListPanel() {
     const {controller} = useForm({input: '', textArea: ''});
@@ -47,7 +48,7 @@ export default function ControlListPanel() {
                             </svg>
 
                         </Vertical>
-                        <Vertical>Group</Vertical>
+                        <Vertical>{ControlsNaming[Controls.SPACE]}</Vertical>
                     </Horizontal>
                 </DraggableControls>
                 <DraggableControls type={Controls.LABEL}>
@@ -66,7 +67,7 @@ export default function ControlListPanel() {
                             </svg>
 
                         </Vertical>
-                        <Vertical>Label</Vertical>
+                        <Vertical>{ControlsNaming[Controls.LABEL]}</Vertical>
                     </Horizontal>
                 </DraggableControls>
                 <DraggableControls type={Controls.TEXT_INPUT}>
@@ -75,15 +76,15 @@ export default function ControlListPanel() {
                             <svg viewBox={'0 0 355 355'} width="16" height="16"
                                  overflow="hidden">
                                 <g transform="translate(-136 -104)">
-                                    <rect x="145" y="112" width="337" height="338" stroke="#000000" stroke-width="16"
-                                          stroke-miterlimit="8" fill="none"/>
-                                    <path d="M239.5 151.5 239.5 410.825" stroke="#000000" stroke-width="21.3333"
-                                          stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
+                                    <rect x="145" y="112" width="337" height="338" stroke="#000000" strokeWidth="16"
+                                          strokeMiterlimit="8" fill="none"/>
+                                    <path d="M239.5 151.5 239.5 410.825" stroke="#000000" strokeWidth="21.3333"
+                                          strokeMiterlimit="8" fill="none" fillRule="evenodd"/>
                                 </g>
                             </svg>
                         </Vertical>
                         <Vertical pB={1}>
-                            Input
+                            <Vertical>{ControlsNaming[Controls.TEXT_INPUT]}</Vertical>
                         </Vertical>
                     </Horizontal>
                 </DraggableControls>
@@ -93,16 +94,15 @@ export default function ControlListPanel() {
                             <svg viewBox={'0 0 565 564'} width="22" height="22" xmlns="http://www.w3.org/2000/svg"
                                  overflow="hidden">
                                 <g transform="translate(-136 -104)">
-                                    <rect x="145" y="112" width="547" height="548" stroke="#000000" stroke-width="16"
-                                          stroke-miterlimit="8" fill="none"/>
-                                    <path d="M239.5 151.5 239.5 410.825" stroke="#000000" stroke-width="21.3333"
-                                          stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
+                                    <rect x="145" y="112" width="547" height="548" stroke="#000000" strokeWidth="16"
+                                          strokeMiterlimit="8" fill="none"/>
+                                    <path d="M239.5 151.5 239.5 410.825" stroke="#000000" strokeWidth="21.3333"
+                                          strokeMiterlimit="8" fill="none" fillRule="evenodd"/>
                                 </g>
                             </svg>
-
                         </Vertical>
                         <Vertical pB={1}>
-                            Text Area
+                            <Vertical>{ControlsNaming[Controls.TEXT_AREA]}</Vertical>
                         </Vertical>
                     </Horizontal>
 
@@ -115,20 +115,20 @@ export default function ControlListPanel() {
                                 <defs>
                                     <linearGradient x1="324.5" y1="112" x2="324.5" y2="472"
                                                     gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="fill1">
-                                        <stop offset="0" stop-color="#F6F8FC"/>
-                                        <stop offset="0.18" stop-color="#A6A6A6"/>
-                                        <stop offset="0.83" stop-color="#A6A6A6"/>
-                                        <stop offset="1" stop-color="#D9D9D9"/>
+                                        <stop offset="0" stopColor="#F6F8FC"/>
+                                        <stop offset="0.18" stopColor="#A6A6A6"/>
+                                        <stop offset="0.83" stopColor="#A6A6A6"/>
+                                        <stop offset="1" stopColor="#D9D9D9"/>
                                     </linearGradient>
                                 </defs>
                                 <g transform="translate(-136 -104)">
-                                    <rect x="145" y="112" width="359" height="360" stroke="#000000" stroke-width="16"
-                                          stroke-miterlimit="8" fill="url(#fill1)"/>
+                                    <rect x="145" y="112" width="359" height="360" stroke="#000000" strokeWidth="16"
+                                          strokeMiterlimit="8" fill="url(#fill1)"/>
                                 </g>
                             </svg>
                         </Vertical>
                         <Vertical pB={1}>
-                            Button
+                            <Vertical>{ControlsNaming[Controls.BUTTON]}</Vertical>
                         </Vertical>
                     </Horizontal>
 
@@ -139,13 +139,6 @@ export default function ControlListPanel() {
 
 }
 
-export const Controls = {
-    TEXT_INPUT: 'textInput',
-    TEXT_AREA: 'textArea',
-    BUTTON: 'button',
-    SPACE: 'space',
-    LABEL: 'label'
-};
 
 function DraggableControls({type, ...props}) {
     const [isDragging, setIsDragging] = useState(false);

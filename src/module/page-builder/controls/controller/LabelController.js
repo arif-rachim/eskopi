@@ -1,15 +1,15 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {handleDragOverControlComponent} from "module/page-builder/designer/handleDragOverControlComponent";
 
-export default function LabelController({data, path, formController, setSelectedController, ...controllerProps}) {
-    path = [...path, data.id];
+export default function LabelController({data, formController, setSelectedController, ...controllerProps}) {
+
     return <Vertical onDragOver={handleDragOverControlComponent()} p={2} pT={1}
                      pB={1}>
         <Horizontal onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
             if (setSelectedController) {
-                setSelectedController({...data, path});
+                setSelectedController(data);
             }
         }} {...controllerProps}>Label</Horizontal>
     </Vertical>

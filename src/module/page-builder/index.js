@@ -29,16 +29,20 @@ export default function PageBuilder() {
                     />
                 </Vertical>
                 <Vertical width={200} color={"light"} brightness={-3}>
-                    <PropertiesPanel
-                        $layout={$data}
-                        setLayout={setData}
-                        $selectedController={$selectedController}
-                    />
-
-                    <OutlinePanel $data={$data}
-                                  setData={setData}
-                                  $selectedController={$selectedController}
-                    />
+                    <Vertical height={'50%'}>
+                        <PropertiesPanel
+                            $layout={$data}
+                            setLayout={setData}
+                            $selectedController={$selectedController}
+                        />
+                    </Vertical>
+                    <Vertical height={'50%'}>
+                        <OutlinePanel $data={$data}
+                                      setData={setData}
+                                      $selectedController={$selectedController}
+                                      setSelectedController={setSelectedController}
+                        />
+                    </Vertical>
                 </Vertical>
             </Horizontal>
         </Vertical>

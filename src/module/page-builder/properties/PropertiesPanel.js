@@ -4,9 +4,9 @@ import List from "components/list/List";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import {camelCaseToSentenceCase, isNullOrUndefined} from "components/utils";
-import {Controls} from "module/page-builder/controls/ControlListPanel";
 import Select from "components/input/Select";
 import Panel from "components/panel/Panel";
+import {controllerPropertiesCatalog} from "module/page-builder/controls/ControllerMapper"
 
 /**
  @param {useRef} inputRef
@@ -21,144 +21,24 @@ import Panel from "components/panel/Panel";
  */
 
 
-const controllerPropertiesCatalog = {
-    common: {
-        p: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        pL: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        pR: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        pT: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        pB: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        m: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        mL: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        mR: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        mT: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        mB: {
-            type: 'number',
-            defaultValue: undefined
-        },
-
-        b: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        bL: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        bR: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        bT: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        bB: {
-            type: 'number',
-            defaultValue: undefined
-        },
-
-        r: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        rTL: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        rTR: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        rBL: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        rBR: {
-            type: 'number',
-            defaultValue: undefined
-        },
-    },
-    [Controls.TEXT_INPUT]: {
-        name: {
-            type: 'string',
-            defaultValue: ''
-        },
-    },
-    [Controls.TEXT_AREA]: {
-        name: {
-            type: 'string',
-            defaultValue: ''
-        },
-    },
-    [Controls.BUTTON]: {
-        name: {
-            type: 'string',
-            defaultValue: ''
-        },
-    },
-    [Controls.SPACE]: {
-        layout: {
-            type: 'select',
-            data: ['vertical', 'horizontal'],
-            defaultValue: 'vertical'
-        },
-        vAlign: {
-            type: 'select',
-            data: ['top', 'center', 'bottom'],
-            defaultValue: ''
-        },
-        hAlign: {
-            type: 'select',
-            data: ['left', 'center', 'right'],
-            defaultValue: ''
-        },
-    }
-}
 export default function PropertiesPanel({$layout, setLayout, $selectedController}) {
 
     const [$listData, setListData] = useObserver();
     const {controller: formController, reset, $value} = useForm();
     useObserverListener($value, (value) => {
+
         const selectedController = $selectedController.current;
         if (isNullOrUndefined(value) || isNullOrUndefined(selectedController)) {
             return;
         }
-
-        const path = selectedController.path;
+        const parentIds = selectedController.parentIds;
         setLayout(layout => {
             const newLayout = JSON.parse(JSON.stringify(layout));
             let nodeToUpdate = newLayout;
-            for (const pathId of path) {
-                nodeToUpdate = nodeToUpdate.children.filter(c => c.id === pathId)[0];
+            for (const pathId of parentIds) {
+                nodeToUpdate = nodeToUpdate.children.find(c => c.id === pathId);
             }
+            nodeToUpdate = nodeToUpdate.children.find(c => c.id === selectedController.id);
             Object.keys(value).forEach(key => {
                 nodeToUpdate[key] = value[key];
             })

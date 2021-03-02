@@ -2,15 +2,10 @@ import {Vertical} from "components/layout/Layout";
 import {memo, useContext, useRef, useState} from "react";
 import {DropListenerContext} from "module/page-builder/index";
 import {ObserverValue, useObserverMapper} from "components/useObserver";
-import {Controls} from "module/page-builder/controls/ControlListPanel";
 import useForm from "components/useForm";
-import SpaceController from "module/page-builder/controls/controller/SpaceController";
-import LabelController from "module/page-builder/controls/controller/LabelController";
-import ButtonController from "module/page-builder/controls/controller/ButtonController";
-import TextInputController from "module/page-builder/controls/controller/TextInputController";
-import TextAreaController from "module/page-builder/controls/controller/TextAreaController";
 import {getPlaceHolder, usePlaceHolderListener} from "module/page-builder/designer/getPlaceHolder";
 import {handlePlaceHolderDrop} from "module/page-builder/designer/handlePlaceHolderDrop";
+import {ControlMapper} from "module/page-builder/controls/ControllerMapper";
 
 
 const handleRootDragEnter = (dragHoverCountRef) => (event) => {
@@ -59,21 +54,13 @@ export default function DesignerPanel({$data, setData, $selectedController, setS
                            render={RenderLayoutMemo}
                            controller={controller}
                            $selectedController={$selectedController}
-                           setSelectedController={setSelectedController} path={[]}/>
+                           setSelectedController={setSelectedController}/>
         </Vertical>
     </Vertical>
 }
 
 
-export const ControlMapper = {
-    [Controls.SPACE]: SpaceController,
-    [Controls.LABEL]: LabelController,
-    [Controls.BUTTON]: ButtonController,
-    [Controls.TEXT_INPUT]: TextInputController,
-    [Controls.TEXT_AREA]: TextAreaController
-}
-
-export const RenderLayout = ({value, controller, $selectedController, setSelectedController, path}) => {
+export const RenderLayout = ({value, controller, $selectedController, setSelectedController}) => {
     if (value === undefined) {
         return false;
     }
@@ -82,7 +69,6 @@ export const RenderLayout = ({value, controller, $selectedController, setSelecte
         const ChildRender = ControlMapper[child.type];
         return <DraggableComponent render={ChildRender} key={child.id}
                                    data={child}
-                                   path={path}
                                    formController={controller}
                                    $selectedController={$selectedController}
                                    setSelectedController={setSelectedController}

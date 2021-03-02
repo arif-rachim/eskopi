@@ -8,14 +8,12 @@ import {handleDragOverControlComponent} from "module/page-builder/designer/handl
 
 export default function TextAreaController({
                                                data,
-                                               path,
                                                formController,
                                                $selectedController,
                                                setSelectedController,
                                                ...controllerProps
                                            }) {
     const {id, children, type, parentIds, ...props} = data;
-    path = [...path, id];
     const [isFocused, setFocused] = useState(false);
     useObserverListener($selectedController, selectedController => {
         if (isNullOrUndefined(selectedController)) {
@@ -30,12 +28,12 @@ export default function TextAreaController({
                         backgroundColor: isFocused ? 'rgba(152,224,173,0.5)' : 'rgba(255,255,255,1)',
                         transition: 'all 100ms cubic-bezier(0,0,0.7,0.9)'
                     }}
-                    autocomplete={'off'}
+                    autoComplete={'off'}
                     onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
                         if (setSelectedController) {
-                            setSelectedController({...data, path});
+                            setSelectedController(data);
                         }
                     }} {...controllerProps} {...props}/>
     </Vertical>

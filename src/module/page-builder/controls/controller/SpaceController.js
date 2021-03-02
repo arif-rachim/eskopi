@@ -8,14 +8,12 @@ import {handleDragOverControlComponent} from "module/page-builder/designer/handl
 
 export default function SpaceController({
                                             data,
-                                            path,
                                             formController,
                                             $selectedController,
                                             setSelectedController,
                                             ...controllerProps
                                         }) {
     const {id, layout, children, type, parentIds, ...props} = data;
-    path = [...path, id];
     const isHorizontal = layout === 'horizontal';
     const Component = isHorizontal ? Horizontal : Vertical;
     const [isHovered, setHovered] = useState(false);
@@ -58,12 +56,12 @@ export default function SpaceController({
         onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
-            setSelectedController({...data, path});
+            setSelectedController(data);
         }}
         {...controllerProps}
         {...props}
     >
-        <RenderLayout value={children} controller={formController} path={path} $selectedController={$selectedController}
+        <RenderLayout value={children} controller={formController} $selectedController={$selectedController}
                       setSelectedController={setSelectedController}
         />
 
