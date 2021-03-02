@@ -51,6 +51,7 @@ export const Controls = {
 function DraggableControls({type, ...props}) {
     const [isDragging, setIsDragging] = useState(false);
     const dropListener = useContext(DropListenerContext);
+
     const handleDragStart = (event) => {
         setIsDragging(true);
         event.dataTransfer.effectAllowed = 'copy';

@@ -1,9 +1,10 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {ControlMapper, handleDragOver} from "module/page-builder/page/PageEditorPanel";
+import {RenderLayout} from "module/page-builder/page/PageEditorPanel";
 import {getPlaceHolder} from "module/page-builder/page/getPlaceHolder";
 import {useState} from "react";
 import {useObserverListener} from "components/useObserver";
 import {isNullOrUndefined} from "components/utils";
+import {handleDragOverControlComponent} from "module/page-builder/page/handleDragOverControlComponent";
 
 export default function SpaceController({
                                             data,
@@ -13,7 +14,7 @@ export default function SpaceController({
                                             setSelectedController,
                                             ...controllerProps
                                         }) {
-    const {id, layout, children, type, ...props} = data;
+    const {id, layout, children, type, parentIds, ...props} = data;
     path = [...path, id];
     const isHorizontal = layout === 'horizontal';
     const Component = isHorizontal ? Horizontal : Vertical;
@@ -27,7 +28,11 @@ export default function SpaceController({
     });
 
     return <Component
-        onDragOver={handleDragOver()}
+        onDragOver={() => {
+            setHovered(true);
+            handleDragOverControlComponent()
+        }
+        }
         p={0}
         m={0}
         style={{
@@ -46,7 +51,7 @@ export default function SpaceController({
                 event.currentTarget.append(placeHolder);
             }
         }}
-        onDragOver={() => setHovered(true)}
+
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         data-layout={isHorizontal ? 'horizontal' : 'vertical'}
@@ -58,15 +63,9 @@ export default function SpaceController({
         {...controllerProps}
         {...props}
     >
-        {children && children.map(child => {
-            const ChildRender = ControlMapper[child.type];
-            return <ChildRender key={child.id}
-                                data={child}
-                                path={path}
-                                formController={formController}
-                                $selectedController={$selectedController}
-                                setSelectedController={setSelectedController}
-                                draggable={true}/>
-        })}
+        <RenderLayout value={children} controller={formController} path={path} $selectedController={$selectedController}
+                      setSelectedController={setSelectedController}
+        />
+
     </Component>
 }

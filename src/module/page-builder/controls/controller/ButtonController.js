@@ -1,10 +1,10 @@
 import {Vertical} from "components/layout/Layout";
-import {handleDragOver} from "module/page-builder/page/PageEditorPanel";
 import Button from "components/button/Button";
+import {handleDragOverControlComponent} from "module/page-builder/page/handleDragOverControlComponent";
 
 export default function ButtonController({data, path, formController, setSelectedController, ...controllerProps}) {
     path = [...path, data.id];
-    return <Vertical onDragOver={handleDragOver()} p={2} pT={1} pB={1}>
+    return <Vertical onDragOver={handleDragOverControlComponent()} p={2} pT={1} pB={1}>
         <Button color={"primary"} onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
