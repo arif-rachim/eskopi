@@ -4,7 +4,7 @@ import {Vertical} from "components/layout/Layout";
 import {useObserverListener} from "components/useObserver";
 import {useState} from "react";
 import {isNullOrUndefined} from "components/utils";
-import {handleDragOverControlComponent} from "module/page-builder/page/handleDragOverControlComponent";
+import {handleDragOverControlComponent} from "module/page-builder/designer/handleDragOverControlComponent";
 
 export default function TextInputController({
                                                 data,

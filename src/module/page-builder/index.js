@@ -3,8 +3,9 @@ import useObserver from "components/useObserver";
 import {createContext, useRef} from "react";
 import PageTreePanel from "module/page-builder/pages/PageTreePanel";
 import ControlListPanel from "module/page-builder/controls/ControlListPanel";
-import PageEditorPanel from "module/page-builder/page/PageEditorPanel";
+import DesignerPanel from "module/page-builder/designer/DesignerPanel";
 import PropertiesPanel from "module/page-builder/properties/PropertiesPanel";
+import OutlinePanel from "./outline/OutlinePanel";
 
 export const DropListenerContext = createContext(null);
 export default function PageBuilder() {
@@ -21,10 +22,10 @@ export default function PageBuilder() {
                     <ControlListPanel/>
                 </Vertical>
                 <Vertical flex={1}>
-                    <PageEditorPanel $data={$data}
-                                     setData={setData}
-                                     setSelectedController={setSelectedController}
-                                     $selectedController={$selectedController}
+                    <DesignerPanel $data={$data}
+                                   setData={setData}
+                                   setSelectedController={setSelectedController}
+                                   $selectedController={$selectedController}
                     />
                 </Vertical>
                 <Vertical width={200} color={"light"} brightness={-3}>
@@ -32,6 +33,11 @@ export default function PageBuilder() {
                         $layout={$data}
                         setLayout={setData}
                         $selectedController={$selectedController}
+                    />
+
+                    <OutlinePanel $data={$data}
+                                  setData={setData}
+                                  $selectedController={$selectedController}
                     />
                 </Vertical>
             </Horizontal>

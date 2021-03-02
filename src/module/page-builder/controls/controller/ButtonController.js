@@ -1,6 +1,6 @@
 import {Vertical} from "components/layout/Layout";
 import Button from "components/button/Button";
-import {handleDragOverControlComponent} from "module/page-builder/page/handleDragOverControlComponent";
+import {handleDragOverControlComponent} from "module/page-builder/designer/handleDragOverControlComponent";
 
 export default function ButtonController({data, path, formController, setSelectedController, ...controllerProps}) {
     path = [...path, data.id];

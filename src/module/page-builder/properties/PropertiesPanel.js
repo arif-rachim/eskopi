@@ -195,13 +195,11 @@ export default function PropertiesPanel({$layout, setLayout, $selectedController
         reset(selectedController);
     })
     // ok lets do something here /// lets render the properties over here !
-    return <Vertical height={'100%'} bL={3} overflow={'auto'}>
-        <Panel headerTitle={'Properties'}>
+    return <Panel headerTitle={'Properties'}>
             <List $data={$listData} dataKey={data => data.label} formController={formController}
                   itemRenderer={PropertyItemRenderer}/>
         </Panel>
 
-    </Vertical>
 }
 
 function PropertyItemRenderer({data, formController}) {

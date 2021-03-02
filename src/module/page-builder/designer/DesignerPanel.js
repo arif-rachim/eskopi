@@ -9,8 +9,8 @@ import LabelController from "module/page-builder/controls/controller/LabelContro
 import ButtonController from "module/page-builder/controls/controller/ButtonController";
 import TextInputController from "module/page-builder/controls/controller/TextInputController";
 import TextAreaController from "module/page-builder/controls/controller/TextAreaController";
-import {getPlaceHolder, usePlaceHolderListener} from "module/page-builder/page/getPlaceHolder";
-import {handlePlaceHolderDrop} from "module/page-builder/page/handlePlaceHolderDrop";
+import {getPlaceHolder, usePlaceHolderListener} from "module/page-builder/designer/getPlaceHolder";
+import {handlePlaceHolderDrop} from "module/page-builder/designer/handlePlaceHolderDrop";
 
 
 const handleRootDragEnter = (dragHoverCountRef) => (event) => {
@@ -40,7 +40,7 @@ const handleRootDragOver = () => (event) => {
 }
 
 
-export default function PageEditorPanel({$data, setData, $selectedController, setSelectedController}) {
+export default function DesignerPanel({$data, setData, $selectedController, setSelectedController}) {
     const rootRef = useRef();
     const dropListener = useContext(DropListenerContext);
     usePlaceHolderListener("drop", handlePlaceHolderDrop(rootRef, setData));

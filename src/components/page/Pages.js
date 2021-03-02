@@ -77,7 +77,7 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
                 </Horizontal>
             </form>
         </Horizontal>
-        <Vertical flex={'1 0 auto'}>
+        <Vertical flex={'1 0 auto'} height={'100%'}>
             <ObserverValue render={RenderPages} $observer={$pagesToRender} $pageActiveIndex={$pageActiveIndex}/>
         </Vertical>
     </Vertical>

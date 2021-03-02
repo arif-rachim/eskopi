@@ -1,4 +1,4 @@
-import {getPlaceHolder} from "module/page-builder/page/getPlaceHolder";
+import {getPlaceHolder} from "module/page-builder/designer/getPlaceHolder";
 
 export const handleDragOverControlComponent = () => {
     return (event) => {

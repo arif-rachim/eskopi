@@ -1,5 +1,5 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {handleDragOverControlComponent} from "module/page-builder/page/handleDragOverControlComponent";
+import {handleDragOverControlComponent} from "module/page-builder/designer/handleDragOverControlComponent";
 
 export default function LabelController({data, path, formController, setSelectedController, ...controllerProps}) {
     path = [...path, data.id];
