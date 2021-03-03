@@ -23,10 +23,12 @@ function cleanDataFromTree(data, dataToRemove) {
     if (data.id) {
         if (data.parentIds) {
             for (const idsToTrace of data.parentIds) {
-                dataToRemove = dataToRemove.children.find(child => child.id === idsToTrace);
+                dataToRemove = dataToRemove?.children?.find(child => child.id === idsToTrace);
             }
         }
-        dataToRemove.children = dataToRemove.children.filter(child => child.id !== data.id);
+        if (dataToRemove) {
+            dataToRemove.children = dataToRemove.children?.filter(child => child.id !== data.id);
+        }
     }
 }
 

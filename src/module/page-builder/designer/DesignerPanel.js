@@ -50,7 +50,9 @@ export default function DesignerPanel({$data, setData, $selectedController, setS
                   onClick={() => setSelectedController(null)}
                   data-layout={'vertical'}>
 
-            <ObserverValue $observer={useObserverMapper($data, data => data.children)}
+            <ObserverValue $observer={useObserverMapper($data, data => {
+                return data.children
+            })}
                            render={RenderLayoutMemo}
                            controller={controller}
                            $selectedController={$selectedController}
@@ -64,7 +66,6 @@ export const RenderLayout = ({value, controller, $selectedController, setSelecte
     if (value === undefined) {
         return false;
     }
-
     return value.map(child => {
         const ChildRender = ControlMapper[child.type];
         return <DraggableComponent render={ChildRender} key={child.id}
@@ -84,7 +85,6 @@ function DraggableComponent({render, data, ...props}) {
     const handleOnDragStart = (event) => {
         event.stopPropagation();
         setIsDragging(true);
-        console.log("Shit we start dragging", data);
         event.dataTransfer.effectAllowed = 'copy';
         event.dataTransfer.setData('text/plain', JSON.stringify(data));
         dropListener.current = () => {

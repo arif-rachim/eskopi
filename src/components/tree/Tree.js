@@ -47,13 +47,11 @@ export default function Tree({
 const flatArray = (array, result, parentKey, dataKey) => {
     array = array || [];
     return array.reduce((acc, next) => {
-        const {children, ...item} = next;
-        const key = dataKey(item);
-        item.key_ = [...parentKey, key];
-        item.children = children ? children.length : 0;
-        acc.push(item)
-        if (children) {
-            acc = flatArray(children, acc, item.key_, dataKey);
+        const key = dataKey(next);
+        next.key_ = [...parentKey, key];
+        acc.push(next)
+        if (next.children) {
+            acc = flatArray(next.children, acc, next.key_, dataKey);
         }
         return acc;
     }, result);
@@ -179,7 +177,7 @@ export function DefaultTreeItemRenderer({
 
     const [$toggleButtonVisible, setToggleButtonVisible] = useObserver(data.children > 0);
     useObserverListener($selectedItem, (selectedItem) => setSelected(selectedItem === data));
-    useEffect(() => setToggleButtonVisible(data.children > 0), [data, setToggleButtonVisible]);
+    useEffect(() => setToggleButtonVisible(data?.children?.length > 0), [data, setToggleButtonVisible]);
     const Component = listRenderer;
     return <Horizontal onClick={() => setSelectedItem(data)} color={"light"} brightness={selected ? -3 : 0}>
         <Horizontal width={(level - 1) * 15}/>

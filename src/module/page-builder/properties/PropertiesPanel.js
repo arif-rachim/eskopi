@@ -36,9 +36,9 @@ export default function PropertiesPanel({$layout, setLayout, $selectedController
             const newLayout = JSON.parse(JSON.stringify(layout));
             let nodeToUpdate = newLayout;
             for (const pathId of parentIds) {
-                nodeToUpdate = nodeToUpdate.children.find(c => c.id === pathId);
+                nodeToUpdate = nodeToUpdate?.children?.find(c => c.id === pathId);
             }
-            nodeToUpdate = nodeToUpdate.children.find(c => c.id === selectedController.id);
+            nodeToUpdate = nodeToUpdate?.children?.find(c => c.id === selectedController.id);
             Object.keys(value).forEach(key => {
                 nodeToUpdate[key] = value[key];
             })
