@@ -1,5 +1,5 @@
 import {Vertical} from "components/layout/Layout";
-import {ObserverValue, useObserverListener} from "components/useObserver";
+import {useObserverListener, useObserverValue} from "components/useObserver";
 import {useState} from "react";
 
 const DEFAULT_DATA_KEY = (data) => {
@@ -35,35 +35,25 @@ export default function List({
                                  ...props
                              }) {
     const Renderer = itemRenderer;
-    return <Vertical domRef={domRef}>
-        <Vertical>
-            <ObserverValue $observer={$data} render={({value}) => {
-                const data = value || [];
-                return <Vertical tabIndex={0} style={{outline: 'none'}} onKeyDown={(event) => {
-
-                    if (event.code === 'ArrowDown' && onKeyboardDown) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        onKeyboardDown.call();
-                    }
-                    if (event.code === 'ArrowUp' && onKeyboardDown) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        onKeyboardUp.call();
-                    }
-
-                }}>
-
-                    {data.map((data, index) => {
-                        return <Vertical index={index} key={dataKey.apply(data, [data])}>
-                            <Renderer data={data} index={index} dataKey={dataKey} $selectedItem={$selectedItem}
-                                      setSelectedItem={setSelectedItem} {...props}/>
-                        </Vertical>
-                    })}
-                </Vertical>
-            }}/>
-        </Vertical>
-    </Vertical>;
+    const data = useObserverValue($data) || [];
+    return <Vertical domRef={domRef} tabIndex={0} style={{outline: 'none'}} onKeyDown={(event) => {
+        if (event.code === 'ArrowDown' && onKeyboardDown) {
+            event.preventDefault();
+            event.stopPropagation();
+            onKeyboardDown.call();
+        }
+        if (event.code === 'ArrowUp' && onKeyboardDown) {
+            event.preventDefault();
+            event.stopPropagation();
+            onKeyboardUp.call();
+        }
+    }}>
+        {data.map((data, index) => {
+            return <Renderer key={dataKey.apply(data, [data])} data={data} index={index} dataKey={dataKey}
+                             $selectedItem={$selectedItem}
+                             setSelectedItem={setSelectedItem} {...props}/>
+        })}
+    </Vertical>
 }
 
 

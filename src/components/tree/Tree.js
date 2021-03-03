@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Horizontal, Vertical} from "components/layout/Layout";
+import {Horizontal} from "components/layout/Layout";
 import List from "components/list/List";
 import useObserver, {ObserverValue, useObserverListener, useObserverValue} from "components/useObserver";
 import Button from "components/button/Button";
@@ -10,9 +10,13 @@ export const DefaultTreeDataKey = (data) => data?.id;
  * Tree data should contains children which is an array.
  * @param {{children:[],id:string}[]} $data
  * @param {React.FunctionComponent} itemRenderer
+ * @param {React.FunctionComponent} rowRenderer
  * @param {function(data:*):string} dataKey
  * @param {function(event:*):void} onKeyboardUp
  * @param {function(event:*):void} onKeyboardDown
+ * @param {useRef} domRef
+ * @param {useRef} compRef
+ * @param {any} rowProps
  * @param props
  * @returns {JSX.Element}
  * @constructor
@@ -20,9 +24,13 @@ export const DefaultTreeDataKey = (data) => data?.id;
 export default function Tree({
                                  $data,
                                  itemRenderer = DefaultTreeItemRenderer,
+                                 rowRenderer = DefaultTreeItemRenderer,
                                  dataKey = DefaultTreeDataKey,
                                  onKeyboardDown,
                                  onKeyboardUp,
+                                 domRef,
+                                 compRef,
+                                 rowProps,
                                  ...props
                              }) {
 
@@ -34,13 +42,23 @@ export default function Tree({
     });
     useObserverListener($collapsedNode, (collapsedNode) => {
         setListData(filterWithCollapsedNode(flatArray($data.current, [], [], dataKey), collapsedNode));
-    })
+    });
+
+    useEffect(() => {
+        if (compRef) {
+            compRef.current = {
+                $listData,
+                $collapsedNode
+            };
+        }
+    }, [$collapsedNode, $listData, compRef])
 
     // lets make the data flat first
-    return <List $data={$listData} itemRenderer={DefaultTreeItemRenderer} listRenderer={itemRenderer} dataKey={dataKey}
+    return <List domRef={domRef} $data={$listData} itemRenderer={rowRenderer} listRenderer={itemRenderer}
+                 dataKey={dataKey}
                  onKeyboardUp={onKeyboardUp}
                  onKeyboardDown={onKeyboardDown} $collapsedNode={$collapsedNode}
-                 setCollapsedNode={setCollapsedNode} {...props} />
+                 setCollapsedNode={setCollapsedNode} rowProps={rowProps} {...props} />
 }
 
 
@@ -117,7 +135,7 @@ export function removeTreeDataFromKey(data = [], key = [], dataKey, index = 0) {
 
 function ToggleButton({$open, setOpen, width}) {
     const open = useObserverValue($open);
-    return <Button p={0} pT={0} pB={0} vAlign={"center"} color={'light'} opacity={0} b={0} width={width}
+    return <Button p={0} pT={1} pB={0} vAlign={"center"} color={'light'} opacity={0} b={0} width={width}
                    onClick={() => setOpen(val => !val)}>
         {open &&
         <svg viewBox='0 0 512 512'>
@@ -144,9 +162,10 @@ export function DefaultTreeItemRenderer({
                                             listRenderer,
                                             $collapsedNode,
                                             setCollapsedNode,
+                                            rowProps,
                                             ...props
                                         }) {
-
+    rowProps = rowProps || {};
     const key = data.key_.join(':');
 
     const [$collapsed, setCollapsed] = useObserver($collapsedNode.current[key] === true);
@@ -166,7 +185,6 @@ export function DefaultTreeItemRenderer({
         setCollapsed($collapsedNode.current[key] === true);
     });
 
-
     const level = data.key_.length;
     const [selected, setSelected] = useState(false);
     const [$expand, setExpand] = useObserver(!$collapsed.current);
@@ -179,23 +197,23 @@ export function DefaultTreeItemRenderer({
     useObserverListener($selectedItem, (selectedItem) => setSelected(selectedItem === data));
     useEffect(() => setToggleButtonVisible(data?.children?.length > 0), [data, setToggleButtonVisible]);
     const Component = listRenderer;
-    return <Horizontal onClick={() => setSelectedItem(data)} color={"light"} brightness={selected ? -3 : 0}>
-        <Horizontal width={(level - 1) * 15}/>
+    return <Horizontal onClick={() => setSelectedItem(data)} color={"light"}
+                       brightness={selected ? -3 : 0} {...rowProps}>
+        <Horizontal width={(level - 1) * 10}/>
         <ObserverValue $observer={$toggleButtonVisible} render={({value}) => {
             if (!value) {
                 return <Horizontal width={15}/>
             }
             return <ToggleButton $open={$expand} setOpen={setExpand} width={15}/>
         }}/>
-        <Vertical flex={1}>
-            <Component selected={selected}
-                       index={index}
-                       $selectedItem={$selectedItem}
-                       $collapsed={$collapsed}
-                       data={data}
-                       setData={setData}
-                       dataKey={dataKey}
-                       {...props}/>
-        </Vertical>
+        <Component selected={selected}
+                   index={index}
+                   $selectedItem={$selectedItem}
+                   $collapsed={$collapsed}
+                   data={data}
+                   setData={setData}
+                   dataKey={dataKey}
+                   {...props}/>
+
     </Horizontal>
 }

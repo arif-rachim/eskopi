@@ -6,6 +6,7 @@ import useForm from "components/useForm";
 import {getPlaceHolder, usePlaceHolderListener} from "module/page-builder/designer/getPlaceHolder";
 import {handlePlaceHolderDrop} from "module/page-builder/designer/handlePlaceHolderDrop";
 import {ControlMapper} from "module/page-builder/controls/ControllerMapper";
+import getOutlinePlaceHolder from "module/page-builder/outline/getOutlinePlaceHolder";
 
 
 const handleRootDragEnter = (dragHoverCountRef) => (event) => {
@@ -22,8 +23,10 @@ const handleRootDragEnter = (dragHoverCountRef) => (event) => {
 const handleRootDragLeave = (dragHoverCountRef) => () => {
     dragHoverCountRef.current--;
 }
+
 const handleRootDrop = (dragHoverCountRef, dropListener) => (event) => {
     getPlaceHolder({display: 'none'});
+    getOutlinePlaceHolder({display: 'none'});
     event.preventDefault();
     event.stopPropagation();
     dragHoverCountRef.current = 0;
@@ -89,6 +92,8 @@ function DraggableComponent({render, data, ...props}) {
         event.dataTransfer.setData('text/plain', JSON.stringify(data));
         dropListener.current = () => {
             setIsDragging(false);
+            getOutlinePlaceHolder({display: 'none'});
+            getPlaceHolder({display: 'none'});
         };
     };
     return <Render draggable={true} opacity={isDragging ? 0.5 : 1} onDragStart={handleOnDragStart}
