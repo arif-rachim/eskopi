@@ -46,7 +46,7 @@ export default function PageTreePanel({$selectedPage, setSelectedPage}) {
 }
 
 function HeaderRenderer({$showDelete, showConfirmation, $selectedItem, $pages, setPageResource, showSlideDown}) {
-    return <>
+    return <Horizontal hAlign={'right'} flex={1}>
         <Button $visible={$showDelete} p={0} onClick={async (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -88,7 +88,7 @@ function HeaderRenderer({$showDelete, showConfirmation, $selectedItem, $pages, s
                       strokeWidth='32' d='M256 112v288M400 256H112'/>
             </svg>
         </Button>
-    </>
+    </Horizontal>
 
 }
 

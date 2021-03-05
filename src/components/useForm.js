@@ -156,7 +156,6 @@ const callbackOnChange = (propsRef) => (value) => {
  * @param {string} label
  * @param {function(value)} validator
  * @param {'change'|'blur'} validateOn
- * @param {number} flex
  * @param {React.Element} render
  * @param {number} horizontalLabelPositionWidth
  * @param {React.MutableRefObject<{validateOn: {}, $errors: (React.MutableRefObject<*>|setObserver), $value: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>} controller
@@ -170,7 +169,6 @@ export function Controller({
                                validateOn = 'blur',
                                render,
                                controller,
-                               flex,
                                horizontalLabelPositionWidth,
                                ...props
                            }) {
@@ -190,9 +188,7 @@ export function Controller({
     const onChange = useCallback(callbackOnChange(propsRef), []);
     const Render = useRef(render).current;
     const containerStyle = {};
-    if (flex) {
-        containerStyle.flex = flex;
-    }
+
     const isHorizontal = horizontalLabelPositionWidth > 0;
     return <Vertical overflow={'visible'} style={containerStyle}>
         <label>
@@ -202,7 +198,7 @@ export function Controller({
                     <Horizontal style={{fontSize: '0.8rem', whiteSpace: 'nowrap'}}
                                 flex={`1 0 ${horizontalLabelPositionWidth}px`}>{label}</Horizontal>
                     <Render name={name} onBlur={onBlur} onChange={onChange} $value={controller.current.$value}
-                            $errors={controller.current.$errors} {...props} style={{flex: '1 1 auto'}}/>
+                            $errors={controller.current.$errors} {...props} style={{width: '100%'}}/>
                 </Horizontal>
                 }
                 {!isHorizontal &&

@@ -138,13 +138,13 @@ function ToggleButton({$open, setOpen, width}) {
     return <Button p={0} pT={1} pB={0} vAlign={"center"} color={'light'} opacity={0} b={0} width={width}
                    onClick={() => setOpen(val => !val)}>
         {open &&
-        <svg viewBox='0 0 512 512'>
+        <svg width={12} height={12} viewBox='0 0 512 512'>
             <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='48'
                   d='M112 184l144 144 144-144'/>
         </svg>
         }
         {!open &&
-        <svg viewBox='0 0 512 512'>
+        <svg width={12} height={12} viewBox='0 0 512 512'>
             <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='48'
                   d='M184 112l144 144-144 144'/>
         </svg>
