@@ -233,7 +233,7 @@ function Layout({
                     hAlign,
                     vAlign,
                     width, height,
-                    overflow = 'visible',
+                    overflow = 'unset',
                     position = 'relative',
                     top, left, right, bottom,
                     transition,

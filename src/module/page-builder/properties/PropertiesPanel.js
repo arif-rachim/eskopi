@@ -10,6 +10,7 @@ import CollapsiblePanel from "components/panel/CollapsiblePanel";
 import BorderMarginPaddingPanel from "module/page-builder/properties/BorderMarginPaddingPanel";
 import {WidthAndHeightPanel} from "module/page-builder/properties/WidthAndHeightPanel";
 import {AlignmentAndGap} from "module/page-builder/properties/AlignmentAndGap";
+import {ColorBrightnessOpacity} from "./ColorBrightnessOpacity";
 
 /**
  @param {useRef} inputRef
@@ -86,10 +87,12 @@ export default function PropertiesPanel({$layout, setLayout, $selectedController
         <CollapsiblePanel height={'unset'} headerTitle={'Width and Height'}>
             <WidthAndHeightPanel controller={controller}/>
         </CollapsiblePanel>
-        <CollapsiblePanel height={'unset'} headerTitle={'Alignment And Gap'}>
+        <CollapsiblePanel height={'unset'} headerTitle={'Alignment and Gap'}>
             <AlignmentAndGap controller={controller}/>
         </CollapsiblePanel>
-
+        <CollapsiblePanel height={'unset'} headerTitle={'Color and Brightness'}>
+            <ColorBrightnessOpacity controller={controller}/>
+        </CollapsiblePanel>
         {/*<List $data={$listData} dataKey={data => data.label} formController={formController}*/}
         {/*      itemRenderer={PropertyItemRenderer}/>*/}
     </Panel>

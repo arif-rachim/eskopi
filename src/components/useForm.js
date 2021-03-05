@@ -170,6 +170,7 @@ export function Controller({
                                render,
                                controller,
                                horizontalLabelPositionWidth,
+                               containerStyle,
                                ...props
                            }) {
     if (isNullOrUndefined(controller)) {
@@ -187,7 +188,7 @@ export function Controller({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const onChange = useCallback(callbackOnChange(propsRef), []);
     const Render = useRef(render).current;
-    const containerStyle = {};
+    containerStyle = containerStyle || {};
 
     const isHorizontal = horizontalLabelPositionWidth > 0;
     return <Vertical overflow={'visible'} style={containerStyle}>

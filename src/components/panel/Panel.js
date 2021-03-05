@@ -12,9 +12,10 @@ export default function Panel({headerTitle, headerRenderer, height = '100%', chi
             <HeaderRenderer {...props}/>
             }
         </Horizontal>
-
-        <Vertical height={'100%'} color={"light"} brightness={0} overflow={'auto'}>
+        <Vertical  height={'100%'} overflow={'scroll'}>
+        <Vertical color={"light"} brightness={0} overflow={'auto'} style={{display:'block'}}>
             {children}
+        </Vertical>
         </Vertical>
     </Vertical>
 }
