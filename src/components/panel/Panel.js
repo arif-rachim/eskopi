@@ -7,7 +7,7 @@ export default function Panel({headerTitle, headerRenderer, children, ...props})
             <Vertical fSize={14} style={{fontWeight: 'bold'}}>
                 {headerTitle}
             </Vertical>
-            <Horizontal flex={1}/>
+
             {HeaderRenderer &&
             <HeaderRenderer {...props}/>
             }
