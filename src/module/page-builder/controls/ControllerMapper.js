@@ -35,5 +35,6 @@ export const ControlMapper = {
 }
 
 export const ControlPropertiesCatalog = {
-    [Controls.SPACE]: [BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity]
+    [Controls.SPACE]: [BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity],
+    [Controls.TEXT_INPUT]: [BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity]
 }

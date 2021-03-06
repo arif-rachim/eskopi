@@ -13,7 +13,7 @@ export default function TextAreaController({
                                                setSelectedController,
                                                ...controllerProps
                                            }) {
-    const {id, children, type, parentIds, ...props} = data;
+    const {id, children, type, parentIds,width, ...props} = data;
     const [isHovered, setHovered] = useState(false);
     const [isFocused, setFocused] = useState(false);
     useObserverListener($selectedController, selectedController => {
@@ -22,7 +22,7 @@ export default function TextAreaController({
         }
         setFocused(selectedController.id === id);
     });
-    return <Vertical onDragOver={handleDragOverControlComponent()} p={2} pT={1} pB={1}>
+    return <Vertical onDragOver={handleDragOverControlComponent()} p={2} pT={1} pB={1} width={width}>
         <Controller render={TextArea} rows={3} label={"Text Area"} controller={formController}
                     name={"textarea"} disabled={false}
                     style={{
