@@ -3,6 +3,10 @@ import LabelController from "module/page-builder/controls/controller/LabelContro
 import ButtonController from "module/page-builder/controls/controller/ButtonController";
 import TextInputController from "module/page-builder/controls/controller/TextInputController";
 import TextAreaController from "module/page-builder/controls/controller/TextAreaController";
+import BorderMarginPaddingPanel from "../properties/BorderMarginPaddingPanel";
+import AlignmentAndGap from "../properties/AlignmentAndGap";
+import WidthAndHeightPanel from "../properties/WidthAndHeightPanel";
+import ColorBrightnessOpacity from "../properties/ColorBrightnessOpacity";
 
 
 export const Controls = {
@@ -30,125 +34,6 @@ export const ControlMapper = {
     [Controls.TEXT_AREA]: TextAreaController
 }
 
-
-export const controllerPropertiesCatalog = {
-    common: {
-        p: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        pL: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        pR: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        pT: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        pB: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        m: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        mL: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        mR: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        mT: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        mB: {
-            type: 'number',
-            defaultValue: undefined
-        },
-
-        b: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        bL: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        bR: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        bT: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        bB: {
-            type: 'number',
-            defaultValue: undefined
-        },
-
-        r: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        rTL: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        rTR: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        rBL: {
-            type: 'number',
-            defaultValue: undefined
-        },
-        rBR: {
-            type: 'number',
-            defaultValue: undefined
-        },
-    },
-    [Controls.TEXT_INPUT]: {
-        name: {
-            type: 'string',
-            defaultValue: ''
-        },
-    },
-    [Controls.TEXT_AREA]: {
-        name: {
-            type: 'string',
-            defaultValue: ''
-        },
-    },
-    [Controls.BUTTON]: {
-        name: {
-            type: 'string',
-            defaultValue: ''
-        },
-    },
-    [Controls.SPACE]: {
-        layout: {
-            type: 'select',
-            data: ['vertical', 'horizontal'],
-            defaultValue: 'vertical'
-        },
-        vAlign: {
-            type: 'select',
-            data: ['top', 'center', 'bottom'],
-            defaultValue: ''
-        },
-        hAlign: {
-            type: 'select',
-            data: ['left', 'center', 'right'],
-            defaultValue: ''
-        },
-    }
+export const ControlPropertiesCatalog = {
+    [Controls.SPACE]: [BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity]
 }

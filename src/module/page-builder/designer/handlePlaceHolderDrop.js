@@ -59,6 +59,9 @@ export function handlePlaceHolderDrop(rootRef, setData) {
                 for (const id of parentIds) {
                     nodeToBeUpdated = nodeToBeUpdated.children.find(d => d.id === id);
                 }
+                if (!nodeToBeUpdated) {
+                    return;
+                }
                 nodeToBeUpdated.children = nodeToBeUpdated.children || [];
                 nodeToBeUpdated.children.splice(childIndex, 0, {
                     id: uuid(),

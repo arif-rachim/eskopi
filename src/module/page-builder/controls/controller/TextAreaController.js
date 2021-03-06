@@ -14,6 +14,7 @@ export default function TextAreaController({
                                                ...controllerProps
                                            }) {
     const {id, children, type, parentIds, ...props} = data;
+    const [isHovered, setHovered] = useState(false);
     const [isFocused, setFocused] = useState(false);
     useObserverListener($selectedController, selectedController => {
         if (isNullOrUndefined(selectedController)) {
@@ -25,8 +26,18 @@ export default function TextAreaController({
         <Controller render={TextArea} rows={3} label={"Text Area"} controller={formController}
                     name={"textarea"} disabled={false}
                     style={{
-                        backgroundColor: isFocused ? 'rgba(152,224,173,0.5)' : 'rgba(255,255,255,1)',
+                        border: isFocused ? '1px solid blue' : isHovered ? `1px solid green` : '1px solid rgba(0,0,0,0.2)',
                         transition: 'all 100ms cubic-bezier(0,0,0.7,0.9)'
+                    }}
+                    onMouseEnter={(event) => {
+                        event.stopPropagation();
+                        event.preventDefault();
+                        setHovered(true);
+                    }}
+                    onMouseLeave={(event) => {
+                        event.stopPropagation();
+                        event.preventDefault();
+                        setHovered(false);
                     }}
                     autoComplete={'off'}
                     onClick={(event) => {

@@ -1,10 +1,10 @@
 import {Vertical} from "components/layout/Layout";
 
-export default function BorderMarginPaddingPanel() {
-    return <Vertical p={2}>
+function BorderMarginPaddingPanel() {
+    return <Vertical p={2} width={250} height={168}>
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="100%"
+            width={'100%'}
             version="1.1"
             viewBox="0 0 140.653 92.475"
         >
@@ -292,3 +292,7 @@ export default function BorderMarginPaddingPanel() {
                }}/>
     </Vertical>
 }
+
+BorderMarginPaddingPanel.title = 'Border Margin and Padding';
+
+export default BorderMarginPaddingPanel;

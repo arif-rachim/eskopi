@@ -58,7 +58,7 @@ function App() {
                      onChange={useCallback(handleOnChange(setActiveTab), [])}
                 // eslint-disable-next-line
                      onClose={useCallback(handleOnClose(setBooks, setActiveTab), [])}/>
-            <Vertical height={'100%'} >
+            <Vertical height={'100%'}>
                 {books.map((book, index) => {
                     return <Pages key={book.id} index={index} $activeIndex={$activeTab} {...book}/>
                 })}

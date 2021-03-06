@@ -130,9 +130,9 @@ export function parseChildrenPosition({vAlign, hAlign, horizontal}) {
 }
 
 function handleMouse(hasMouseDownOrHoverBrightness, setMouseOver, action, callback) {
-    return () => {
+    return (event) => {
         if (callback) {
-            callback.call();
+            callback.call(null, event);
         }
         if (!hasMouseDownOrHoverBrightness) {
             return;

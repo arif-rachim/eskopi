@@ -35,10 +35,9 @@ export default function SpaceController({
         m={0}
         style={{
             minHeight: 30,
-            border: isHovered ? '1px dashed #ccc' : '1px dashed rgba(0,0,0,0)',
+            border: isFocused ? '1px solid blue' : isHovered ? '1px solid green' : (!children || children.length === 0) ? '1px dashed #ccc' : '1px solid rgba(0,0,0,0)',
             transition: 'all 100ms cubic-bezier(0,0,0.7,0.9)',
-            flexWrap: 'wrap',
-            backgroundColor: isFocused ? 'rgba(152,224,173,0.5)' : children && children.length > 0 ? 'inherit' : 'rgba(0,0,0,0.1)'
+            flexWrap: 'wrap'
         }}
         data-id={id}
         onDragEnter={(event) => {
@@ -50,8 +49,16 @@ export default function SpaceController({
             }
         }}
 
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        onMouseEnter={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            setHovered(true);
+        }}
+        onMouseLeave={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            setHovered(false);
+        }}
         data-layout={isHorizontal ? 'horizontal' : 'vertical'}
         onClick={(event) => {
             event.preventDefault();
