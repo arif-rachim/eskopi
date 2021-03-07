@@ -8,7 +8,10 @@ import {useRef} from "react";
 const defaultMenus = {
     'Page Builder': {
         path: 'page-builder'
-    }
+    },
+    'DB Explorer': {
+        path: 'db-explorer'
+    },
 };
 
 export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {

@@ -1,3 +1,4 @@
+import db_explorer from "./module/db-explorer/index";
 import _ from "./module/index";
 import login from "./module/login/index";
 import login_registration from "./module/login/registration/index";
@@ -13,6 +14,7 @@ import sample_use_observer from "./module/sample/use-observer/index";
 import sample_use_observer_two from "./module/sample/use-observer-two/index";
 
 const routing = {
+    'db-explorer': db_explorer,
     '': _,
     'login': login,
     'login/registration': login_registration,

@@ -1,9 +1,7 @@
-import {Vertical} from "components/layout/Layout";
+import PageBuilder from "module/page-builder";
 
 function Home() {
-    return <Vertical>
-        Welcome to eskopi Project
-    </Vertical>
+    return <PageBuilder/>
 }
 
 Home.title = 'Home';
