@@ -1,5 +1,5 @@
-import {useEffect, useMemo, useRef, useState} from "react";
-import {isFunction} from "components/utils";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {debounce, isFunction} from "components/utils";
 
 
 /**
@@ -84,20 +84,50 @@ export function useObserverMapper($observer, map = (value) => value) {
 /**
  * hook to extract the value of observer.
  * @param {{current:*} | null} observer
+ * @param {function(newValue:any,oldValue:any):any} mapper
+ * @param {number} debounceTimeout
  * @returns {*}
  */
-export function useObserverValue(observer = undefined) {
-
-    const [state, setState] = useState(() => {
-        if (observer === undefined) {
-            return undefined;
+export function useObserverValue(observer, mapper, debounceTimeout = 0) {
+    const observerIsUndefined = observer === undefined;
+    const observerIsArray = observerIsUndefined ? false : Array.isArray(observer);
+    if (!observerIsUndefined && !observerIsArray) {
+        observer = [observer];
+    }
+    const oldValueRef = useRef();
+    const [state, _setState] = useState(() => {
+        if (observerIsUndefined) {
+            return observer;
         }
-        return observer.current;
+        return observer.map($o => $o.current)
     });
-    useObserverListener(observer, (value) => {
-        setState(value);
-    })
-    return state;
+
+    const setState = useCallback(debounce(_setState, debounceTimeout), []);
+
+    useEffect(() => {
+        if (observer === undefined) {
+            return;
+        }
+        const listener = (index) => (newValue) => {
+            setState(oldState => {
+                oldValueRef.current = oldState;
+                const newState = [...oldState];
+                newState.splice(index, 1, newValue);
+                return newState;
+            });
+        };
+        const deregisterListener = observer.map(($o, index) => $o.addListener(listener(index)));
+        return () => deregisterListener.forEach(dr => dr.call())
+    }, observer);
+
+    if (state === undefined) {
+        return state;
+    }
+    if (mapper === undefined) {
+        return observerIsArray ? state : state[0];
+    } else {
+        return mapper.apply(null, [state, oldValueRef.current]);
+    }
 }
 
 /**
@@ -132,3 +162,5 @@ export function useObserverListener($observer, listener = undefined) {
         })
     }, [$observer]);
 }
+
+

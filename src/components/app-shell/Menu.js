@@ -15,7 +15,7 @@ const defaultMenus = {
 };
 
 export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
-    const showMenu = useObserverValue($showMenu);
+
     const domRef = useRef();
     useClickOutside([domRef, menuButtonRef], event => {
         setShowMenu(false);
@@ -27,7 +27,8 @@ export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
                      position={"absolute"}
                      color={"light"}
                      width={200}
-                     left={showMenu ? 0 : -200} transition={'left 200ms cubic-bezier(0,0,0.7,0.9)'} bR={1}>
+                     left={useObserverValue($showMenu) ? 0 : -200} transition={'left 200ms cubic-bezier(0,0,0.7,0.9)'}
+                     bR={1}>
         <Vertical p={1} bB={1}>
             <Controller name={'search'} controller={controller} render={Input} validateOn={'change'}
                         placeholder={'Search'}/>

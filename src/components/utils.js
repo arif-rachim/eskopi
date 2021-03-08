@@ -36,3 +36,31 @@ export function camelCaseToSentenceCase(text) {
     const result = text.replace(/([A-Z])/g, " $1");
     return result.charAt(0).toUpperCase() + result.slice(1);
 }
+
+/**
+ * Function to create debounce function
+ * @param {function():void} func
+ * @param {number} wait
+ * @param {boolean} immediate
+ * @returns {debouncedFunction}
+ */
+export function debounce(func, wait = 100, immediate = false) {
+    let timeout = 0;
+
+    function debouncedFunction() {
+        let context = this;
+        let args = arguments;
+
+        function later() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        }
+
+        let callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    }
+
+    return debouncedFunction;
+}
