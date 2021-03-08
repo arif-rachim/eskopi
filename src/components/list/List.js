@@ -1,6 +1,7 @@
 import {Vertical} from "components/layout/Layout";
 import {useObserverListener, useObserverValue} from "components/useObserver";
 import {useState} from "react";
+import {isFunction} from "components/utils";
 
 const DEFAULT_DATA_KEY = (data) => {
     if (data && !('id' in data)) {
@@ -32,6 +33,7 @@ export default function List({
                                  domRef,
                                  $selectedItem,
                                  setSelectedItem,
+                                 onDoubleClicked,
                                  ...props
                              }) {
     const Renderer = itemRenderer;
@@ -51,18 +53,22 @@ export default function List({
         {data.map((data, index) => {
             return <Renderer key={dataKey.apply(data, [data])} data={data} index={index} dataKey={dataKey}
                              $selectedItem={$selectedItem}
-                             setSelectedItem={setSelectedItem} {...props}/>
+                             setSelectedItem={setSelectedItem} onDoubleClicked={onDoubleClicked} {...props}/>
         })}
     </Vertical>
 }
 
 
-function DefaultItemRender({data, setSelectedItem, $selectedItem, dataKey}) {
+function DefaultItemRender({data, setSelectedItem, $selectedItem, onDoubleClicked, dataKey}) {
     const [selected, setSelected] = useState(dataKey($selectedItem.current) === dataKey(data))
     useObserverListener($selectedItem, (selectedItem) => {
         setSelected(dataKey(selectedItem) === dataKey(data))
     })
     return <Vertical p={1} color={"light"} brightness={selected ? -1 : 0} onClick={() => {
         setSelectedItem(data);
+    }} onDoubleClicked={() => {
+        if (onDoubleClicked && isFunction(onDoubleClicked)) {
+            onDoubleClicked.call(null, data)
+        }
     }}>{data}</Vertical>
 }
