@@ -83,7 +83,7 @@ export function useObserverMapper($observer, map = (value) => value) {
 
 /**
  * hook to extract the value of observer.
- * @param {{current:*} | null} observer
+ * @param {{current:*}[] | {current:*} | null} observer
  * @param {function(newValue:any,oldValue:any):any} mapper
  * @param {number} debounceTimeout
  * @returns {*}
@@ -101,9 +101,7 @@ export function useObserverValue(observer, mapper, debounceTimeout = 0) {
         }
         return observer.map($o => $o.current)
     });
-
     const setState = useCallback(debounce(_setState, debounceTimeout), []);
-
     useEffect(() => {
         if (observer === undefined) {
             return;

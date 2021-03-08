@@ -3,7 +3,6 @@ import morgan from "morgan";
 import dbRouter from "./service/database.js";
 import authenticationRouter from "./service/authentication.js";
 import log from "./service/logger.js";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 const app = express();
@@ -31,20 +30,19 @@ const token = (req, res, next) => {
     if (publicUrl.indexOf(req.url) >= 0) {
         return next();
     }
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]
-
-    if (token == null) {
-        throw new Error('Sorry you dont have valid token, please sign in to the app first');
-    }
-
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) {
-            throw err;
-        }
-        req.user = user;
-        next();
-    })
+    return next();
+    // const authHeader = req.headers['authorization'];
+    // const token = authHeader && authHeader.split(' ')[1]
+    // if (token == null) {
+    //     throw new Error('Sorry you dont have valid token, please sign in to the app first');
+    // }
+    // jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    //     if (err) {
+    //         throw err;
+    //     }
+    //     req.user = user;
+    //     next();
+    // })
 }
 
 app.use(cors);

@@ -184,6 +184,10 @@ const onActionRead = (params, queries) => {
         throw new Error(`No collection of ${type} in store`);
     }
 
+    if (params.length === 0) {
+        return Object.keys(store);
+    }
+
     let [entity, props] = getEntity(params);
     if (!entity) {
         throw new Error(`Entity does not exist in [${params}]`);
