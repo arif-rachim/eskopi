@@ -64,3 +64,18 @@ export function debounce(func, wait = 100, immediate = false) {
 
     return debouncedFunction;
 }
+
+/**
+ * Tools to handle double event within 500ms
+ * @param {function(event,isDouble)} callback
+ * @returns {function(...[*]): void}
+ */
+export function handleDouble(callback) {
+    let lastInvokeTime = 0;
+    return (...args) => {
+        const current = new Date().getTime();
+        let isDouble = (current - lastInvokeTime) < 500;
+        callback.apply(this, [...args, isDouble]);
+        lastInvokeTime = current;
+    }
+}

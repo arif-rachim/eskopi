@@ -3,6 +3,7 @@ import Panel from "components/panel/Panel";
 import useResource, {useResourceListener} from "components/useResource";
 import useObserver, {useObserverValue} from "components/useObserver";
 import List from "components/list/List";
+import {handleDouble} from "../../components/utils";
 
 
 function DBExplorer() {
@@ -23,6 +24,14 @@ function DBExplorer() {
                           dataKey={data => data}
                           itemRenderer={MyComponent}
                           $value={$selectedTable}
+                          onChange={handleDouble((data,isDouble) => {
+                              if(isDouble){
+                                  // open detail
+
+                              }else{
+                                  setSelectedTable(data);
+                              }
+                          })}
                           onKeyboardDown={() => setSelectedTable($listTables.current[$listTables.current.indexOf($selectedTable.current) + 1])}
                           onKeyboardUp={() => setSelectedTable($listTables.current[$listTables.current.indexOf($selectedTable.current) - 1])}/>
                 </Panel>
