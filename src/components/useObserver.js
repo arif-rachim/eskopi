@@ -116,27 +116,13 @@ export function useObserverValue(observers, mapper, debounceTimeout = 0) {
 }
 
 /**
- * @param {string} key
- * @param {{current}} $observer
- * @param {React.Element} render
- * @param props
- * @returns {JSX.Element}
- * @constructor
- */
-export function ObserverValue({$observer, render, ...props}) {
-    const value = useObserverValue($observer);
-    const Render = render;
-    return <Render value={value} {...props}/>
-}
-
-/**
  *
  * @param $observers
  * @param props
  * @returns {*}
  * @constructor
  */
-export function ObsValue({$observers, ...props}) {
+export function ObserverValue({$observers, ...props}) {
     const values = useObserverValue($observers);
     const children = props.children;
     if (!isFunction(children)) {

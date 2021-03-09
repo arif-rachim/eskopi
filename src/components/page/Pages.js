@@ -1,6 +1,6 @@
 import {memo, useEffect, useRef} from "react";
 import {Horizontal, Vertical} from "components/layout/Layout";
-import useObserver, {ObsValue, useObserverListener} from "components/useObserver";
+import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
 import useGradient from "components/useGradient";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
@@ -78,11 +78,11 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
             </form>
         </Horizontal>
         <Vertical flex={'1 0 auto'} height={'100%'}>
-            <ObsValue $observers={$pagesToRender}>
+            <ObserverValue $observers={$pagesToRender}>
                 {(value) => {
                     return <RenderPages value={value} $pageActiveIndex={$pageActiveIndex}/>
                 }}
-            </ObsValue>
+            </ObserverValue>
         </Vertical>
     </Vertical>
 }

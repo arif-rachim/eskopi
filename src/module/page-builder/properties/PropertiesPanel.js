@@ -1,4 +1,4 @@
-import useObserver, {ObsValue, useObserverListener} from "components/useObserver";
+import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
 import useForm from "components/useForm";
 import {isNullOrUndefined} from "components/utils";
 import Panel from "components/panel/Panel";
@@ -49,7 +49,7 @@ export default function PropertiesPanel({$layout, setLayout, $selectedController
     // ok lets do something here /// lets render the properties over here !
 
     return <Panel headerTitle={'Properties'}>
-        <ObsValue $observers={$propertiesPanel}>
+        <ObserverValue $observers={$propertiesPanel}>
             {(value) => {
                 return value.map((Panel, index) => {
                     return <CollapsiblePanel key={index} height={'unset'} headerTitle={Panel.title}>
@@ -57,7 +57,7 @@ export default function PropertiesPanel({$layout, setLayout, $selectedController
                     </CollapsiblePanel>
                 });
             }}
-        </ObsValue>
+        </ObserverValue>
 
     </Panel>
 

@@ -1,6 +1,6 @@
 import {createContext, useCallback, useContext} from "react";
 import {createShowPanel} from "components/useLayers";
-import useObserver, {ObsValue} from "components/useObserver";
+import useObserver, {ObserverValue} from "components/useObserver";
 
 /**
  * @returns {function(*=): Promise<ValidationOptions.unknown>}
@@ -23,11 +23,11 @@ export function PageLayerContextProvider({children}) {
     const [$stacks, setStacks] = useObserver([]);
     return <PageLayerContext.Provider value={setStacks}>
         {children}
-        <ObsValue $observers={$stacks}>{
+        <ObserverValue $observers={$stacks}>{
             (value) => {
                 return value.map((stack) => <Layer key={stack.key}>{stack.panel}</Layer>)
             }
-        }</ObsValue>
+        }</ObserverValue>
     </PageLayerContext.Provider>
 }
 

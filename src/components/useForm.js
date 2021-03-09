@@ -183,9 +183,9 @@ export function Controller({
     }
     const propsRef = useRef({controller, name, validator});
     propsRef.current = {controller, name, validator};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
     const onBlur = useCallback(callbackOnBlur(propsRef), []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
     const onChange = useCallback(callbackOnChange(propsRef), []);
     const Render = useRef(render).current;
     containerStyle = containerStyle || {};

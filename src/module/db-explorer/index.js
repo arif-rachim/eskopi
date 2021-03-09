@@ -1,19 +1,22 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import Panel from "components/panel/Panel";
 import useResource, {useResourceListener} from "components/useResource";
-import useObserver, {useObserverValue} from "components/useObserver";
+import useObserver, {useObserverListener, useObserverValue} from "components/useObserver";
 import List from "components/list/List";
 import {handleDouble} from "../../components/utils";
-
 
 function DBExplorer() {
     const [$resource, getDbList, $pending] = useResource({url: '/db'});
     const [$listTables, setListTables] = useObserver([]);
     const [$selectedTable, setSelectedTable] = useObserver();
+    const [$navigationStack, setNavigationStack] = useObserver([]);
     useResourceListener($resource, (status, value) => {
         if (status === 'success') {
             setListTables(value);
         }
+    });
+    useObserverListener($navigationStack, (stacks) => {
+        getDbList('/db/' + stacks.join('/'));
     });
 
     return <Vertical height={'100%'}>
@@ -22,12 +25,14 @@ function DBExplorer() {
                 <Panel headerTitle={'Tables'}>
                     <List $data={$listTables}
                           dataKey={data => data}
-                          itemRenderer={MyComponent}
+                          itemRenderer={ItemRenderer}
+                          $navigationStack={$navigationStack}
                           $value={$selectedTable}
                           onChange={handleDouble((data, isDouble) => {
                               if (isDouble) {
-                                  // open detail
-
+                                  setNavigationStack(stacks => {
+                                      return [...stacks, data]
+                                  });
                               } else {
                                   setSelectedTable(data);
                               }
@@ -41,12 +46,13 @@ function DBExplorer() {
 }
 
 
-function MyComponent({data, index, $value, onChange}) {
+function ItemRenderer({data, index, $value, onChange, $navigationStack}) {
     const selectedItem = useObserverValue($value);
     const isSelected = data === selectedItem;
 
     return <Vertical color={"light"} brightness={isSelected ? -3 : -1}
-                     onClick={() => onChange(data)}>{data}</Vertical>
+                     onClick={() => onChange(data)}>{JSON.stringify(data)}
+    </Vertical>
 }
 
 DBExplorer.title = 'Database Explorer';
