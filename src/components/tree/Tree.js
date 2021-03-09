@@ -153,8 +153,8 @@ function ToggleButton({$open, setOpen, width}) {
 }
 
 export function DefaultTreeItemRenderer({
-                                            $selectedItem,
-                                            setSelectedItem,
+                                            $value,
+                                            onChange,
                                             index,
                                             data,
                                             setData,
@@ -194,10 +194,10 @@ export function DefaultTreeItemRenderer({
     });
 
     const [$toggleButtonVisible, setToggleButtonVisible] = useObserver(data.children > 0);
-    useObserverListener($selectedItem, (selectedItem) => setSelected(selectedItem === data));
+    useObserverListener($value, (selectedItem) => setSelected(selectedItem === data));
     useEffect(() => setToggleButtonVisible(data?.children?.length > 0), [data, setToggleButtonVisible]);
     const Component = listRenderer;
-    return <Horizontal onClick={() => setSelectedItem(data)} color={"light"}
+    return <Horizontal onClick={() => onChange(data)} color={"light"}
                        brightness={selected ? -3 : 0} {...rowProps}>
         <Horizontal width={(level - 1) * 10}/>
         <ObserverValue $observer={$toggleButtonVisible} render={({value}) => {
@@ -208,7 +208,7 @@ export function DefaultTreeItemRenderer({
         }}/>
         <Component selected={selected}
                    index={index}
-                   $selectedItem={$selectedItem}
+                   $value={$value}
                    $collapsed={$collapsed}
                    data={data}
                    setData={setData}

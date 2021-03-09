@@ -119,18 +119,18 @@ export default function Select({
     />
 }
 
-function PopupMenu({parentRef, closePanel, itemRenderer, dataKey, $data, $value}) {
+function PopupMenu({parentRef, closePanel, itemRenderer, dataKey, $data}) {
     const domRef = useRef();
     useClickOutside([parentRef, domRef], () => {
         closePanel(false);
     });
 
-    const [$selectedItem, setSelectedItem] = useObserver($data.current);
-    useObserverListener($selectedItem, (selectedItem) => {
+    const [$value, onChange] = useObserver($data.current);
+    useObserverListener($value, (selectedItem) => {
         closePanel(selectedItem);
     });
     return <Vertical domRef={domRef} pL={0.5} pR={0.5}>
-        <List itemRenderer={itemRenderer} dataKey={dataKey} $data={$data} $selectedItem={$selectedItem}
-              setSelectedItem={setSelectedItem}/>
+        <List itemRenderer={itemRenderer} dataKey={dataKey} $data={$data} $value={$value}
+              onChange={onChange}/>
     </Vertical>
 }

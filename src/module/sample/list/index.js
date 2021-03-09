@@ -8,36 +8,36 @@ import PaginatedList from "components/list/PaginatedList";
 
 export default function ListExample() {
     const [$data, setData] = useObserver([]);
-    const [$selectedItem, setSelectedItem] = useObserver(null);
+    const [$value, onChange] = useObserver(null);
     return <Vertical gap={10}>
         <Horizontal>
             <Button onClick={() => setData(oldData => ([...oldData, {id: uuid(), name: ''}]))}>Add</Button>
-            <Button onClick={() => setData(oldData => oldData.filter(d => d !== $selectedItem.current))}>Delete</Button>
+            <Button onClick={() => setData(oldData => oldData.filter(d => d !== $value.current))}>Delete</Button>
         </Horizontal>
         <List $data={$data}
               dataKey={data => data.id}
               itemRenderer={MyComponent}
-              $selectedItem={$selectedItem}
-              setSelectedItem={setSelectedItem}
-              onKeyboardDown={() => setSelectedItem($data.current[$data.current.indexOf($selectedItem.current) + 1])}
-              onKeyboardUp={() => setSelectedItem($data.current[$data.current.indexOf($selectedItem.current) - 1])}
+              $value={$value}
+              onChange={onChange}
+              onKeyboardDown={() => onChange($data.current[$data.current.indexOf($value.current) + 1])}
+              onKeyboardUp={() => onChange($data.current[$data.current.indexOf($value.current) - 1])}
         />
         <PaginatedList $data={$data}
                        dataKey={data => data.id}
                        itemRenderer={MyComponent}
-                       $selectedItem={$selectedItem}
-                       setSelectedItem={setSelectedItem}
-                       onKeyboardDown={() => setSelectedItem($data.current[$data.current.indexOf($selectedItem.current) + 1])}
-                       onKeyboardUp={() => setSelectedItem($data.current[$data.current.indexOf($selectedItem.current) - 1])}/>
+                       $value={$value}
+                       onChange={onChange}
+                       onKeyboardDown={() => onChange($data.current[$data.current.indexOf($value.current) + 1])}
+                       onKeyboardUp={() => onChange($data.current[$data.current.indexOf($value.current) - 1])}/>
 
 
     </Vertical>
 }
 
 
-function MyComponent({data, index, $selectedItem, setSelectedItem}) {
-    const selectedItem = useObserverValue($selectedItem);
+function MyComponent({data, index, $value, onChange}) {
+    const selectedItem = useObserverValue($value);
     const isSelected = data === selectedItem;
     return <Vertical color={"light"} brightness={isSelected ? -3 : -1}
-                     onClick={() => setSelectedItem(data)}>{data?.id}</Vertical>
+                     onClick={() => onChange(data)}>{data?.id}</Vertical>
 }

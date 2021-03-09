@@ -18,8 +18,8 @@ const DEFAULT_DATA_KEY = (data) => {
  * @param {function(event:*):void} onKeyboardUp
  * @param {function(event:*):void} onKeyboardDown
  * @param {any} domRef
- * @param {observer} $selectedItem
- * @param {function(data)} setSelectedItem
+ * @param {observer} $value
+ * @param {function(data)} onChange
  * @param props
  * @returns {JSX.Element}
  * @constructor
@@ -31,9 +31,8 @@ export default function List({
                                  onKeyboardDown,
                                  onKeyboardUp,
                                  domRef,
-                                 $selectedItem,
-                                 setSelectedItem,
-                                 onDoubleClicked,
+                                 $value,
+                                 onChange,
                                  ...props
                              }) {
     const Renderer = itemRenderer;
@@ -52,23 +51,19 @@ export default function List({
     }}>
         {data.map((data, index) => {
             return <Renderer key={dataKey.apply(data, [data])} data={data} index={index} dataKey={dataKey}
-                             $selectedItem={$selectedItem}
-                             setSelectedItem={setSelectedItem} onDoubleClicked={onDoubleClicked} {...props}/>
+                             $value={$value}
+                             onChange={onChange} {...props}/>
         })}
     </Vertical>
 }
 
 
-function DefaultItemRender({data, setSelectedItem, $selectedItem, onDoubleClicked, dataKey}) {
-    const [selected, setSelected] = useState(dataKey($selectedItem.current) === dataKey(data))
-    useObserverListener($selectedItem, (selectedItem) => {
+function DefaultItemRender({data, onChange, $value, dataKey}) {
+    const [selected, setSelected] = useState(dataKey($value.current) === dataKey(data))
+    useObserverListener($value, (selectedItem) => {
         setSelected(dataKey(selectedItem) === dataKey(data))
     })
     return <Vertical p={1} color={"light"} brightness={selected ? -1 : 0} onClick={() => {
-        setSelectedItem(data);
-    }} onDoubleClicked={() => {
-        if (onDoubleClicked && isFunction(onDoubleClicked)) {
-            onDoubleClicked.call(null, data)
-        }
-    }}>{data}</Vertical>
+        onChange(data);
+    }} >{data}</Vertical>
 }

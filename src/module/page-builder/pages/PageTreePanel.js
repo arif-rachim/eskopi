@@ -11,8 +11,8 @@ import Input from "components/input/Input";
 import Panel from "components/panel/Panel";
 
 export default function PageTreePanel({$selectedPage, setSelectedPage}) {
-    const $selectedItem = $selectedPage;
-    const setSelectedItem = setSelectedPage;
+    const $value = $selectedPage;
+    const onChange = setSelectedPage;
     const [$pages, setPages] = useObserver({children: []});
     const [$pageResource, setPageResource] = useResource({url: '/db/pages'});
 
@@ -27,7 +27,7 @@ export default function PageTreePanel({$selectedPage, setSelectedPage}) {
     });
 
     const [$showDelete, setShowDelete] = useObserver(false);
-    useObserverListener($selectedItem, (item) => {
+    useObserverListener($value, (item) => {
         setShowDelete(item !== null)
     });
     const showSlideDown = useSlideDownStackPanel();
@@ -35,25 +35,25 @@ export default function PageTreePanel({$selectedPage, setSelectedPage}) {
     return <Panel headerTitle={'Pages'} headerRenderer={HeaderRenderer}
                   $showDelete={$showDelete}
                   showConfirmation={showConfirmation}
-                  $selectedItem={$selectedItem}
+                  $value={$value}
                   $pages={$pages}
                   setPageResource={setPageResource}
                   showSlideDown={showSlideDown}>
         <Tree $data={useObserverMapper($pages, page => page.children)} itemRenderer={PageTreeItemRenderer}
-              $selectedItem={$selectedItem} setSelectedItem={setSelectedItem}/>
+              $value={$value} onChange={onChange}/>
     </Panel>
 
 }
 
-function HeaderRenderer({$showDelete, showConfirmation, $selectedItem, $pages, setPageResource, showSlideDown}) {
+function HeaderRenderer({$showDelete, showConfirmation, $value, $pages, setPageResource, showSlideDown}) {
     return <Horizontal hAlign={'right'} flex={1}>
         <Button $visible={$showDelete} p={0} onClick={async (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const result = await showConfirmation(`Are you sure you want to delete ${$selectedItem.current.name}`);
-            if (result === 'YES' && $selectedItem.current) {
+            const result = await showConfirmation(`Are you sure you want to delete ${$value.current.name}`);
+            if (result === 'YES' && $value.current) {
                 const pages = JSON.parse(JSON.stringify($pages.current));
-                const selectedItem = $selectedItem.current;
+                const selectedItem = $value.current;
                 pages.children = removeTreeDataFromKey(pages.children, selectedItem.key_, DefaultTreeDataKey);
                 setPageResource('/db/pages', pages);
             }
@@ -71,8 +71,8 @@ function HeaderRenderer({$showDelete, showConfirmation, $selectedItem, $pages, s
                 return;
             }
             const oldPages = JSON.parse(JSON.stringify($pages.current));
-            if ($selectedItem.current) {
-                const selectedItem = findTreeDataFromKey(oldPages.children, $selectedItem.current.key_, DefaultTreeDataKey);
+            if ($value.current) {
+                const selectedItem = findTreeDataFromKey(oldPages.children, $value.current.key_, DefaultTreeDataKey);
                 if (!selectedItem) {
                     return;
                 }

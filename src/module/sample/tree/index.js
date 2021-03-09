@@ -10,7 +10,7 @@ export default function TreeSample() {
         name: uuid(),
         children: []
     }]);
-    const [$selectedItem, setSelectedItem] = useObserver(null);
+    const [$value, onChange] = useObserver(null);
     return <Vertical>
         <Horizontal>
             <Button onClick={() => setData(oldData => ([...oldData, {
@@ -18,11 +18,11 @@ export default function TreeSample() {
                 name: uuid(),
                 children: []
             }]))}>Add</Button>
-            <Button onClick={() => setData(oldData => oldData.filter(d => d !== $selectedItem.current))}>Delete</Button>
+            <Button onClick={() => setData(oldData => oldData.filter(d => d !== $value.current))}>Delete</Button>
         </Horizontal>
         <Tree $data={$data}
-              $selectedItem={$selectedItem}
-              setSelectedItem={setSelectedItem}
+              $value={$value}
+              onChange={onChange}
               itemRenderer={MyComponent}
               setData={setData}
         />
