@@ -1,6 +1,6 @@
 import {createContext, useCallback, useContext} from "react";
 import {v4} from "uuid";
-import useObserver, {ObserverValue} from "components/useObserver";
+import useObserver, {ObsValue} from "components/useObserver";
 
 /**
  *
@@ -44,8 +44,11 @@ export function LayerContextProvider({children}) {
     const [$stacks, setStacks] = useObserver([]);
     return <LayerContext.Provider value={setStacks}>
         {children}
-        <ObserverValue $observer={$stacks}
-                       render={({value}) => value.map((stack) => <Layer key={stack.key}>{stack.panel}</Layer>)}/>
+        <ObsValue $observers={$stacks}>
+            {(stacks) => {
+                return stacks.map((stack) => <Layer key={stack.key}>{stack.panel}</Layer>)
+            }}
+        </ObsValue>
     </LayerContext.Provider>
 }
 

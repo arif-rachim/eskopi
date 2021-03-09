@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {Horizontal} from "components/layout/Layout";
 import List from "components/list/List";
-import useObserver, {ObserverValue, useObserverListener, useObserverValue} from "components/useObserver";
+import useObserver, {ObsValue, useObserverListener, useObserverValue} from "components/useObserver";
 import Button from "components/button/Button";
 
 export const DefaultTreeDataKey = (data) => data?.id;
@@ -200,12 +200,15 @@ export function DefaultTreeItemRenderer({
     return <Horizontal onClick={() => onChange(data)} color={"light"}
                        brightness={selected ? -3 : 0} {...rowProps}>
         <Horizontal width={(level - 1) * 10}/>
-        <ObserverValue $observer={$toggleButtonVisible} render={({value}) => {
-            if (!value) {
-                return <Horizontal width={15}/>
-            }
-            return <ToggleButton $open={$expand} setOpen={setExpand} width={15}/>
-        }}/>
+        <ObsValue $observers={$toggleButtonVisible}>
+            {(value) => {
+                if (!value) {
+                    return <Horizontal width={15}/>
+                }
+                return <ToggleButton $open={$expand} setOpen={setExpand} width={15}/>
+            }}
+        </ObsValue>
+
         <Component selected={selected}
                    index={index}
                    $value={$value}

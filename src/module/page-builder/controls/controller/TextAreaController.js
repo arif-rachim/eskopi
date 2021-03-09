@@ -13,7 +13,7 @@ export default function TextAreaController({
                                                setSelectedController,
                                                ...controllerProps
                                            }) {
-    const {id, children, type, parentIds,width, ...props} = data;
+    const {id, children, type, parentIds, width, ...props} = data;
     const [isHovered, setHovered] = useState(false);
     const [isFocused, setFocused] = useState(false);
     useObserverListener($selectedController, selectedController => {

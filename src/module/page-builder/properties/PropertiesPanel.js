@@ -1,12 +1,9 @@
-import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
+import useObserver, {ObsValue, useObserverListener} from "components/useObserver";
 import useForm from "components/useForm";
 import {isNullOrUndefined} from "components/utils";
 import Panel from "components/panel/Panel";
 import {ControlPropertiesCatalog} from "module/page-builder/controls/ControllerMapper"
 import CollapsiblePanel from "components/panel/CollapsiblePanel";
-import {WidthAndHeightPanel} from "module/page-builder/properties/WidthAndHeightPanel";
-import {AlignmentAndGap} from "module/page-builder/properties/AlignmentAndGap";
-import {ColorBrightnessOpacity} from "./ColorBrightnessOpacity";
 
 /**
  @param {useRef} inputRef
@@ -19,8 +16,6 @@ import {ColorBrightnessOpacity} from "./ColorBrightnessOpacity";
  * @param {boolean} autoCaps - indicate to enable autoCaps
  * @type {{common: {}, space: {layout: [string, string], name: string}}}
  */
-
-
 export default function PropertiesPanel({$layout, setLayout, $selectedController}) {
     const [$propertiesPanel, setPropertiesPanel] = useObserver([]);
     const {controller, reset, $value} = useForm();
@@ -54,13 +49,16 @@ export default function PropertiesPanel({$layout, setLayout, $selectedController
     // ok lets do something here /// lets render the properties over here !
 
     return <Panel headerTitle={'Properties'}>
-        <ObserverValue controller={controller} $observer={$propertiesPanel} render={({value, controller}) => {
-            return value.map((Panel, index) => {
-                return <CollapsiblePanel key={index} height={'unset'} headerTitle={Panel.title}>
-                    <Panel controller={controller}/>
-                </CollapsiblePanel>
-            });
-        }}/>
+        <ObsValue $observers={$propertiesPanel}>
+            {(value) => {
+                return value.map((Panel, index) => {
+                    return <CollapsiblePanel key={index} height={'unset'} headerTitle={Panel.title}>
+                        <Panel controller={controller}/>
+                    </CollapsiblePanel>
+                });
+            }}
+        </ObsValue>
+
     </Panel>
 
 }

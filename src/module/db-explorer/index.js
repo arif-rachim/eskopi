@@ -24,11 +24,11 @@ function DBExplorer() {
                           dataKey={data => data}
                           itemRenderer={MyComponent}
                           $value={$selectedTable}
-                          onChange={handleDouble((data,isDouble) => {
-                              if(isDouble){
+                          onChange={handleDouble((data, isDouble) => {
+                              if (isDouble) {
                                   // open detail
 
-                              }else{
+                              } else {
                                   setSelectedTable(data);
                               }
                           })}

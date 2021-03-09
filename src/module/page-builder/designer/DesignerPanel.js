@@ -1,7 +1,7 @@
 import {Vertical} from "components/layout/Layout";
 import {memo, useContext, useRef, useState} from "react";
 import {DropListenerContext} from "module/page-builder/index";
-import {ObserverValue, useObserverMapper} from "components/useObserver";
+import {ObsValue, useObserverMapper} from "components/useObserver";
 import useForm from "components/useForm";
 import {getPlaceHolder, usePlaceHolderListener} from "module/page-builder/designer/getPlaceHolder";
 import {handlePlaceHolderDrop} from "module/page-builder/designer/handlePlaceHolderDrop";
@@ -53,13 +53,16 @@ export default function DesignerPanel({$data, setData, $selectedController, setS
                   onClick={() => setSelectedController(null)}
                   data-layout={'vertical'}>
 
-            <ObserverValue $observer={useObserverMapper($data, data => {
+            <ObsValue $observers={useObserverMapper($data, data => {
                 return data.children
-            })}
-                           render={RenderLayoutMemo}
-                           controller={controller}
-                           $selectedController={$selectedController}
-                           setSelectedController={setSelectedController}/>
+            })}>{
+                (value) => {
+                    return <RenderLayoutMemo value={value} controller={controller}
+                                             setSelectedController={setSelectedController}
+                                             $selectedController={$selectedController}/>
+                }
+            }</ObsValue>
+
         </Vertical>
     </Vertical>
 }

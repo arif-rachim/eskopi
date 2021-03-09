@@ -1,6 +1,6 @@
 import Panel from "components/panel/Panel";
 import {Horizontal, Vertical} from "components/layout/Layout";
-import useObserver, {ObserverValue} from "components/useObserver";
+import useObserver, {ObsValue} from "components/useObserver";
 
 export default function CollapsiblePanel({headerTitle, height, ...props}) {
     const [$showCollapsible, setShowCollapsible] = useObserver('true');
@@ -21,9 +21,11 @@ function CollapsibleHeaderRenderer({title, $showCollapsible, setShowCollapsible}
 
     return <Horizontal onClick={() => setShowCollapsible(collapsible => !collapsible)}>
         <Horizontal flex={'0 0 15px'} height={20} vAlign={'center'}>
-            <ObserverValue $observer={$showCollapsible} render={({value}) => {
-                return value ? <CaretDownIcon/> : <CaretForwardIcon/>
-            }}/>
+            <ObsValue $observers={$showCollapsible}>{
+                (value) => {
+                    return value ? <CaretDownIcon/> : <CaretForwardIcon/>
+                }
+            }</ObsValue>
         </Horizontal>
         <Horizontal flex={'1 0 auto'}>
             {title}

@@ -1,6 +1,5 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {debounce, isFunction} from "components/utils";
-
 
 /**
  * Utilities to check if an object is an observer.
@@ -71,65 +70,52 @@ export default function useObserver(defaultValue) {
  */
 export function useObserverMapper($observer, map = (value) => value) {
     const [$newObserver, setNewObserver] = useObserver(map($observer.current));
-    useObserverListener($observer, (newValue, oldValue) => {
-        const oldMapValue = map(oldValue);
+    useObserverListener($observer, (newValue) => {
         const newMapValue = map(newValue);
-        if (oldMapValue !== newMapValue) {
-            setNewObserver(newMapValue);
-        }
+        setNewObserver(newMapValue);
     })
     return $newObserver
 }
 
 /**
  * hook to extract the value of observer.
- * @param {{current:*}[] | {current:*} | null} observer
- * @param {function(newValue:any,oldValue:any):any} mapper
+ * @param {{current:*}[] | {current:*} | null} observers
+ * @param {function(newValue:any):any} mapper
  * @param {number} debounceTimeout
  * @returns {*}
  */
-export function useObserverValue(observer, mapper, debounceTimeout = 0) {
-    const observerIsUndefined = observer === undefined;
-    const observerIsArray = observerIsUndefined ? false : Array.isArray(observer);
+export function useObserverValue(observers, mapper, debounceTimeout = 0) {
+    const observerIsUndefined = observers === undefined;
+    const mapperIsUndefined = mapper === undefined;
+    const observerIsArray = observerIsUndefined ? false : Array.isArray(observers);
     if (!observerIsUndefined && !observerIsArray) {
-        observer = [observer];
+        observers = [observers];
     }
-    const oldValueRef = useRef();
-    const [state, _setState] = useState(() => {
-        if (observerIsUndefined) {
-            return observer;
-        }
-        return observer.map($o => $o.current)
-    });
-    const setState = useCallback(debounce(_setState, debounceTimeout), []);
+    const [internalState, setInternalState] = useState(() => observerIsUndefined ? observers : observers.map($o => $o.current));
+    // eslint-disable-next-line
+    const setState = useCallback(debounce(setInternalState, debounceTimeout), []);
     useEffect(() => {
-        if (observer === undefined) {
+        if (observers === undefined) {
             return;
         }
-        const listener = (index) => (newValue) => {
-            setState(oldState => {
-                oldValueRef.current = oldState;
-                const newState = [...oldState];
-                newState.splice(index, 1, newValue);
-                return newState;
-            });
-        };
-        const deregisterListener = observer.map(($o, index) => $o.addListener(listener(index)));
-        return () => deregisterListener.forEach(dr => dr.call())
-    }, observer);
-
-    if (state === undefined) {
-        return state;
+        const listener = (index) => (newValue) => setState(oldState => {
+            const newState = [...oldState];
+            newState.splice(index, 1, newValue);
+            return newState;
+        });
+        const removeListeners = observers.map(($o, index) => $o.addListener(listener(index)));
+        return () => removeListeners.forEach(removeListener => removeListener.call());
+        // eslint-disable-next-line
+    }, observers);
+    const internalStateIsUndefined = internalState === undefined;
+    if (internalStateIsUndefined) {
+        return internalState;
     }
-    if (mapper === undefined) {
-        return observerIsArray ? state : state[0];
-    } else {
-        return mapper.apply(null, [state, oldValueRef.current]);
-    }
+    const result = observerIsArray ? internalState : internalState[0];
+    return mapperIsUndefined ? result : mapper.apply(this, [result]);
 }
 
 /**
- *
  * @param {string} key
  * @param {{current}} $observer
  * @param {React.Element} render
@@ -144,21 +130,53 @@ export function ObserverValue({$observer, render, ...props}) {
 }
 
 /**
- * hook to listen when observer is changed, this is an alternative then using the addListener in observer.
- * @param {{current}|function(newValue,oldValue)} $observer
- * @param {function(newValue,oldValue)} listener
+ *
+ * @param $observers
+ * @param props
+ * @returns {*}
+ * @constructor
  */
-export function useObserverListener($observer, listener = undefined) {
+export function ObsValue({$observers, ...props}) {
+    const values = useObserverValue($observers);
+    const children = props.children;
+    if (!isFunction(children)) {
+        throw new Error('Value children should be a function with props value');
+    }
+    return children.apply(this, [values]);
+}
+
+/**
+ * hook to listen when observer is changed, this is an alternative then using the addListener in observer.
+ * @param {{current}|{current}[]} observers
+ * @param {function(newValue)} listener
+ */
+export function useObserverListener(observers, listener = undefined) {
+    const observerIsUndefined = observers === undefined;
+    const observerIsArray = observerIsUndefined ? false : Array.isArray(observers);
+
+    if (!observerIsUndefined && !observerIsArray) {
+        observers = [observers];
+    }
     const listenerRef = useRef(listener);
     listenerRef.current = listener;
     useEffect(() => {
-        if ($observer === null || $observer === undefined || listenerRef.current === undefined) {
+        if (observers === undefined) {
             return;
         }
-        return $observer.addListener((newValue, oldValue) => {
-            listenerRef.current.call(listenerRef.current, newValue, oldValue);
-        })
-    }, [$observer]);
+        const listener = (index) => (newValue) => {
+            let currentValue = observers.map(o => o.current);
+            let newValues = [...currentValue];
+            newValues.splice(index, 1, newValue);
+            newValues = observerIsArray ? newValues : newValues[0];
+            listenerRef.current.apply(null, [newValues]);
+        };
+        const removeListeners = observers.map(($o, index) => {
+            if ($o === undefined) {
+                debugger;
+            }
+            return $o.addListener(listener(index))
+        });
+        return () => removeListeners.forEach(removeListener => removeListener.call())
+        // eslint-disable-next-line
+    }, observers);
 }
-
-

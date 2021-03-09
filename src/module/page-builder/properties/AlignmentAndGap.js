@@ -10,7 +10,6 @@ function AlignmentAndGap({controller}) {
     const [$layoutData, setLayoutData] = useObserver(['horizontal', 'vertical']);
     return <Vertical>
         <Horizontal gap={5} p={2}>
-
             <Controller label={'Layout'} horizontalLabelPositionWidth={60}
                         render={Select} name={'layout'} flex={'1 0 auto'}
                         $data={$layoutData}

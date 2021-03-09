@@ -1,7 +1,6 @@
 import {Vertical} from "components/layout/Layout";
 import {useObserverListener, useObserverValue} from "components/useObserver";
 import {useState} from "react";
-import {isFunction} from "components/utils";
 
 const DEFAULT_DATA_KEY = (data) => {
     if (data && !('id' in data)) {
@@ -65,5 +64,5 @@ function DefaultItemRender({data, onChange, $value, dataKey}) {
     })
     return <Vertical p={1} color={"light"} brightness={selected ? -1 : 0} onClick={() => {
         onChange(data);
-    }} >{data}</Vertical>
+    }}>{data}</Vertical>
 }
