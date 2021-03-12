@@ -145,10 +145,9 @@ const onActionDelete = (params, queries) => {
  * @returns {*}
  */
 function filterByQuery(array, query) {
-    if (query === null || query === undefined || typeof query !== 'object' || Object.keys(query).length === 0) {
-        return array;
-    }
-    const keys = Object.keys(query);
+    // ini ada bug nih kalau query kosong ya berarti kita kembaliin aja semuanya !!
+    const queryIsEmpty = query === null || query === undefined || typeof query !== 'object' || Object.keys(query).length === 0;
+    const keys = queryIsEmpty ? [] : Object.keys(query);
     const filter = keys.reduce((acc, key) => {
         acc[key] = query[key].toString().toLowerCase()
         return acc;
