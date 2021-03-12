@@ -20,6 +20,8 @@ export default function PageTreePanel({$selectedPage, setSelectedPage}) {
         if (status === 'success') {
             if (Array.isArray(data)) {
                 setPages(data[0]);
+            } else {
+                setPages(data);
             }
         }
     });
@@ -30,7 +32,7 @@ export default function PageTreePanel({$selectedPage, setSelectedPage}) {
     });
     const showSlideDown = useSlideDownStackPanel();
     const showConfirmation = useConfirmMessage();
-    return <Panel headerTitle={'Pages'} headerRenderer={HeaderRenderer}
+    return <Panel headerRenderer={HeaderRenderer}
                   $showDelete={$showDelete}
                   showConfirmation={showConfirmation}
                   $value={$value}
@@ -44,7 +46,9 @@ export default function PageTreePanel({$selectedPage, setSelectedPage}) {
 }
 
 function HeaderRenderer({$showDelete, showConfirmation, $value, $pages, setPageResource, showSlideDown}) {
-    return <Horizontal hAlign={'right'} flex={1}>
+    return <Horizontal hAlign={'right'} flex={1} vAlign={'center'}>
+        <Horizontal style={{fontWeight: 'bold'}}>{'Pages'}</Horizontal>
+        <Horizontal flex={'1 0 auto'}/>
         <Button $visible={$showDelete} p={0} onClick={async (e) => {
             e.preventDefault();
             e.stopPropagation();

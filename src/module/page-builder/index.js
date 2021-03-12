@@ -28,7 +28,7 @@ export default function PageBuilder() {
                                    $selectedController={$selectedController}
                     />
                 </Vertical>
-                <Vertical width={265} color={"light"} brightness={-3}>
+                <Vertical width={265} color={"light"} brightness={0.5}>
                     <Vertical height={'50%'}>
                         <PropertiesPanel
                             $layout={$data}
