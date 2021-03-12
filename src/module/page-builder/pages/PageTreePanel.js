@@ -46,7 +46,7 @@ export default function PageTreePanel({$selectedPage, setSelectedPage}) {
 }
 
 function HeaderRenderer({$showDelete, showConfirmation, $value, $pages, setPageResource, showSlideDown}) {
-    return <Horizontal hAlign={'right'} flex={1} vAlign={'center'}>
+    return <Horizontal hAlign={'right'} width={'100%'} vAlign={'center'}>
         <Horizontal style={{fontWeight: 'bold'}}>{'Pages'}</Horizontal>
         <Horizontal flex={'1 0 auto'}/>
         <Button $visible={$showDelete} p={0} onClick={async (e) => {
