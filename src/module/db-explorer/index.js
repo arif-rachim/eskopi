@@ -1,50 +1,42 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useResource, {useResourceListener} from "components/useResource";
-import useObserver, {useObserverListener, useObserverValue,ObserverValue} from "components/useObserver";
-import SidePanel from "components/panel/SidePanel";
-import Panel from "../../components/panel/Panel";
+import useObserver, {useObserverListener} from "components/useObserver";
+import Panel from "components/panel/Panel";
+import List from "components/list/List";
+import Table from "components/table/Table";
 
 function DBExplorer() {
-    const [$resource, getDbList, $pending] = useResource({url: '/db'});
-    const [$listTables, setListTables] = useObserver([]);
+    const [$table, setTable] = useObserver([]);
+    const [$tableResource] = useResource({url: '/db'});
     const [$selectedTable, setSelectedTable] = useObserver();
-    const [$navigationStack, setNavigationStack] = useObserver([]);
-    const [$togglePanel,setTogglePanel] = useObserver(false);
-    useResourceListener($resource, (status, value) => {
+    const [$tableContentResource, setTableContentResource] = useResource();
+    const [$tableContent, setTableContent] = useObserver();
+    useResourceListener($tableResource, (status, result) => {
         if (status === 'success') {
-            setListTables(value);
+            setTable(result);
         }
     });
-    useObserverListener($navigationStack, (stacks) => {
-        getDbList('/db/' + stacks.join('/'));
+    useObserverListener($selectedTable, selectedTable => {
+        setTableContentResource('/db/' + selectedTable);
     });
-
-    return <Vertical height={'100%'}>
-        <Horizontal width={'100%'} height={'100%'}>
-            <Vertical flex={'1 0 auto'}>
-                <ObserverValue $observers={$togglePanel} >{(togglePanel) => {
-                    const Layout = togglePanel ? SidePanel : Panel;
-                    return <Layout headerRenderer={HeaderRenderer} setTogglePanel={setTogglePanel}>
-                        Hello World
-                    </Layout>
-                }}</ObserverValue>
-            </Vertical>
-        </Horizontal>
-    </Vertical>
+    useResourceListener($tableContentResource, (status, tableContent) => {
+        if (status === 'success') {
+            setTableContent(tableContent);
+        }
+    })
+    return <Horizontal width={'100%'} height={'100%'}>
+        <Vertical color={'light'} brightness={1} bR={1} height={'100%'} flex={'0 0 200px'}>
+            <Panel headerTitle={'Tables'}>
+                <List $data={$table} dataKey={data => data} $value={$selectedTable} onChange={setSelectedTable}/>
+            </Panel>
+        </Vertical>
+        <Vertical color={'light'} brightness={1} flex={'1 0 auto'}>
+            <Table $data={$tableContent} dataKey={data => data?.id_}/>
+        </Vertical>
+        <Vertical color={'light'} brightness={1} bL={1} flex={'0 0 200px'}>Three</Vertical>
+    </Horizontal>
 }
 
-function HeaderRenderer({setTogglePanel}){
-    return <Horizontal onClick={() => setTogglePanel(panel => !panel)}>{'Tables'}</Horizontal>
-}
-
-function ItemRenderer({data, index, $value, onChange, $navigationStack}) {
-    const selectedItem = useObserverValue($value);
-    const isSelected = data === selectedItem;
-
-    return <Vertical color={"light"} brightness={isSelected ? -3 : -1}
-                     onClick={() => onChange(data)}>{JSON.stringify(data)}
-    </Vertical>
-}
 
 DBExplorer.title = 'Database Explorer';
 export default DBExplorer;

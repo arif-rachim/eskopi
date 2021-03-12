@@ -1,6 +1,7 @@
 import {Vertical} from "components/layout/Layout";
 import {useObserverListener, useObserverValue} from "components/useObserver";
 import {useState} from "react";
+import {isFunction} from "components/utils";
 
 const DEFAULT_DATA_KEY = (data) => {
     if (data && !('id' in data)) {
@@ -49,8 +50,12 @@ export default function List({
         }
     }}>
         {data.map((data, index) => {
-            return <Renderer key={dataKey.apply(data, [data])} data={data} index={index} dataKey={dataKey}
+            return <Renderer key={dataKey.apply(data, [data])}
+                             data={data}
+                             index={index}
+                             dataKey={dataKey}
                              $value={$value}
+                             $list={$data}
                              onChange={onChange} {...props}/>
         })}
     </Vertical>
@@ -58,11 +63,18 @@ export default function List({
 
 
 function DefaultItemRender({data, onChange, $value, dataKey}) {
-    const [selected, setSelected] = useState(dataKey($value.current) === dataKey(data))
+    const [selected, setSelected] = useState(() => {
+        if ($value?.current) {
+            return dataKey($value.current) === dataKey(data)
+        }
+        return undefined;
+    })
     useObserverListener($value, (selectedItem) => {
         setSelected(dataKey(selectedItem) === dataKey(data))
     })
     return <Vertical p={1} color={"light"} brightness={selected ? -1 : 0} onClick={() => {
-        onChange(data);
+        if (isFunction(onChange)) {
+            onChange(data);
+        }
     }}>{data}</Vertical>
 }

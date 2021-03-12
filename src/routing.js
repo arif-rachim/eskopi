@@ -1,4 +1,3 @@
-
 import db_explorer from "./module/db-explorer/index";
 import _ from "./module/index";
 import login from "./module/login/index";
@@ -13,6 +12,7 @@ import sample_sidebar from "./module/sample/sidebar/index";
 import sample_tree from "./module/sample/tree/index";
 import sample_use_observer from "./module/sample/use-observer/index";
 import sample_use_observer_two from "./module/sample/use-observer-two/index";
+
 const routing = {
 'db-explorer' : db_explorer,
 '' : _,
