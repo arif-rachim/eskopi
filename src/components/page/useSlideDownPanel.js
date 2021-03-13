@@ -4,7 +4,7 @@ import usePageLayers from "components/page/usePageLayers";
 
 export default function useSlideDownPanel(animationDuration = 300) {
     const showPageLayer = usePageLayers();
-    return useCallback((render, {actionRef = undefined} = {
+    return useCallback((render, {actionRef = undefined,...props} = {
         actionRef: undefined
     }) => {
         return showPageLayer(closePanel => <SlideDownContainer
@@ -12,12 +12,13 @@ export default function useSlideDownPanel(animationDuration = 300) {
             closePanel={closePanel}
             animationDuration={animationDuration}
             render={render}
+            {...props}
         />)
     }, [animationDuration, showPageLayer]);
 }
 
 
-function SlideDownContainer({closePanel, animationDuration = 300, render, actionRef}) {
+function SlideDownContainer({closePanel, animationDuration = 300, render, actionRef,...props}) {
     const disableAnimationRef = useRef(true);
     actionRef = actionRef || {current: null};
     const [show, setShow] = useState(false);
@@ -55,7 +56,7 @@ function SlideDownContainer({closePanel, animationDuration = 300, render, action
         <Vertical domRef={contentContainerRef} color={"light"} top={show ? 0 : (contentHeight * -1)}
                   transition={`top ${disableAnimationRef.current ? 0 : animationDuration}ms cubic-bezier(0,0,0.7,0.9)`}
                   elevation={2}>
-            <Render closePanel={handleClose}/>
+            <Render closePanel={handleClose} {...props}/>
         </Vertical>
     </Vertical>
 }

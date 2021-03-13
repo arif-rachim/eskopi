@@ -49,7 +49,7 @@ export default function useForm(defaultValue = {}) {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleSubmit = useCallback(handleSubmitFactory(controller), []);
-    const reset = useCallback((defaultValue) => {
+    const reset = useCallback(function resetForm(defaultValue){
         const {setErrors, setValue} = controller.current;
         Object.keys(controller.current.$errors.current).forEach(key => {
             setErrors(oldErrors => {
@@ -62,7 +62,7 @@ export default function useForm(defaultValue = {}) {
         setValue(oldValue => {
             const newValue = {...oldValue};
             Object.keys(oldValue).forEach(key => {
-                if (controller.current.defaultValue && key in controller.current.defaultValue) {
+                if (controller.current.defaultValue) {
                     newValue[key] = controller.current.defaultValue[key];
                 } else {
                     delete newValue[key];

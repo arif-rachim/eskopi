@@ -2,6 +2,8 @@ import List from "components/list/List";
 import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {useState} from "react";
+import Button from "../button/Button";
+import useSlideDownPanel from "../page/useSlideDownPanel";
 
 function RowItemRenderer(props) {
     const $columns = props.$columns;
@@ -17,8 +19,10 @@ function RowItemRenderer(props) {
         }
     }} color={"light"} brightness={rowIsSelected ? -0.5 :0.5}>
         {Object.keys($columns.current).map(columnKey => {
+            let value = data[columnKey];
+            value = value === undefined ? '' : value;
             return <Horizontal bL={1} p={1} overflow={'hidden'} width={$columns.current[columnKey].width}
-                               key={columnKey}>{data[columnKey].toString()}</Horizontal>
+                               key={columnKey}>{value.toString()}</Horizontal>
         })}
     </Horizontal>
 
@@ -73,10 +77,14 @@ export default function Table({dataKey, $data, domRef,$value,onChange}) {
         }
         return undefined;
     });
+
     useObserverListener($data, data => {
         constructColumns(data, setColumns);
         setTableData(data);
     });
+
+    const showPanel = useSlideDownPanel();
+
     return <Vertical>
         <Horizontal bB={2} color={'light'} brightness={-1}>
             <ObserverValue $observers={$columns}>
@@ -99,8 +107,31 @@ export default function Table({dataKey, $data, domRef,$value,onChange}) {
               $data={$tableData}
               domRef={domRef}
               $columns={$columns}
-
         />
+        <Horizontal top={0} right={0} style={{position:'absolute'}}>
+            <Button onClick={async () => {
+                const result = await showPanel(ConfigureColumnPanel,{$columns});
 
+
+            }}>⚒︎</Button>
+        </Horizontal>
+
+    </Vertical>
+}
+
+function ConfigureColumnPanel({closePanel,$columns}){
+    // TODO Configure column
+    const [$configuredColumns,setConfiguredColumns] = useObserver([]);
+    return <Vertical p={2} gap={2}>
+        <Horizontal>Configure Columns</Horizontal>
+        <Vertical>
+
+        </Vertical>
+        <Horizontal hAlign={'right'} gap={2}>
+            <Button onClick={() => {}}>Save</Button>
+            <Button onClick={() => {
+                closePanel(false);
+            }}>Cancel</Button>
+        </Horizontal>
     </Vertical>
 }

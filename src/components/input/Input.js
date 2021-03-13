@@ -74,10 +74,10 @@ function Input({
     const ref = useRef();
     inputRef = inputRef || ref;
     const $nameValue = useObserverMapper($value, value => value[name]);
-
     const $errorValue = useObserverMapper($errors, value => value[name]);
-    const propsRef = useRef({});
+    const propsRef = useRef({userPerformChange:false});
     propsRef.current.onChange = onChange;
+
     let errorMessage = useObserverValue($errorValue);
     const isDisabled = useObserverValue($disabled);
     const [localValue,setLocalValue] = useState(() => $nameValue?.current ? $nameValue.current : '');
@@ -103,16 +103,23 @@ function Input({
         defaultStyle.textTransform = 'uppercase'
     }
     const handleOnChange = useMemo(() => {
-        const onChangeDebounce = (data) => {
-            if(propsRef.current.onChange){
-                propsRef.current.onChange(data.toUpperCase());
-            }
-        };
         return (data) => {
+            propsRef.current.userPerformChange = true;
             setLocalValue(data.target.value);
-            onChangeDebounce(data.target.value)
+            if(propsRef.current.onChange){
+                propsRef.current.onChange(data.target.value.toUpperCase());
+            }
+            propsRef.current.userPerformChange = false;
         }
     },[]);
+
+    useObserverListener($nameValue,nameValue => {
+        if(propsRef.current.userPerformChange){
+            return;
+        }
+        nameValue = nameValue === undefined ? '' : nameValue;
+        setLocalValue(nameValue);
+    });
     return <input ref={inputRef} type={type} name={name}
                   className={[...className, styles.button].join(' ')}
                   readOnly={isDisabled}
