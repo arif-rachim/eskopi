@@ -3,8 +3,9 @@ import useForm, {Controller} from "../../../components/useForm";
 import Input from "../../../components/input/Input";
 import Button from "../../../components/button/Button";
 import useSlideDownPanel from "../../../components/page/useSlideDownPanel";
-import useObserver,{ObserverValue} from "../../../components/useObserver";
+import useObserver, {ObserverValue} from "../../../components/useObserver";
 import useResource, {useResourceListener} from "../../../components/useResource";
+import Select from "components/input/Select";
 
 function DatabaseCrud() {
     const [$tableProps,setTableProps] = useObserver({});
@@ -16,7 +17,7 @@ function DatabaseCrud() {
             debugger;
         }
     })
-
+    const [$selectDataProvider] = useObserver(['string', 'number', 'date', 'boolean', 'array']);
     useSlideDownPanel()
     return <Vertical p={2}>
         <Horizontal>
@@ -32,6 +33,13 @@ function DatabaseCrud() {
                                             name={'fieldName'} label={'Field Name'}
                                             render={Input}
                                 />
+                                <Controller controller={controller}
+                                            name={'fieldType'} label={'Field Type'}
+                                            render={Select}
+                                            $data={$selectDataProvider}
+                                            dataKey={data => data}
+                                />
+
                                 <Horizontal hAlign={'right'}>
                                     <Button type={'submit'}>Save</Button>
                                 </Horizontal>
