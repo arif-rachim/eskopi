@@ -1,24 +1,35 @@
 import List from "components/list/List";
 import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
 import {Horizontal, Vertical} from "components/layout/Layout";
+import {useState} from "react";
 
 function RowItemRenderer(props) {
     const $columns = props.$columns;
     const index = props.index;
     const data = props.data;
-    const dataKey = props.dataKey;
-    return <Horizontal bB={1}>
+    const onRowClicked = props.onChange;
+    const $selectedRow = props.$value;
+    const [rowIsSelected,setRowIsSelected] = useState(false);
+    useObserverListener($selectedRow,selectedRow => setRowIsSelected(selectedRow === data));
+    return <Horizontal bB={1} onClick={() => {
+        if(onRowClicked){
+            onRowClicked(data);
+        }
+    }} color={"light"} brightness={rowIsSelected ? -0.5 :0.5}>
         {Object.keys($columns.current).map(columnKey => {
             return <Horizontal bL={1} p={1} overflow={'hidden'} width={$columns.current[columnKey].width}
-                               key={dataKey(data)}>{data[columnKey].toString()}</Horizontal>
+                               key={columnKey}>{data[columnKey].toString()}</Horizontal>
         })}
     </Horizontal>
 
 }
 
-function handleOnChange() {
-    return function onChangeListener(event) {
-
+function handleOnChange(onChange,setSelectedRow) {
+    return function onChangeListener(data) {
+        setSelectedRow(data);
+        if(onChange){
+            onChange(data);
+        }
     };
 }
 
@@ -42,8 +53,18 @@ function constructColumns(rows, setColumns) {
     setColumns(columnsNames);
 }
 
-export default function Table({dataKey, $data, domRef}) {
-    const [$selectedRow, setSelectedRow] = useObserver();
+export default function Table({dataKey, $data, domRef,$value,onChange}) {
+    const [$selectedRow, setSelectedRow] = useObserver(() => {
+        if($data){
+            return $data.current;
+        }
+        return undefined;
+    });
+    useObserverListener($value,(newValue) => {
+        if($selectedRow.current !== newValue){
+            setSelectedRow(newValue);
+        }
+    })
     const [$columns, setColumns] = useObserver();
     const [$tableData, setTableData] = useObserver(() => {
         if ($data?.current) {
@@ -64,7 +85,7 @@ export default function Table({dataKey, $data, domRef}) {
                         return <Horizontal/>;
                     }
                     return Object.keys(columns).map(col => {
-                        return <Horizontal width={columns[col].width} p={1} bL={2}
+                        return <Horizontal key={col} width={columns[col].width} p={1} bL={2}
                                            style={{fontWeight: 'bold'}}>{col}</Horizontal>
                     });
                 }}
@@ -72,7 +93,7 @@ export default function Table({dataKey, $data, domRef}) {
         </Horizontal>
 
         <List itemRenderer={RowItemRenderer}
-              onChange={handleOnChange()}
+              onChange={handleOnChange(onChange,setSelectedRow)}
               $value={$selectedRow}
               dataKey={dataKey}
               $data={$tableData}

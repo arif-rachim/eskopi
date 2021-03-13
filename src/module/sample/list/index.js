@@ -19,8 +19,7 @@ export default function ListExample() {
               itemRenderer={MyComponent}
               $value={$value}
               onChange={onChange}
-              onKeyboardDown={() => onChange($data.current[$data.current.indexOf($value.current) + 1])}
-              onKeyboardUp={() => onChange($data.current[$data.current.indexOf($value.current) - 1])}
+
         />
         <PaginatedList $data={$data}
                        dataKey={data => data.id}
