@@ -4,7 +4,7 @@ import usePageLayers from "components/page/usePageLayers";
 
 export default function useSlideDownPanel(animationDuration = 300) {
     const showPageLayer = usePageLayers();
-    return useCallback((render, {actionRef = undefined,...props} = {
+    return useCallback((render, {actionRef = undefined, ...props} = {
         actionRef: undefined
     }) => {
         return showPageLayer(closePanel => <SlideDownContainer
@@ -18,7 +18,7 @@ export default function useSlideDownPanel(animationDuration = 300) {
 }
 
 
-function SlideDownContainer({closePanel, animationDuration = 300, render, actionRef,...props}) {
+function SlideDownContainer({closePanel, animationDuration = 300, render, actionRef, ...props}) {
     const disableAnimationRef = useRef(true);
     actionRef = actionRef || {current: null};
     const [show, setShow] = useState(false);

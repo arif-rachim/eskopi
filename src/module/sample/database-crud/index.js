@@ -9,7 +9,7 @@ import Select from "components/input/Select";
 
 function DatabaseCrud() {
     const [$tableProps, setTableProps] = useObserver({});
-    const {controller, handleSubmit,reset} = useForm();
+    const {controller, handleSubmit, reset} = useForm();
     const detailForm = useForm();
     const showSlideDown = useSlideDownPanel();
 
@@ -34,6 +34,7 @@ function DatabaseCrud() {
                                 <Controller controller={detailForm.controller}
                                             name={'fieldName'} label={'Field Name'}
                                             render={Input} autoCaps={false}
+                                            autoCaps={false}
                                 />
                                 <Controller controller={detailForm.controller}
                                             name={'fieldType'} label={'Field Type'}
@@ -41,6 +42,7 @@ function DatabaseCrud() {
                                             render={Select}
                                             $data={$selectDataProvider}
                                             dataKey={data => data}
+                                            autoCaps={false}
                                 />
 
                                 <Horizontal hAlign={'right'}>

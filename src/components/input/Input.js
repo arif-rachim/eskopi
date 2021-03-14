@@ -1,8 +1,8 @@
 import styles from "./Input.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
-import React, {useMemo,useRef,useState,useEffect} from "react";
-import useObserver,{useObserverListener, useObserverMapper, useObserverValue} from "components/useObserver";
+import React, {useMemo, useRef, useState} from "react";
+import {useObserverListener, useObserverMapper, useObserverValue} from "components/useObserver";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
@@ -75,12 +75,12 @@ function Input({
     inputRef = inputRef || ref;
     const $nameValue = useObserverMapper($value, value => value[name]);
     const $errorValue = useObserverMapper($errors, value => value[name]);
-    const propsRef = useRef({userPerformChange:false});
+    const propsRef = useRef({userPerformChange: false});
     propsRef.current.onChange = onChange;
 
     let errorMessage = useObserverValue($errorValue);
     const isDisabled = useObserverValue($disabled);
-    const [localValue,setLocalValue] = useState(() => $nameValue?.current ? $nameValue.current : '');
+    const [localValue, setLocalValue] = useState(() => $nameValue?.current ? $nameValue.current : '');
 
     const buttonStyle = {
         background: 'none',
@@ -99,22 +99,22 @@ function Input({
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
     const colorStyle = parseColorStyle({color, brightness: isDisabled ? -0.1 : 0.71, alpha: 1}, theme);
     const defaultStyle = {minWidth: 0};
-    if(autoCaps){
+    if (autoCaps) {
         defaultStyle.textTransform = 'uppercase'
     }
     const handleOnChange = useMemo(() => {
         return (data) => {
             propsRef.current.userPerformChange = true;
             setLocalValue(data.target.value);
-            if(propsRef.current.onChange){
+            if (propsRef.current.onChange) {
                 propsRef.current.onChange(data.target.value.toUpperCase());
             }
             propsRef.current.userPerformChange = false;
         }
-    },[]);
+    }, []);
 
-    useObserverListener($nameValue,nameValue => {
-        if(propsRef.current.userPerformChange){
+    useObserverListener($nameValue, nameValue => {
+        if (propsRef.current.userPerformChange) {
             return;
         }
         nameValue = nameValue === undefined ? '' : nameValue;
@@ -128,7 +128,7 @@ function Input({
                   onBlur={onBlur}
                   value={localValue}
                   onFocus={(event) => {
-                      event.currentTarget.setSelectionRange(0,event.currentTarget.value.length);
+                      event.currentTarget.setSelectionRange(0, event.currentTarget.value.length);
                   }}
                   {...props}/>
 }

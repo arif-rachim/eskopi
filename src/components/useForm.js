@@ -49,7 +49,7 @@ export default function useForm(defaultValue = {}) {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleSubmit = useCallback(handleSubmitFactory(controller), []);
-    const reset = useCallback(function resetForm(defaultValue){
+    const reset = useCallback(function resetForm(defaultValue) {
         const {setErrors, setValue} = controller.current;
         Object.keys(controller.current.$errors.current).forEach(key => {
             setErrors(oldErrors => {
@@ -133,7 +133,7 @@ const callbackOnBlur = (propsRef) => () => {
  * @param {Object} propsRef
  * @returns {function(*=): void}
  */
-const callbackOnChange = (propsRef) => (value) => {
+const callbackOnChange = (propsRef) => function onChangeCallback(value) {
     const {controller, name, validator} = propsRef.current;
     // here we flag that the user actually did perform editing
     controller.current.userEditingField[name] = true;
@@ -197,9 +197,11 @@ export function Controller({
                 {isHorizontal &&
                 <Horizontal flex={'1 0 auto'} vAlign={'center'}>
                     <Horizontal style={{fontSize: '0.8rem', whiteSpace: 'nowrap'}}
-                                flex={`1 0 ${horizontalLabelPositionWidth}px`}>{label}</Horizontal>
+                                flex={`0 0 ${horizontalLabelPositionWidth}px`}>{label}</Horizontal>
+
                     <Render name={name} onBlur={onBlur} onChange={onChange} $value={controller.current.$value}
                             $errors={controller.current.$errors} {...props} style={{width: '100%'}}/>
+
                 </Horizontal>
                 }
                 {!isHorizontal &&

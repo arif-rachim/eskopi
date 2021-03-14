@@ -4,6 +4,7 @@ import {Horizontal, Vertical} from "components/layout/Layout";
 import {useState} from "react";
 import Button from "../button/Button";
 import useSlideDownPanel from "../page/useSlideDownPanel";
+import ConfigureColumnPanel from "components/table/ConfigureColumnPanel";
 
 function RowItemRenderer(props) {
     const $columns = props.$columns;
@@ -11,27 +12,32 @@ function RowItemRenderer(props) {
     const data = props.data;
     const onRowClicked = props.onChange;
     const $selectedRow = props.$value;
-    const [rowIsSelected,setRowIsSelected] = useState(false);
-    useObserverListener($selectedRow,selectedRow => setRowIsSelected(selectedRow === data));
+    const [rowIsSelected, setRowIsSelected] = useState(false);
+    useObserverListener($selectedRow, selectedRow => setRowIsSelected(selectedRow === data));
+
     return <Horizontal bB={1} onClick={() => {
-        if(onRowClicked){
+        if (onRowClicked) {
             onRowClicked(data);
         }
-    }} color={"light"} brightness={rowIsSelected ? -0.5 :0.5}>
-        {Object.keys($columns.current).map(columnKey => {
-            let value = data[columnKey];
-            value = value === undefined ? '' : value;
-            return <Horizontal bL={1} p={1} overflow={'hidden'} width={$columns.current[columnKey].width}
-                               key={columnKey}>{value.toString()}</Horizontal>
-        })}
+    }} color={"light"} brightness={rowIsSelected ? -0.5 : 0.5}>
+        <ObserverValue $observers={$columns}>
+            {(columns) => {
+                columns = columns || [];
+                return Object.keys(columns).map(columnKey => {
+                    let value = data[columnKey];
+                    value = value === undefined ? '' : value;
+                    return <Horizontal bL={1} p={1} overflow={'hidden'} width={$columns.current[columnKey].width}
+                                       key={columnKey}>{value.toString()}</Horizontal>
+                })
+            }}
+        </ObserverValue>
     </Horizontal>
-
 }
 
-function handleOnChange(onChange,setSelectedRow) {
+function handleOnChange(onChange, setSelectedRow) {
     return function onChangeListener(data) {
         setSelectedRow(data);
-        if(onChange){
+        if (onChange) {
             onChange(data);
         }
     };
@@ -57,29 +63,41 @@ function constructColumns(rows, setColumns) {
     setColumns(columnsNames);
 }
 
-export default function Table({dataKey, $data, domRef,$value,onChange}) {
+export default function Table({dataKey, $data, domRef, $value, onChange}) {
     const [$selectedRow, setSelectedRow] = useObserver(() => {
-        if($data){
+        if ($data) {
             return $data.current;
         }
         return undefined;
     });
-    useObserverListener($value,(newValue) => {
-        if($selectedRow.current !== newValue){
+    useObserverListener($value, (newValue) => {
+        if ($selectedRow.current !== newValue) {
             setSelectedRow(newValue);
         }
     })
-    const [$columns, setColumns] = useObserver();
-    const [$tableData, setTableData] = useObserver(() => {
-        if ($data?.current) {
-            constructColumns($data.current, setColumns);
-            return $data.current
-        }
-        return undefined;
+    const [$columnsBasedOnData, setColumnsBasedOnData] = useObserver();
+    const [$persistedColumns, setPersistedColumns] = useObserver(() => {
+        // here we need to fetch from local storage otherwise we need to pull it from data !
+        constructColumns($data.current, setColumnsBasedOnData);
+
     });
+    const [$columns, setColumns] = useObserver();
+    const [$tableData, setTableData] = useObserver($data?.current);
+
+    useObserverListener([$persistedColumns, $columnsBasedOnData], ([persistedColumns, columnsBasedOnData]) => {
+        if (persistedColumns && columnsBasedOnData) {
+            const visibleColumns = Object.keys(persistedColumns).filter(key => persistedColumns[key] === true);
+            const columns = Object.keys(columnsBasedOnData).filter(key => visibleColumns.indexOf(key) >= 0)
+                .reduce((acc, key) => {
+                    acc[key] = columnsBasedOnData[key];
+                    return acc;
+                }, {})
+            setColumns(columns);
+        }
+    })
 
     useObserverListener($data, data => {
-        constructColumns(data, setColumns);
+        constructColumns(data, setColumnsBasedOnData);
         setTableData(data);
     });
 
@@ -101,37 +119,20 @@ export default function Table({dataKey, $data, domRef,$value,onChange}) {
         </Horizontal>
 
         <List itemRenderer={RowItemRenderer}
-              onChange={handleOnChange(onChange,setSelectedRow)}
+              onChange={handleOnChange(onChange, setSelectedRow)}
               $value={$selectedRow}
               dataKey={dataKey}
               $data={$tableData}
               domRef={domRef}
               $columns={$columns}
         />
-        <Horizontal top={0} right={0} style={{position:'absolute'}}>
+        <Horizontal top={0} right={0} style={{position: 'absolute'}}>
             <Button onClick={async () => {
-                const result = await showPanel(ConfigureColumnPanel,{$columns});
-
-
-            }}>⚒︎</Button>
+                const result = await showPanel(ConfigureColumnPanel, {$columns: $columnsBasedOnData});
+                setPersistedColumns(result);
+            }}>⚒</Button>
         </Horizontal>
 
     </Vertical>
 }
 
-function ConfigureColumnPanel({closePanel,$columns}){
-    // TODO Configure column
-    const [$configuredColumns,setConfiguredColumns] = useObserver([]);
-    return <Vertical p={2} gap={2}>
-        <Horizontal>Configure Columns</Horizontal>
-        <Vertical>
-
-        </Vertical>
-        <Horizontal hAlign={'right'} gap={2}>
-            <Button onClick={() => {}}>Save</Button>
-            <Button onClick={() => {
-                closePanel(false);
-            }}>Cancel</Button>
-        </Horizontal>
-    </Vertical>
-}

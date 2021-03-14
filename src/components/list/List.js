@@ -61,7 +61,7 @@ export default function List({
             if (($data.current.length - 1) > currentSelectedIndex) {
                 const nextRow = $data.current[currentSelectedIndex + 1];
                 setSelectedRow(nextRow);
-                if(onChange){
+                if (onChange) {
                     onChange(nextRow);
                 }
             }
@@ -73,7 +73,7 @@ export default function List({
             if (currentSelectedIndex > 0) {
                 const nextRow = $data.current[currentSelectedIndex - 1];
                 setSelectedRow(nextRow);
-                if(onChange){
+                if (onChange) {
                     onChange(nextRow);
                 }
             }
