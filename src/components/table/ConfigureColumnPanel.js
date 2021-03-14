@@ -1,43 +1,27 @@
 import useForm, {Controller} from "components/useForm";
-import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
+import {ObserverValue, useObserverListener} from "components/useObserver";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import Checkbox from "components/input/Checkbox";
 import Button from "components/button/Button";
 
-export default function ConfigureColumnPanel({closePanel, $columns}) {
-    const {controller, handleSubmit, reset} = useForm();
-    const [$configuredColumns] = useObserver(() => {
-        if ($columns?.current === undefined) {
-            return;
-        }
-        const configuredColumns = createDefaultConfiguredColumns($columns.current);
-        const formInitialValue = createConfigureColumnFormInitialValue(configuredColumns);
-        reset(formInitialValue);
-        return configuredColumns;
-    });
+// $value is formInitialValue
+export default function ConfigureColumnPanel({$columns, $value, closePanel: onChange}) {
+    const {controller, handleSubmit, reset} = useForm($value?.current);
 
-    useObserverListener($configuredColumns, (configuredColumns) => {
-        const formInitialValue = createConfigureColumnFormInitialValue(configuredColumns)
+    useObserverListener($value, (formInitialValue) => {
         reset(formInitialValue);
-    })
-    useObserverListener($columns, (columns) => {
-        if ($columns?.current === undefined) {
-            return;
-        }
-        return Object.keys(columns).map(key => {
-            return {id: key, visible: true, name: key}
-        });
     });
 
     return <Vertical p={2} gap={2}>
         <Horizontal>Configure Columns</Horizontal>
-        <ObserverValue $observers={$configuredColumns}>{
-            (configuredColumns) => {
+        <ObserverValue $observers={$columns}>{
+            (columns) => {
+                columns = Object.keys(columns).map(col => ({id: col, name: col}));
                 return <form action="" onSubmit={handleSubmit((data) => {
-                    closePanel(data);
+                    onChange(data);
                 })}>
                     <Vertical>
-                        {configuredColumns.map(col => {
+                        {columns.map(col => {
                             return <Horizontal key={col.id}>
                                 <Controller name={col.name} controller={controller} render={Checkbox}/>
                                 {col.name}
@@ -45,17 +29,16 @@ export default function ConfigureColumnPanel({closePanel, $columns}) {
                         })}
                         <Horizontal hAlign={'right'} gap={2}>
                             <Button type={'submit'}>Save</Button>
-                            <Button onClick={() => closePanel(false)}>Cancel</Button>
+                            <Button onClick={() => onChange(false)}>Cancel</Button>
                         </Horizontal>
                     </Vertical>
                 </form>
             }
         }</ObserverValue>
-
     </Vertical>
 }
 
-function createDefaultConfiguredColumns(columns) {
+export function createDefaultColumnsArray(columns) {
     const configuredColumns = Object.keys(columns).map(key => {
         const isPrivate = key.endsWith('_');
         return {id: key, visible: !isPrivate, name: key}
@@ -63,7 +46,7 @@ function createDefaultConfiguredColumns(columns) {
     return configuredColumns;
 }
 
-function createConfigureColumnFormInitialValue(configuredColumns) {
+export function createDefaultColumnsObject(configuredColumns) {
     return configuredColumns.reduce((acc, data) => {
         acc[data.name] = data.visible;
         return acc;

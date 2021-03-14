@@ -2,9 +2,11 @@ import List from "components/list/List";
 import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {useState} from "react";
-import Button from "../button/Button";
 import useSlideDownPanel from "../page/useSlideDownPanel";
-import ConfigureColumnPanel from "components/table/ConfigureColumnPanel";
+import ConfigureColumnPanel, {
+    createDefaultColumnsArray,
+    createDefaultColumnsObject
+} from "components/table/ConfigureColumnPanel";
 
 function RowItemRenderer(props) {
     const $columns = props.$columns;
@@ -44,7 +46,20 @@ function handleOnChange(onChange, setSelectedRow) {
 }
 
 
-function constructColumns(rows, setColumns) {
+function calculateColumnsWidth(colNames) {
+    const columnsNames = JSON.parse(JSON.stringify(colNames));
+    const totalCharacter = Object.keys(columnsNames).reduce((acc, colName) => {
+        acc = acc + columnsNames[colName].width;
+        return acc;
+    }, 0);
+    Object.keys(columnsNames).map(col => {
+        columnsNames[col].width = Math.round((columnsNames[col].width / totalCharacter) * 100) + '%';
+    });
+    return columnsNames;
+}
+
+function constructColumns(rows) {
+    rows = rows || [];
     const columnsNames = rows.reduce((acc, row) => {
         Object.keys(row).forEach(col => {
             acc[col] = acc[col] || {width: 0};
@@ -53,14 +68,7 @@ function constructColumns(rows, setColumns) {
         })
         return acc;
     }, {});
-    const totalCharacter = Object.keys(columnsNames).reduce((acc, colName) => {
-        acc = acc + columnsNames[colName].width;
-        return acc;
-    }, 0);
-    Object.keys(columnsNames).map(col => {
-        columnsNames[col].width = Math.round((columnsNames[col].width / totalCharacter) * 100) + '%';
-    });
-    setColumns(columnsNames);
+    return columnsNames;
 }
 
 export default function Table({dataKey, $data, domRef, $value, onChange}) {
@@ -75,29 +83,47 @@ export default function Table({dataKey, $data, domRef, $value, onChange}) {
             setSelectedRow(newValue);
         }
     })
-    const [$columnsBasedOnData, setColumnsBasedOnData] = useObserver();
-    const [$persistedColumns, setPersistedColumns] = useObserver(() => {
-        // here we need to fetch from local storage otherwise we need to pull it from data !
-        constructColumns($data.current, setColumnsBasedOnData);
-
+    const [$columnsBasedOnData, setColumnsBasedOnData] = useObserver(() => {
+        return constructColumns($data.current);
     });
-    const [$columns, setColumns] = useObserver();
-    const [$tableData, setTableData] = useObserver($data?.current);
-
-    useObserverListener([$persistedColumns, $columnsBasedOnData], ([persistedColumns, columnsBasedOnData]) => {
-        if (persistedColumns && columnsBasedOnData) {
+    const [$persistedColumns, setPersistedColumns] = useObserver(() => {
+        return createDefaultColumnsObject(createDefaultColumnsArray($columnsBasedOnData.current));
+    });
+    const [$actualGridColumn, setActualGridColumn] = useObserver(() => {
+        if ($persistedColumns.current && $columnsBasedOnData.current) {
+            const persistedColumns = $persistedColumns.current;
+            const columnsBasedOnData = $columnsBasedOnData.current;
             const visibleColumns = Object.keys(persistedColumns).filter(key => persistedColumns[key] === true);
             const columns = Object.keys(columnsBasedOnData).filter(key => visibleColumns.indexOf(key) >= 0)
                 .reduce((acc, key) => {
                     acc[key] = columnsBasedOnData[key];
                     return acc;
-                }, {})
-            setColumns(columns);
+                }, {});
+
+            return columns;
+        }
+    });
+    const [$tableData, setTableData] = useObserver($data?.current);
+
+    useObserverListener([$persistedColumns, $columnsBasedOnData], ([persistedColumns, columnsBasedOnData]) => {
+        if (persistedColumns && columnsBasedOnData) {
+            const visibleColumns = Object.keys(persistedColumns).filter(key => {
+                return persistedColumns[key] === true;
+            });
+            const columns = Object.keys(columnsBasedOnData).filter(key => visibleColumns.indexOf(key) >= 0)
+                .reduce((acc, key) => {
+                    acc[key] = columnsBasedOnData[key];
+                    return acc;
+                }, {});
+            setActualGridColumn(calculateColumnsWidth(columns));
         }
     })
 
     useObserverListener($data, data => {
-        constructColumns(data, setColumnsBasedOnData);
+        const columns = constructColumns(data);
+        setColumnsBasedOnData(columns);
+        const persistedColumns = createDefaultColumnsObject(createDefaultColumnsArray(columns));
+        setPersistedColumns(persistedColumns);
         setTableData(data);
     });
 
@@ -105,7 +131,7 @@ export default function Table({dataKey, $data, domRef, $value, onChange}) {
 
     return <Vertical>
         <Horizontal bB={2} color={'light'} brightness={-1}>
-            <ObserverValue $observers={$columns}>
+            <ObserverValue $observers={$actualGridColumn}>
                 {(columns) => {
                     if (columns === undefined) {
                         return <Horizontal/>;
@@ -124,13 +150,16 @@ export default function Table({dataKey, $data, domRef, $value, onChange}) {
               dataKey={dataKey}
               $data={$tableData}
               domRef={domRef}
-              $columns={$columns}
+              $columns={$actualGridColumn}
         />
-        <Horizontal top={0} right={0} style={{position: 'absolute'}}>
-            <Button onClick={async () => {
-                const result = await showPanel(ConfigureColumnPanel, {$columns: $columnsBasedOnData});
-                setPersistedColumns(result);
-            }}>⚒</Button>
+        <Horizontal top={3} right={3} style={{position: 'absolute', cursor: 'pointer'}} onClick={async () => {
+            const result = await showPanel(ConfigureColumnPanel, {
+                $columns: $columnsBasedOnData,
+                $value: $persistedColumns
+            });
+            setPersistedColumns(result);
+        }}>
+            ⚒
         </Horizontal>
 
     </Vertical>
