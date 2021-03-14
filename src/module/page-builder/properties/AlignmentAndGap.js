@@ -5,9 +5,9 @@ import useObserver from "../../../components/useObserver";
 import Input from "../../../components/input/Input";
 
 function AlignmentAndGap({controller}) {
-    const [$verticalData, setVerticalData] = useObserver(['top', 'bottom', 'center']);
-    const [$horizontalData, setHorizontalData] = useObserver(['left', 'center', 'right']);
-    const [$layoutData, setLayoutData] = useObserver(['horizontal', 'vertical']);
+    const [$verticalData] = useObserver(['top', 'bottom', 'center']);
+    const [$horizontalData] = useObserver(['left', 'center', 'right']);
+    const [$layoutData] = useObserver(['horizontal', 'vertical']);
     return <Vertical>
         <Horizontal gap={5} p={2}>
             <Controller label={'Layout'} horizontalLabelPositionWidth={60}

@@ -1,4 +1,3 @@
-import useForm from "components/useForm";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {useContext, useState} from "react";
 import {DropListenerContext} from "module/page-builder/index";
@@ -6,7 +5,6 @@ import Panel from "components/panel/Panel";
 import {Controls, ControlsNaming} from "module/page-builder/controls/ControllerMapper";
 
 export default function ControlListPanel() {
-    const {controller} = useForm({input: '', textArea: ''});
     return <Panel headerTitle={'Controls'}>
         <Vertical color={"light"} brightness={0.3}>
             <Vertical p={2} gap={3}>

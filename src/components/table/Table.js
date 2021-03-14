@@ -10,7 +10,6 @@ import ConfigureColumnPanel, {
 
 function RowItemRenderer(props) {
     const $columns = props.$columns;
-    const index = props.index;
     const data = props.data;
     const onRowClicked = props.onChange;
     const $selectedRow = props.$value;
@@ -52,11 +51,12 @@ function calculateColumnsWidth(colNames) {
         acc = acc + columnsNames[colName].width;
         return acc;
     }, 0);
-    Object.keys(columnsNames).map(col => {
+    Object.keys(columnsNames).forEach(col => {
         columnsNames[col].width = Math.round((columnsNames[col].width / totalCharacter) * 100) + '%';
     });
     return columnsNames;
 }
+
 
 function constructColumns(rows) {
     rows = rows || [];
