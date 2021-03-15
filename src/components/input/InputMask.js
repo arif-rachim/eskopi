@@ -1,14 +1,13 @@
 import React, {useEffect, useRef} from "react";
 import IMask from 'imask';
 
-export default function InputMask() {
+export default function InputMask({name, ...options}) {
     const inputRef = useRef();
+    const propsRef = useRef(options);
+    propsRef.current = options;
     useEffect(() => {
-        const maskOptions = {
-            mask: '+{7}(000)000-00-00'
-        };
-        const mask = IMask(inputRef.current, maskOptions);
+        const mask = IMask(inputRef.current, propsRef.current);
         return () => mask.destroy();
     }, []);
-    return <input ref={inputRef}/>
+    return <input name={name} ref={inputRef}/>
 }
