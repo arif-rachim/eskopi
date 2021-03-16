@@ -43,7 +43,7 @@ export default function DesignerPanel({$data, setData, $selectedController, setS
     const dropListener = useContext(DropListenerContext);
     usePlaceHolderListener("drop", handlePlaceHolderDrop(rootRef, setData));
     const dragHoverCountRef = useRef(0);
-    const {controller} = useForm();
+    const {control} = useForm();
     return <Vertical color={"light"} brightness={-3} p={3} flex={1}>
         <Vertical domRef={rootRef} color={"light"} brightness={0} flex={1} elevation={1}
                   onDragEnter={handleRootDragEnter(dragHoverCountRef)}
@@ -57,7 +57,7 @@ export default function DesignerPanel({$data, setData, $selectedController, setS
                 return data.children
             })}>{
                 (value) => {
-                    return <RenderLayoutMemo value={value} controller={controller}
+                    return <RenderLayoutMemo value={value} control={control}
                                              setSelectedController={setSelectedController}
                                              $selectedController={$selectedController}/>
                 }
@@ -68,7 +68,7 @@ export default function DesignerPanel({$data, setData, $selectedController, setS
 }
 
 
-export const RenderLayout = ({value, controller, $selectedController, setSelectedController}) => {
+export const RenderLayout = ({value, control, $selectedController, setSelectedController}) => {
     if (value === undefined) {
         return false;
     }
@@ -76,7 +76,7 @@ export const RenderLayout = ({value, controller, $selectedController, setSelecte
         const ChildRender = ControlMapper[child.type];
         return <DraggableComponent render={ChildRender} key={child.id}
                                    data={child}
-                                   formController={controller}
+                                   formControl={control}
                                    $selectedController={$selectedController}
                                    setSelectedController={setSelectedController}
         />

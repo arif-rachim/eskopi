@@ -5,17 +5,17 @@ import {useObserverMapper, useObserverValue} from "components/useObserver";
 import Input from "components/input/Input";
 
 export default function LoginScreen() {
-    const {errors, handleSubmit, controller} = useForm({userName: '', password: ''});
+    const {errors, handleSubmit, control} = useForm({userName: '', password: ''});
 
     return <Vertical color={"light"} height={'100%'} hAlign={'center'} vAlign={'center'}>
         <form action="" onSubmit={handleSubmit((data) => {
 
         })}>
             <Vertical gap={3} color={"light"} brightness={-0.5} p={5} pT={7} r={5} b={0.5}>
-                <Controller controller={controller} render={Input} name={'userName'}/>
-                <Controller controller={controller} render={Input} name={'password'} type={'password'}/>
+                <Controller control={control} render={Input} name={'userName'}/>
+                <Controller control={control} render={Input} name={'password'} type={'password'}/>
 
-                <Controller controller={controller} render={({$value, $errors, onChange, onBlur, data, name}) => {
+                <Controller control={control} render={({$value, $errors, onChange, onBlur, data, name}) => {
                     return <Horizontal>
                         {data.map(data => {
                             return <label key={JSON.stringify(data)}>

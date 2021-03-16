@@ -6,7 +6,7 @@ import Button from "components/button/Button";
 
 // $value is formInitialValue
 export default function ConfigureColumnPanel({$columns, $value, closePanel: onChange}) {
-    const {controller, handleSubmit, reset} = useForm($value?.current);
+    const {control, handleSubmit, reset} = useForm($value?.current);
 
     useObserverListener($value, (formInitialValue) => {
         reset(formInitialValue);
@@ -23,7 +23,7 @@ export default function ConfigureColumnPanel({$columns, $value, closePanel: onCh
                     <Vertical>
                         {columns.map(col => {
                             return <Horizontal key={col.id}>
-                                <Controller name={col.name} controller={controller} render={Checkbox}/>
+                                <Controller name={col.name} control={control} render={Checkbox}/>
                                 {col.name}
                             </Horizontal>
                         })}

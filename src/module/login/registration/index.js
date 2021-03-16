@@ -30,7 +30,7 @@ function onSubmit(getRegistrationResource) {
 }
 
 export default function RegistrationScreen({onClose}) {
-    const {controller, handleSubmit, reset} = useForm({
+    const {control, handleSubmit, reset} = useForm({
         name: '',
         email: '',
         password: '',
@@ -39,12 +39,12 @@ export default function RegistrationScreen({onClose}) {
     const [$registration, getRegistrationResource, $isPending] = useResource();
     useResourceListener($registration, (status, result) => {
         if (status === 'error') {
-            controller.current.setErrors((errors) => {
+            control.current.setErrors((errors) => {
                 return {...errors, email: result.message};
             });
         }
         if (status === 'success') {
-            onClose(controller.current.$value.current.email);
+            onClose(control.current.$value.current.email);
         }
 
     })
@@ -53,15 +53,15 @@ export default function RegistrationScreen({onClose}) {
 
         <form action="" onSubmit={handleSubmit(onSubmit(getRegistrationResource))}>
             <Vertical gap={2} b={1} p={4} r={5} brightness={0} color={"light"} elevation={1}>
-                <Controller controller={controller} render={Input} name={"name"} label={'Name'}
+                <Controller control={control} render={Input} name={"name"} label={'Name'}
                             validator={requiredValidator('Name required')} $disabled={$isPending}/>
-                <Controller controller={controller} render={Input} name={"email"} label={'Email'}
+                <Controller control={control} render={Input} name={"email"} label={'Email'}
                             validator={requiredValidator('Email Required')} autoCaps={false}/>
 
                 <Horizontal gap={5} overflow={'visible'}>
-                    <Controller controller={controller} render={Input} name={"password"} type={"password"}
+                    <Controller control={control} render={Input} name={"password"} type={"password"}
                                 label={"Password"} validator={requiredValidator('Password Required')}/>
-                    <Controller controller={controller} render={Input} name={"passwordConfirmation"} type={"password"}
+                    <Controller control={control} render={Input} name={"passwordConfirmation"} type={"password"}
                                 label={"Confirm Password"}
                                 validator={(value, formValue) => {
                                     if (value) {

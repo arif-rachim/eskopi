@@ -112,7 +112,7 @@ function UserProfileMenu({closePanel, parentRef, setLogout}) {
 
 
 function ChangePasswordDialog({closePanel}) {
-    const {controller, handleSubmit} = useForm({oldPassword: '', newPassword: '', confirmPassword: ''});
+    const {control, handleSubmit} = useForm({oldPassword: '', newPassword: '', confirmPassword: ''});
     const confirmCancel = useConfirmCancelMessage();
     const showError = useErrorMessage();
     const showInfo = useInfoMessage();
@@ -133,17 +133,17 @@ function ChangePasswordDialog({closePanel}) {
             newPassword: data.newPassword
         }))}>
             <Vertical color={"light"} elevation={1} p={5} r={3} width={200} gap={3}>
-                <Controller controller={controller} name={'oldPassword'} render={Input} type={'password'}
+                <Controller control={control} name={'oldPassword'} render={Input} type={'password'}
                             label={'Old Password'} validator={requiredValidator('Old Password required')}/>
-                <Controller controller={controller} name={'newPassword'} render={Input} type={'password'}
+                <Controller control={control} name={'newPassword'} render={Input} type={'password'}
                             label={'New Password'} validator={requiredValidator('New Password required')}/>
-                <Controller controller={controller} name={'confirmPassword'} render={Input} type={'password'}
+                <Controller control={control} name={'confirmPassword'} render={Input} type={'password'}
                             label={'Confirm New Password'}
                             validator={confirmPasswordValidator('Confirm New Password required')}/>
                 <Horizontal gap={2} hAlign={'right'}>
                     <Button type={"submit"} color={"primary"}>Save</Button>
                     <Button type={"button"} onClick={async () => {
-                        if (Object.keys(controller.current.modified).length > 0) {
+                        if (Object.keys(control.current.modified).length > 0) {
                             const result = await confirmCancel();
                             if (result === 'YES') {
                                 closePanel();
@@ -157,6 +157,7 @@ function ChangePasswordDialog({closePanel}) {
         </form>
     </Vertical>
 }
+
 
 function requiredValidator(message) {
     return (...args) => {

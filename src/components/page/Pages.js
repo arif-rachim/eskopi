@@ -31,7 +31,7 @@ function Page({Element, index, $activeIndex}) {
 const MemoPage = memo(Page);
 
 export default function Pages({pages, activePage, title, id, $activeIndex, index}) {
-    const {controller, handleSubmit} = useForm({address: ''});
+    const {control, handleSubmit} = useForm({address: ''});
     const [$visible, setVisible] = useObserver(index === $activeIndex.current);
     useEffect(() => setVisible(index === $activeIndex.current), [index, $activeIndex, setVisible]);
     const [$pagesToRender, setPagesToRender] = useObserver(pages);
@@ -72,7 +72,7 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
             })}>
                 <Horizontal style={{flex: 1}} vAlign={'center'} gap={1}>
                     <Horizontal>Address</Horizontal>
-                    <Controller name={'address'} render={Input} controller={controller} flex={1} autoCaps={false}/>
+                    <Controller name={'address'} render={Input} control={control} flex={1} autoCaps={false}/>
                     <Button>Go</Button>
                 </Horizontal>
             </form>

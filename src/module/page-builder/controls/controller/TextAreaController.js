@@ -8,7 +8,7 @@ import {handleDragOverControlComponent} from "module/page-builder/designer/handl
 
 export default function TextAreaController({
                                                data,
-                                               formController,
+                                               formControl,
                                                $selectedController,
                                                setSelectedController,
                                                ...controllerProps
@@ -23,7 +23,7 @@ export default function TextAreaController({
         setFocused(selectedController.id === id);
     });
     return <Vertical onDragOver={handleDragOverControlComponent()} p={2} pT={1} pB={1} width={width}>
-        <Controller render={TextArea} rows={3} label={"Text Area"} controller={formController}
+        <Controller render={TextArea} rows={3} label={"Text Area"} control={formControl}
                     name={"textarea"} disabled={false}
                     style={{
                         border: isFocused ? '1px solid blue' : isHovered ? `1px solid green` : '1px solid rgba(0,0,0,0.2)',

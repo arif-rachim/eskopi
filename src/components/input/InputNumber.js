@@ -5,6 +5,8 @@ import {useObserverListener, useObserverMapper} from "components/useObserver";
 /**
  *
  * @param {string} name
+ * @param {string} color
+ * @param {{current:boolean}} $disabled
  * @param {number} scale digits after point, 0 for integers
  * @param {boolean} signed
  * @param {string} thousandsSeparator
@@ -14,8 +16,11 @@ import {useObserverListener, useObserverMapper} from "components/useObserver";
  * @param {array} mapToRadix
  * @param {number} min
  * @param {number} max
- * @param $value
- * @param onChange
+ *
+ * @param {function(value)} onChange,
+ * @param {function()} onBlur,
+ * @param {{current:*}} $value,
+ * @param {{current:*}} $errors
  * @returns {JSX.Element}
  * @constructor
  */
@@ -26,6 +31,7 @@ export default function InputNumber({
                                         onChange,
                                         $errors,
                                         $disabled,
+
                                         scale = 2,
                                         signed = false,
                                         thousandsSeparator = ',',
@@ -61,8 +67,6 @@ export default function InputNumber({
                       thousandsSeparator={thousandsSeparator}
                       padFractionalZeros={padFractionalZeros}
                       normalizeZeros={normalizeZeros}
-        // radix={radix}
-        // mapToRadix={mapToRadix}
                       min={min}
                       max={max}
     />

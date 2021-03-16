@@ -31,7 +31,7 @@ function onSubmit(setSignInResource) {
 }
 
 export default function LoginScreen() {
-    const {controller, handleSubmit} = useForm({email: '', password: ''});
+    const {control, handleSubmit} = useForm({email: '', password: ''});
     const [$signInResource, setSignInResource, $isPending] = useResource();
     const showPanel = useLayers();
     const [, setUser] = useUser();
@@ -51,16 +51,16 @@ export default function LoginScreen() {
     return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'} background={background}>
         <form action="" onSubmit={handleSubmit(onSubmit(setSignInResource))}>
             <Vertical gap={2} width={200} b={1} p={4} r={5} elevation={1}>
-                <Controller controller={controller} render={Input} name={"email"} label={'Email'}
+                <Controller control={control} render={Input} name={"email"} label={'Email'}
                             validator={requiredValidator('Email Required')} $disabled={$isPending}/>
-                <Controller controller={controller} render={Input} name={"password"} type={"password"}
+                <Controller control={control} render={Input} name={"password"} type={"password"}
                             label={"Password"} validator={requiredValidator('Password Required')}
                             $disabled={$isPending}/>
                 <Horizontal hAlign={'right'} mT={2} gap={2} vAlign={'center'}>
                     <Button type={"button"} color={"secondary"} mL={1}
                             onClick={async () => {
                                 const email = await showPanel(closePanel => <RegistrationScreen onClose={closePanel}/>)
-                                controller.current.setValue('email', email);
+                                control.current.setValue('email', email);
                             }} $disabled={$isPending}>Register</Button>
                     <Horizontal width={'100%'}/>
                     <Button type={"submit"} style={{whiteSpace: 'nowrap'}} $disabled={$isPending}>Log In</Button>

@@ -4,7 +4,7 @@ import Select from "../../../components/input/Select";
 import useObserver from "../../../components/useObserver";
 import Input from "../../../components/input/Input";
 
-function AlignmentAndGap({controller}) {
+function AlignmentAndGap({control}) {
     const [$verticalData] = useObserver(['top', 'bottom', 'center']);
     const [$horizontalData] = useObserver(['left', 'center', 'right']);
     const [$layoutData] = useObserver(['horizontal', 'vertical']);
@@ -14,11 +14,11 @@ function AlignmentAndGap({controller}) {
                         render={Select} name={'layout'} flex={'1 0 auto'}
                         $data={$layoutData}
                         dataKey={data => data}
-                        controller={controller}
+                        control={control}
                         containerStyle={{width: '50%'}}
             />
             <Controller label={'Gap'} horizontalLabelPositionWidth={60} render={Input} name={'gap'}
-                        flex={'1 0 auto'} controller={controller}
+                        flex={'1 0 auto'} control={control}
                         containerStyle={{width: '50%'}}
             />
         </Horizontal>
@@ -27,11 +27,11 @@ function AlignmentAndGap({controller}) {
                         render={Select} name={'vAlign'} flex={'1 0 auto'}
                         $data={$verticalData}
                         dataKey={data => data}
-                        controller={controller}
+                        control={control}
                         containerStyle={{width: '50%'}}
             />
             <Controller label={'Horizontal'} horizontalLabelPositionWidth={60} render={Select} name={'hAlign'}
-                        flex={'1 0 auto'} controller={controller}
+                        flex={'1 0 auto'} control={control}
                         dataKey={data => data}
                         $data={$horizontalData}
                         containerStyle={{width: '50%'}}

@@ -8,7 +8,7 @@ import {handleDragOverControlComponent} from "module/page-builder/designer/handl
 
 export default function SpaceController({
                                             data,
-                                            formController,
+                                            formControl,
                                             $selectedController,
                                             setSelectedController,
                                             ...controllerProps
@@ -68,7 +68,7 @@ export default function SpaceController({
         {...controllerProps}
         {...props}
     >
-        <RenderLayout value={children} controller={formController} $selectedController={$selectedController}
+        <RenderLayout value={children} control={formControl} $selectedController={$selectedController}
                       setSelectedController={setSelectedController}
         />
 

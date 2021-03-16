@@ -9,7 +9,7 @@ import Select from "components/input/Select";
 
 function DatabaseCrud() {
     const [$tableProps, setTableProps] = useObserver({});
-    const {controller, handleSubmit, reset} = useForm();
+    const {control, handleSubmit, reset} = useForm();
     const detailForm = useForm();
     const showSlideDown = useSlideDownPanel();
 
@@ -60,13 +60,13 @@ function DatabaseCrud() {
             actionCreateResource('/db/' + table, dataToSave);
         })}>
             <Vertical gap={2}>
-                <Controller controller={controller} render={Input} label={'Table Name'} name={'table'}/>
+                <Controller control={control} render={Input} label={'Table Name'} name={'table'}/>
                 <ObserverValue $observers={$tableProps}>
                     {(props) => {
                         const propsArray = Object.keys(props);
                         return <Vertical gap={4}>
                             {propsArray.map(key => {
-                                return <Controller controller={controller} render={Input} label={key} name={key}
+                                return <Controller control={control} render={Input} label={key} name={key}
                                                    key={key}/>
                             })}
                         </Vertical>

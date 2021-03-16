@@ -8,7 +8,7 @@ import {handleDragOverControlComponent} from "module/page-builder/designer/handl
 
 export default function TextInputController({
                                                 data,
-                                                formController,
+                                                formControl,
                                                 $selectedController,
                                                 setSelectedController,
                                                 ...controllerProps
@@ -23,7 +23,7 @@ export default function TextInputController({
         setFocused(selectedController.id === id);
     });
     return <Vertical onDragOver={handleDragOverControlComponent()} p={2} pT={1} pB={1} width={width}>
-        <Controller render={Input} type={"input"} label={"Input"} controller={formController}
+        <Controller render={Input} type={"input"} label={"Input"} control={formControl}
                     name={"input"} disabled={false}
                     autoComplete={'off'}
                     style={{

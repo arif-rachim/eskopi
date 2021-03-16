@@ -103,7 +103,7 @@ function PageTreeItemRenderer(props) {
 
 
 function PageDetail({closePanel}) {
-    const {controller, handleSubmit} = useForm({name: ''});
+    const {control, handleSubmit} = useForm({name: ''});
     const confirmation = useConfirmMessage();
     return <Vertical vAlign={'center'} hAlign={'center'} p={3} gap={2}>
         <Vertical fSize={16} p={3}>Add New Page</Vertical>
@@ -111,12 +111,12 @@ function PageDetail({closePanel}) {
             closePanel(value.name);
         })}>
             <Vertical gap={10}>
-                <Controller render={Input} label={'Page Name'} name={'name'} controller={controller}
+                <Controller render={Input} label={'Page Name'} name={'name'} control={control}
                             validator={requiredValidator('Name is mandatory')} autoFocus={true}/>
                 <Horizontal gap={5}>
                     <Button color={"primary"} type={'submit'} flex={1}>Save</Button>
                     <Button type={'button'} onClick={async () => {
-                        const modified = Object.keys(controller.current.modified).length > 0;
+                        const modified = Object.keys(control.current.modified).length > 0;
                         if (modified) {
                             const result = await confirmation('Are you sure you want to cancel changes ?')
                             if (result === 'YES') {
