@@ -31,11 +31,11 @@ function DatabaseCrud() {
                             closePanel(data.fieldName);
                         })}>
                             <Vertical gap={2}>
-                                <Controller controller={detailForm.controller}
+                                <Controller control={detailForm.control}
                                             name={'fieldName'} label={'Field Name'}
                                             render={Input} autoCaps={false}
                                 />
-                                <Controller controller={detailForm.controller}
+                                <Controller control={detailForm.control}
                                             name={'fieldType'} label={'Field Type'}
                                             render={Select}
                                             $data={$selectDataProvider}
