@@ -200,7 +200,7 @@ export function Controller({
                                 flex={`0 0 ${horizontalLabelPositionWidth}px`}>{label}</Horizontal>
 
                     <Render name={name} onBlur={onBlur} onChange={onChange} $value={control.current.$value}
-                            $errors={control.current.$errors} {...props} style={{width: '100%'}}/>
+                            $errors={control.current.$errors} {...props} style={{...props.style, width: '100%'}}/>
 
                 </Horizontal>
                 }

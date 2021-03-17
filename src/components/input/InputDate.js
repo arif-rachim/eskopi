@@ -63,8 +63,13 @@ export default function InputDate({
                                       onBlur,
                                       $errors,
                                       $disabled,
+                                      onClick,
+                                      onMouseEnter,
+                                      onMouseLeave,
+
                                       min = new Date(1970, 0, 1),
                                       max = new Date(2500, 0, 1),
+                                      ...props
                                   }) {
     const maskRef = useRef();
     const $nameValue = useObserverMapper($value, value => value[name]);
@@ -91,6 +96,9 @@ export default function InputDate({
                       format={formatDate}
                       parse={parseDate}
                       blocks={dateBlocks}
-
+                      onClick={onClick}
+                      onMouseEnter={onMouseEnter}
+                      onMouseLeave={onMouseLeave}
+                      {...props}
     />
 }

@@ -1,6 +1,8 @@
 import {Vertical} from "components/layout/Layout";
+import {Controller} from "components/useForm";
+import InputNumber from "components/input/InputNumber";
 
-function BorderMarginPaddingPanel() {
+function BorderMarginPaddingPanel({control}) {
     return <Vertical p={2} width={250} height={168}>
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -166,130 +168,226 @@ function BorderMarginPaddingPanel() {
                 />
             </g>
         </svg>
-        <input name={'marginTop'} type="text"
-               style={{
-                   position: 'absolute',
-                   top: 6,
-                   width: 26,
-                   height: 14,
-                   left: 'calc( 50% - 15px)',
-                   border: 'none',
-                   outline: 'none'
-               }}/>
-        <input name={'borderTop'} type="text"
-               style={{
-                   position: 'absolute',
-                   top: 25,
-                   width: 26,
-                   height: 14,
-                   left: 'calc( 50% - 15px)',
-                   border: 'none',
-                   outline: 'none'
-               }}/>
-        <input name={'paddingTop'} type="text"
-               style={{
-                   position: 'absolute',
-                   top: 42,
-                   width: 26,
-                   height: 14,
-                   left: 'calc( 50% - 15px)',
-                   border: 'none',
-                   outline: 'none'
-               }}/>
+        <Controller render={InputNumber}
+                    name={'mT'}
+                    control={control}
+                    style={{
+                        padding: 0,
+                        textAlign: 'center',
+                        width: 32,
+                        height: 12,
+                        border: 'none',
+                        outline: 'none'
+                    }}
+                    containerStyle={{
+                        position: 'absolute',
+                        top: 6,
+                        left: 'calc( 50% - 16px)',
+                    }}
+        />
 
-        <input name={'marginRight'} type="text"
-               style={{
-                   position: 'absolute',
-                   right: 6,
-                   width: 21,
-                   height: 14,
-                   top: 75,
-                   border: 'none',
-                   outline: 'none'
-               }}/>
-        <input name={'borderRight'} type="text"
-               style={{
-                   position: 'absolute',
-                   right: 35,
-                   width: 21,
-                   height: 14,
-                   top: 75,
-                   border: 'none',
-                   outline: 'none'
-               }}/>
-        <input name={'paddingRight'} type="text"
-               style={{
-                   position: 'absolute',
-                   right: 62,
-                   width: 21,
-                   height: 14,
-                   top: 75,
-                   border: 'none',
-                   outline: 'none'
-               }}/>
+        <Controller render={InputNumber}
+                    name={'bT'}
+                    control={control}
+                    style={{
+                        padding: 0,
+                        textAlign: 'center',
+                        width: 32,
+                        height: 12,
+                        border: 'none',
+                        outline: 'none'
+                    }}
+                    containerStyle={{
+                        position: 'absolute',
+                        top: 24,
+                        left: 'calc( 50% - 16px)',
+                    }}
+        />
+
+        <Controller render={InputNumber}
+                    name={'pT'}
+                    control={control}
+                    style={{
+                        padding: 0,
+                        textAlign: 'center',
+                        width: 32,
+                        height: 12,
+                        border: 'none',
+                        outline: 'none'
+                    }}
+                    containerStyle={{
+                        position: 'absolute',
+                        top: 42,
+                        left: 'calc( 50% - 16px)',
+                    }}
+        />
 
 
-        <input name={'paddingBottom'} type="text"
-               style={{
-                   position: 'absolute',
-                   bottom: 43,
-                   width: 26,
-                   height: 14,
-                   left: 'calc( 50% - 15px)',
-                   border: 'none',
-                   outline: 'none'
-               }}/>
-        <input name={'borderBottom'} type="text"
-               style={{
-                   position: 'absolute',
-                   bottom: 25,
-                   width: 26,
-                   height: 14,
-                   left: 'calc( 50% - 15px)',
-                   border: 'none',
-                   outline: 'none'
-               }}/>
-        <input name={'marginBottom'} type="text"
-               style={{
-                   position: 'absolute',
-                   bottom: 6,
-                   width: 26,
-                   height: 14,
-                   left: 'calc( 50% - 15px)',
-                   border: 'none',
-                   outline: 'none'
-               }}/>
+        <Controller render={InputNumber}
+                    name={'mR'}
+                    control={control}
+                    style={{
+                        padding: 0,
+                        textAlign: 'center',
+                        width: 28,
+                        height: 11,
+                        border: 'none',
+                        outline: 'none'
+                    }}
+                    containerStyle={{
+                        position: 'absolute',
+                        top: 75,
+                        right: 5,
+                    }}
+        />
 
-        <input name={'marginLeft'} type="text"
-               style={{
-                   position: 'absolute',
-                   left: 6,
-                   width: 21,
-                   height: 14,
-                   top: 75,
-                   border: 'none',
-                   outline: 'none'
-               }}/>
-        <input name={'borderLeft'} type="text"
-               style={{
-                   position: 'absolute',
-                   left: 35,
-                   width: 21,
-                   height: 14,
-                   top: 75,
-                   border: 'none',
-                   outline: 'none'
-               }}/>
-        <input name={'paddingLeft'} type="text"
-               style={{
-                   position: 'absolute',
-                   left: 62,
-                   width: 21,
-                   height: 14,
-                   top: 75,
-                   border: 'none',
-                   outline: 'none'
-               }}/>
+        <Controller render={InputNumber}
+                    name={'bR'}
+                    control={control}
+                    style={{
+                        padding: 0,
+                        textAlign: 'center',
+                        width: 26,
+                        height: 11,
+                        border: 'none',
+                        outline: 'none'
+                    }}
+                    containerStyle={{
+                        position: 'absolute',
+                        top: 75,
+                        right: 34,
+                    }}
+        />
+
+        <Controller render={InputNumber}
+                    name={'pR'}
+                    control={control}
+                    style={{
+                        padding: 0,
+                        textAlign: 'center',
+                        width: 26,
+                        height: 11,
+                        border: 'none',
+                        outline: 'none'
+                    }}
+                    containerStyle={{
+                        position: 'absolute',
+                        top: 75,
+                        right: 62,
+                    }}
+        />
+
+
+        <Controller render={InputNumber}
+                    name={'pB'}
+                    control={control}
+                    style={{
+                        padding: 0,
+                        textAlign: 'center',
+                        width: 32,
+                        height: 12,
+                        border: 'none',
+                        outline: 'none'
+                    }}
+                    containerStyle={{
+                        position: 'absolute',
+                        bottom: 43,
+                        left: 'calc( 50% - 16px)',
+                    }}
+        />
+
+        <Controller render={InputNumber}
+                    name={'bB'}
+                    control={control}
+                    style={{
+                        padding: 0,
+                        textAlign: 'center',
+                        width: 32,
+                        height: 12,
+                        border: 'none',
+                        outline: 'none'
+                    }}
+                    containerStyle={{
+                        position: 'absolute',
+                        bottom: 24,
+                        left: 'calc( 50% - 16px)',
+                    }}
+        />
+
+        <Controller render={InputNumber}
+                    name={'mB'}
+                    control={control}
+                    style={{
+                        padding: 0,
+                        textAlign: 'center',
+                        width: 32,
+                        height: 12,
+                        border: 'none',
+                        outline: 'none'
+                    }}
+                    containerStyle={{
+                        position: 'absolute',
+                        bottom: 6,
+                        left: 'calc( 50% - 16px)',
+                    }}
+        />
+
+
+        <Controller render={InputNumber}
+                    name={'mL'}
+                    control={control}
+                    style={{
+                        padding: 0,
+                        textAlign: 'center',
+                        width: 28,
+                        height: 11,
+                        border: 'none',
+                        outline: 'none'
+                    }}
+                    containerStyle={{
+                        position: 'absolute',
+                        top: 75,
+                        left: 6
+                    }}
+        />
+
+        <Controller render={InputNumber}
+                    name={'bL'}
+                    control={control}
+                    style={{
+                        padding: 0,
+                        textAlign: 'center',
+                        width: 25,
+                        height: 11,
+                        border: 'none',
+                        outline: 'none'
+                    }}
+                    containerStyle={{
+                        position: 'absolute',
+                        top: 75,
+                        left: 35,
+                    }}
+        />
+
+        <Controller render={InputNumber}
+                    name={'pL'}
+                    control={control}
+                    style={{
+                        padding: 0,
+                        textAlign: 'center',
+                        width: 26,
+                        height: 11,
+                        border: 'none',
+                        outline: 'none'
+                    }}
+                    containerStyle={{
+                        position: 'absolute',
+                        top: 75,
+                        left: 62,
+                    }}
+        />
+
+
     </Vertical>
 }
 

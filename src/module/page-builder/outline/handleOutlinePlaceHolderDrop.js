@@ -37,7 +37,7 @@ export default function handleOutlinePlaceHolderDrop(treeRef, setData) {
             });
         } else {
             const parentNode = treeListData[childIndex - 1];
-            if (parentNode.type === Controls.SPACE) {
+            if (parentNode && parentNode.type === Controls.SPACE) {
                 setData(oldData => {
                     const newData = {...oldData};
                     cleanDataFromTree(data, newData);
@@ -58,7 +58,7 @@ export default function handleOutlinePlaceHolderDrop(treeRef, setData) {
                 let childPositionFromTree = 0;
                 let parentNode = null;
                 for (let i = childIndex; i > 0; i--) {
-                    if (treeListData[i].type === Controls.SPACE) {
+                    if (treeListData[i] && treeListData[i].type === Controls.SPACE) {
                         parentNode = treeListData[i];
                         break;
                     }
@@ -68,10 +68,16 @@ export default function handleOutlinePlaceHolderDrop(treeRef, setData) {
                     const newData = {...oldData};
                     cleanDataFromTree(data, newData);
                     let nodeToBeUpdated = newData;
-                    for (const id of parentNode.parentIds) {
-                        nodeToBeUpdated = nodeToBeUpdated.children.find(d => d.id === id);
+                    if (parentNode) {
+                        for (const id of parentNode.parentIds) {
+                            nodeToBeUpdated = nodeToBeUpdated.children.find(d => d.id === id);
+                        }
                     }
+
                     nodeToBeUpdated = nodeToBeUpdated.children.find(d => d.id === parentNode.id);
+                    if (nodeToBeUpdated === undefined) {
+                        return oldData;
+                    }
                     nodeToBeUpdated.children = nodeToBeUpdated.children || [];
                     nodeToBeUpdated.children.splice(childPositionFromTree - 1, 0, {
                         id: uuid(),

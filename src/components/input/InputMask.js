@@ -4,6 +4,7 @@ import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "components/
 import useTheme from "components/useTheme";
 import {useObserverMapper, useObserverValue} from "components/useObserver";
 import {isUndefinedOrNull} from "components/utils";
+import styles from "components/input/Input.module.css";
 
 export default function InputMask({
                                       name,
@@ -18,6 +19,10 @@ export default function InputMask({
                                       m, mL, mR, mT, mB,
                                       b, bL, bR, bT, bB,
                                       r, rTL, rTR, rBL, rBR,
+                                      className = [],
+                                      onClick,
+                                      onMouseEnter,
+                                      onMouseLeave,
                                       ...options
                                   }) {
     const inputRef = useRef();
@@ -73,7 +78,14 @@ export default function InputMask({
     const colorStyle = parseColorStyle({color, brightness: isDisabled ? -0.1 : 0.71, alpha: 1}, theme);
 
     const defaultStyle = {minWidth: 0};
-    return <input name={name} readOnly={isDisabled}
+
+    return <input name={name}
+                  readOnly={isDisabled}
                   style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...defaultStyle, ...style}}
-                  ref={inputRef}/>
+                  ref={inputRef}
+                  onClick={onClick}
+                  onMouseEnter={onMouseEnter}
+                  onMouseLeave={onMouseLeave}
+                  className={[...className, styles.button].join(' ')}
+    />
 }

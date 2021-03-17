@@ -1,6 +1,7 @@
 import InputMask from "components/input/InputMask";
 import {useRef} from "react";
 import {useObserverListener, useObserverMapper} from "components/useObserver";
+import styles from "components/input/Input.module.css";
 
 /**
  *
@@ -31,6 +32,9 @@ export default function InputNumber({
                                         onChange,
                                         $errors,
                                         $disabled,
+                                        onClick,
+                                        onMouseEnter,
+                                        onMouseLeave,
 
                                         scale = 2,
                                         signed = false,
@@ -41,7 +45,8 @@ export default function InputNumber({
                                         mapToRadix = ['.'],
                                         min = -1000000000,
                                         max = 1000000000,
-
+                                        style,
+                                        className = [], ...props
                                     }) {
     const maskRef = useRef();
     const $nameValue = useObserverMapper($value, value => value[name]);
@@ -50,11 +55,13 @@ export default function InputNumber({
         maskRef.current.typedValue = value;
     });
 
+
     return <InputMask name={name}
                       onMaskCreated={(mask) => {
                           mask.typedValue = $nameValue.current;
                           maskRef.current = mask;
                       }}
+                      className={[...className, styles.button].join(' ')}
                       onAccept={_ => {
                           onChange(maskRef.current.typedValue);
                       }}
@@ -69,5 +76,10 @@ export default function InputNumber({
                       normalizeZeros={normalizeZeros}
                       min={min}
                       max={max}
+                      style={style}
+                      onClick={onClick}
+                      onMouseEnter={onMouseEnter}
+                      onMouseLeave={onMouseLeave}
+                      {...props}
     />
 }
