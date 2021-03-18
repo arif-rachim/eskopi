@@ -51,7 +51,6 @@ app.use(token);
 app.use('/db', dbRouter);
 app.use('/authentication', authenticationRouter);
 
-
 app.use((req, res) => res.json({error: 'Resource not found'}));
 app.use((err, req, res, next) => res.json({error: err.message}));
 app.listen(PORT, () => log('Server running at port ', PORT));

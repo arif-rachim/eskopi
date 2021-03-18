@@ -1,12 +1,16 @@
-import {Vertical} from "components/layout/Layout";
+import {Horizontal, Vertical} from "components/layout/Layout";
 import {memo, useContext, useRef, useState} from "react";
 import {DropListenerContext} from "module/page-builder/index";
-import {ObserverValue, useObserverMapper} from "components/useObserver";
+import {ObserverValue, useObserverListener, useObserverMapper} from "components/useObserver";
 import useForm from "components/useForm";
 import {getPlaceHolder, usePlaceHolderListener} from "module/page-builder/designer/getPlaceHolder";
 import {handlePlaceHolderDrop} from "module/page-builder/designer/handlePlaceHolderDrop";
 import {ControlMapper} from "module/page-builder/controls/ControllerMapper";
 import getOutlinePlaceHolder from "module/page-builder/outline/getOutlinePlaceHolder";
+import useResource, {useResourceListener} from "components/useResource";
+import Button from "components/button/Button";
+import {isNullOrUndefined} from "components/utils";
+import {useInfoMessage} from "components/dialog/Dialog";
 
 
 const handleRootDragEnter = (dragHoverCountRef) => (event) => {
@@ -38,33 +42,73 @@ const handleRootDragOver = () => (event) => {
 }
 
 
-export default function DesignerPanel({$data, setData, $selectedController, setSelectedController}) {
+export default function DesignerPanel({$data, setData, $selectedPage, $selectedController, setSelectedController}) {
     const rootRef = useRef();
     const dropListener = useContext(DropListenerContext);
     usePlaceHolderListener("drop", handlePlaceHolderDrop(rootRef, setData));
     const dragHoverCountRef = useRef(0);
-    const {control} = useForm();
-    return <Vertical color={"light"} brightness={-3} p={3} flex={1}>
-        <Vertical domRef={rootRef} color={"light"} brightness={0} flex={1} elevation={1}
-                  onDragEnter={handleRootDragEnter(dragHoverCountRef)}
-                  onDragOver={handleRootDragOver()}
-                  onDragLeave={handleRootDragLeave(dragHoverCountRef)}
-                  onDrop={handleRootDrop(dragHoverCountRef, dropListener)} p={2}
-                  onClick={() => setSelectedController(null)}
-                  data-layout={'vertical'}>
+    const {control, handleSubmit} = useForm();
+    const [$onPageDataSave, doSavePage] = useResource();
+    const [$onPageDetailFetched, doLoadDetail] = useResource();
+    const $hasSelectedPage = useObserverMapper($selectedPage, selectedPage => !isNullOrUndefined(selectedPage))
+    const showInfo = useInfoMessage();
+    useResourceListener($onPageDataSave, async (status, result) => {
+        if (status === 'success') {
+            debugger;
+            await showInfo();
+        }
+    });
+    useObserverListener($selectedPage, selectedPage => {
+        doLoadDetail('/db/page-design', {a: 'r', pageId: $selectedPage.current.id});
+    });
+    useResourceListener($onPageDetailFetched, (status, result) => {
+        if (status === 'success') {
+            if (result.length > 0) {
+                setData(result[0]);
+            } else {
+                setData({});
+            }
 
-            <ObserverValue $observers={useObserverMapper($data, data => {
-                return data.children
-            })}>{
-                (value) => {
-                    return <RenderLayoutMemo value={value} control={control}
-                                             setSelectedController={setSelectedController}
-                                             $selectedController={$selectedController}/>
-                }
-            }</ObserverValue>
-
+        }
+    })
+    return <>
+        <Vertical color={"light"} brightness={-3} p={3} flex={1}
+                  $visible={useObserverMapper($hasSelectedPage, value => !value)} vAlign={'center'} hAlign={'center'}>
+            Please chose a page
         </Vertical>
-    </Vertical>
+        <Vertical color={"light"} brightness={-3} p={3} flex={1} $visible={$hasSelectedPage}>
+            <form action="" onSubmit={handleSubmit(() => {
+                const data = $data.current;
+                data.pageId = $selectedPage.current.id;
+                data.a = data.id_ ? 'u' : 'c';
+                doSavePage('/db/page-design', data);
+            })} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+                <Vertical domRef={rootRef} color={"light"} brightness={0} flex={1} elevation={1}
+                          onDragEnter={handleRootDragEnter(dragHoverCountRef)}
+                          onDragOver={handleRootDragOver()}
+                          onDragLeave={handleRootDragLeave(dragHoverCountRef)}
+                          onDrop={handleRootDrop(dragHoverCountRef, dropListener)} p={2}
+                          onClick={() => setSelectedController(null)}
+                          data-layout={'vertical'} height={'100%'} mB={2}>
+
+                    <ObserverValue $observers={useObserverMapper($data, data => {
+                        return data.children
+                    })}>{
+                        (value) => {
+                            return <RenderLayoutMemo value={value} control={control}
+                                                     setSelectedController={setSelectedController}
+                                                     $selectedController={$selectedController}/>
+                        }
+                    }</ObserverValue>
+
+                </Vertical>
+                <Horizontal hAlign={'right'} gap={2}>
+                    <Button>Save</Button>
+                    <Button>Cancel</Button>
+                </Horizontal>
+            </form>
+        </Vertical>
+    </>
 }
 
 

@@ -33,7 +33,6 @@ function DBExplorer() {
         <Vertical color={'light'} brightness={1} flex={'1 0 auto'}>
             <Table $data={$tableContent} dataKey={data => data?.id_}/>
         </Vertical>
-        <Vertical color={'light'} brightness={1} bL={1} flex={'0 0 200px'}>Three</Vertical>
     </Horizontal>
 }
 

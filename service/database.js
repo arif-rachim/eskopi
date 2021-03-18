@@ -303,7 +303,7 @@ router.get('/*', (req, res) => {
 
 router.post('/*', (req, res) => {
     const {params, query} = getParamsAndQuery(req);
-    let suggestedAction = params.length % 2 === 1 ? ACTION_CREATE : ACTION_UPDATE;
+    let suggestedAction = query.a || ACTION_READ;
     const dataAlreadyExist = 'id_' in query && query.id_ in warehouse;
     if (dataAlreadyExist) {
         suggestedAction = ACTION_UPDATE;
@@ -343,7 +343,7 @@ function toCamelCase(object) {
     }, {});
 }
 
-function getParamsAndQuery(req) {
+export function getParamsAndQuery(req) {
     const queryIndex = req.url.indexOf('?');
     const url = req.url.substring(1, queryIndex > 0 ? queryIndex : req.url.length);
     const params = decodeURIComponent(url).split('/').filter(s => s.length > 0);

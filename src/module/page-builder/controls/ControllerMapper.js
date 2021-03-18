@@ -10,6 +10,7 @@ import ColorBrightnessOpacity from "../properties/ColorBrightnessOpacity";
 import NumberInputController from "module/page-builder/controls/controller/NumberInputController";
 import DateInputController from "module/page-builder/controls/controller/DateInputController";
 import TimeInputController from "module/page-builder/controls/controller/TimeInputController";
+import NameAndIdPanel from "module/page-builder/properties/NameAndId";
 
 
 export const Controls = {
@@ -48,11 +49,11 @@ export const ControlMapper = {
 
 export const ControlPropertiesCatalog = {
     [Controls.SPACE]: [BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity],
-    [Controls.TEXT_INPUT]: [BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
-    [Controls.TEXT_AREA]: [BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
-    [Controls.DATE_INPUT]: [BorderMarginPaddingPanel, WidthAndHeightPanel],
-    [Controls.TIME_INPUT]: [BorderMarginPaddingPanel, WidthAndHeightPanel],
-    [Controls.NUMBER_INPUT]: [BorderMarginPaddingPanel, WidthAndHeightPanel],
+    [Controls.TEXT_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
+    [Controls.TEXT_AREA]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
+    [Controls.DATE_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
+    [Controls.TIME_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
+    [Controls.NUMBER_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
 }
 
 export const Icons = {

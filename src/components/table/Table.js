@@ -7,6 +7,7 @@ import ConfigureColumnPanel, {
     createDefaultColumnsArray,
     createDefaultColumnsObject
 } from "components/table/ConfigureColumnPanel";
+import Button from "components/button/Button";
 
 function RowItemRenderer(props) {
     const $columns = props.$columns;
@@ -14,26 +15,50 @@ function RowItemRenderer(props) {
     const onRowClicked = props.onChange;
     const $selectedRow = props.$value;
     const [rowIsSelected, setRowIsSelected] = useState(false);
+    const [$showDetail, setShowDetail] = useObserver(false);
+    const [$detailData, setDetailData] = useObserver();
     useObserverListener($selectedRow, selectedRow => setRowIsSelected(selectedRow === data));
+    return <Vertical color={"light"} brightness={rowIsSelected ? -0.5 : 0.5}>
+        <Horizontal bB={1} onClick={() => {
+            setShowDetail(false);
+            if (onRowClicked) {
+                onRowClicked(data);
+            }
+        }}>
+            <ObserverValue $observers={$columns}>
+                {(columns) => {
+                    columns = columns || [];
+                    return Object.keys(columns).map(columnKey => {
+                        let value = data[columnKey];
+                        value = value === undefined ? '' : value;
+                        const valueIsArray = Array.isArray(value);
+                        const valueIsObject = typeof value === 'object';
+                        const canShowDetail = valueIsArray ? value.length > 0 : valueIsObject;
+                        return <Horizontal bL={1} p={1} overflow={'hidden'}
+                                           width={$columns.current[columnKey].width}
+                                           key={columnKey} vAlign={'center'} style={{minWidth: 55}}>
+                            <Horizontal flex={'1 0 auto'}>
+                                {valueIsArray ? `${value.length}` : value}
+                            </Horizontal>
+                            {canShowDetail &&
+                            <Button onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                setDetailData(value);
+                                setShowDetail(true);
+                            }}>Detail</Button>}
+                        </Horizontal>
 
-    return <Horizontal bB={1} onClick={() => {
-        if (onRowClicked) {
-            onRowClicked(data);
-        }
-    }} color={"light"} brightness={rowIsSelected ? -0.5 : 0.5}>
-        <ObserverValue $observers={$columns}>
-            {(columns) => {
-                columns = columns || [];
-                return Object.keys(columns).map(columnKey => {
-                    let value = data[columnKey];
-                    value = value === undefined ? '' : value;
-                    return <Horizontal bL={1} p={1} overflow={'hidden'} width={$columns.current[columnKey].width}
-                                       key={columnKey}>{value.toString()}</Horizontal>
-                })
-            }}
-        </ObserverValue>
-    </Horizontal>
+                    })
+                }}
+            </ObserverValue>
+        </Horizontal>
+        <Vertical $visible={$showDetail}>
+            <Table $data={$detailData} dataKey={data => data?.id_}/>
+        </Vertical>
+    </Vertical>
 }
+
 
 function handleOnChange(onChange, setSelectedRow) {
     return function onChangeListener(data) {
@@ -60,7 +85,7 @@ function calculateColumnsWidth(colNames) {
 
 function constructColumns(rows) {
     rows = rows || [];
-    const columnsNames = rows.reduce((acc, row) => {
+    return rows.reduce((acc, row) => {
         Object.keys(row).forEach(col => {
             acc[col] = acc[col] || {width: 0};
             const rowColWidth = row[col].toString().length;
@@ -68,7 +93,6 @@ function constructColumns(rows) {
         })
         return acc;
     }, {});
-    return columnsNames;
 }
 
 export default function Table({dataKey, $data, domRef, $value, onChange}) {
@@ -94,13 +118,11 @@ export default function Table({dataKey, $data, domRef, $value, onChange}) {
             const persistedColumns = $persistedColumns.current;
             const columnsBasedOnData = $columnsBasedOnData.current;
             const visibleColumns = Object.keys(persistedColumns).filter(key => persistedColumns[key] === true);
-            const columns = Object.keys(columnsBasedOnData).filter(key => visibleColumns.indexOf(key) >= 0)
+            return Object.keys(columnsBasedOnData).filter(key => visibleColumns.indexOf(key) >= 0)
                 .reduce((acc, key) => {
                     acc[key] = columnsBasedOnData[key];
                     return acc;
                 }, {});
-
-            return columns;
         }
     });
     const [$tableData, setTableData] = useObserver($data?.current);
@@ -138,7 +160,7 @@ export default function Table({dataKey, $data, domRef, $value, onChange}) {
                     }
                     return Object.keys(columns).map(col => {
                         return <Horizontal key={col} width={columns[col].width} p={1} bL={2}
-                                           style={{fontWeight: 'bold'}}>{col}</Horizontal>
+                                           style={{fontWeight: 'bold', minWidth: 55}}>{col}</Horizontal>
                     });
                 }}
             </ObserverValue>

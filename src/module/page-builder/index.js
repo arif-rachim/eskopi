@@ -23,6 +23,7 @@ export default function PageBuilder() {
                 </Vertical>
                 <Vertical flex={1}>
                     <DesignerPanel $data={$data}
+                                   $selectedPage={$selectedPage}
                                    setData={setData}
                                    setSelectedController={setSelectedController}
                                    $selectedController={$selectedController}

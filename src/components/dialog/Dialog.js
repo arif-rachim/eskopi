@@ -34,46 +34,42 @@ export default function Dialog({closePanel, message, buttons, color = 'light', a
 export function useConfirmCancelMessage() {
     const showPanel = useLayers();
     return async () => {
-        const result = await showPanel(closePanel => <Dialog closePanel={closePanel}
-                                                             message={'Are you sure you want to cancel changes ?'}
-                                                             buttons={{
-                                                                 YES: {color: 'primary'},
-                                                                 NO: {color: 'light'}
-                                                             }}/>);
-        return result;
+        return await showPanel(closePanel => <Dialog closePanel={closePanel}
+                                                     message={'Are you sure you want to cancel changes ?'}
+                                                     buttons={{
+                                                         YES: {color: 'primary'},
+                                                         NO: {color: 'light'}
+                                                     }}/>);
     }
 }
 
 export function useErrorMessage() {
     const showPanel = useLayers();
     return async (message) => {
-        const result = await showPanel(closePanel => <Dialog closePanel={closePanel}
-                                                             message={message}
-                                                             color={'danger'}
-                                                             alpha={0.8}
-                                                             buttons={{OK: {color: 'light'}}}/>);
-        return result;
+        return await showPanel(closePanel => <Dialog closePanel={closePanel}
+                                                     message={message}
+                                                     color={'danger'}
+                                                     alpha={0.8}
+                                                     buttons={{OK: {color: 'light'}}}/>);
     }
 }
 
 export function useInfoMessage() {
     const showPanel = useLayers();
-    return async () => {
-        const result = await showPanel(closePanel => <Dialog closePanel={closePanel}
-                                                             message={'Changes updated successfully.'}
-                                                             alpha={0.8}
-                                                             buttons={{OK: {color: 'light'}}}/>);
-        return result;
+    return async (message = 'Changes updated successfully.') => {
+        return await showPanel(closePanel => <Dialog closePanel={closePanel}
+                                                     message={message}
+                                                     alpha={0.8}
+                                                     buttons={{OK: {color: 'light'}}}/>);
     }
 }
 
 export function useConfirmMessage() {
     const showPanel = useLayers();
     return async (message) => {
-        const result = await showPanel(closePanel => <Dialog closePanel={closePanel}
-                                                             message={message}
-                                                             alpha={0.8}
-                                                             buttons={{YES: {color: 'light'}, NO: {color: 'light'}}}/>);
-        return result;
+        return await showPanel(closePanel => <Dialog closePanel={closePanel}
+                                                     message={message}
+                                                     alpha={0.8}
+                                                     buttons={{YES: {color: 'light'}, NO: {color: 'light'}}}/>);
     }
 }
