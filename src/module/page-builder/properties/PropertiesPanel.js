@@ -19,12 +19,8 @@ import CollapsiblePanel from "components/panel/CollapsiblePanel";
 export default function PropertiesPanel({$layout, setLayout, $selectedController}) {
     const [$propertiesPanel, setPropertiesPanel] = useObserver([]);
     const {control, reset, $value} = useForm();
-    useObserverListener($value, value => {
-        console.log(value);
-    })
     useObserverListener($value, (value) => {
         const selectedController = $selectedController.current;
-        console.log('Shit')
         if (isNullOrUndefined(value) || isNullOrUndefined(selectedController)) {
             return;
         }

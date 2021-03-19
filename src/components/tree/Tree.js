@@ -59,7 +59,8 @@ export default function Tree({
                  dataKey={dataKey}
                  onKeyboardUp={onKeyboardUp}
                  onKeyboardDown={onKeyboardDown} $collapsedNode={$collapsedNode}
-                 setCollapsedNode={setCollapsedNode} rowProps={rowProps} $value={$value} onChange={onChange} {...props} />
+                 setCollapsedNode={setCollapsedNode} rowProps={rowProps} $value={$value}
+                 onChange={onChange} {...props} />
 }
 
 

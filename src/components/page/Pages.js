@@ -37,7 +37,7 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
     useObserverListener($activeIndex, (activeIndex) => setVisible(activeIndex === index));
     const PANEL_GRADIENT = useGradient(180).stop(0, 'light', -1).stop(0.1, 'light', -2).stop(0.9, 'light', -2).stop(1, 'light', -3).toString();
     const [$pageActiveIndex, setPageActiveIndex] = useObserver(0);
-    const [$showAddressBar,] = useObserver(false);
+    const [$showAddressBar,] = useObserver(true);
     return <Vertical height={'100%'} width={'100%'} position={'absolute'} $visible={$visible}>
 
         <Horizontal background={PANEL_GRADIENT} vAlign={'center'} gap={2} $visible={$showAddressBar}>
@@ -55,7 +55,7 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
                     </svg>
                 </Button>
             </Horizontal>
-            <form action="" style={{display: 'flex', flex: 1}} onSubmit={handleSubmit((data) => {
+            <form action="" style={{display: 'flex', flex: '1 0 auto'}} onSubmit={handleSubmit((data) => {
                 const elementToMount = findMostMatchingComponent(data.address.split('/'), routing);
                 setPagesToRender(pages => {
                     const matchPages = pages.filter(p => p.key === elementToMount.key);
@@ -69,9 +69,10 @@ export default function Pages({pages, activePage, title, id, $activeIndex, index
                     return [...pages, elementToMount];
                 });
             })}>
-                <Horizontal style={{flex: 1}} vAlign={'center'} gap={1}>
+                <Horizontal style={{flex: '1 0 auto'}} vAlign={'center'} gap={1} p={1}>
                     <Horizontal>Address</Horizontal>
-                    <Controller name={'address'} render={Input} control={control} flex={1} autoCaps={false}/>
+                    <Controller name={'address'} render={Input} control={control} containerStyle={{flex: '1 0 auto'}}
+                                autoCaps={false}/>
                     <Button>Go</Button>
                 </Horizontal>
             </form>

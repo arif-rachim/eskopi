@@ -5,7 +5,7 @@ import {Vertical} from "components/layout/Layout";
 import Input from "components/input/Input";
 import {useRef} from "react";
 import useResource, {useResourceListener} from "components/useResource";
-import {SYSTEM_PAGE_DESIGNS, SYSTEM_PAGES} from "../SystemTableName";
+import {SYSTEM_PAGES} from "../SystemTableName";
 import Tree from "../tree/Tree";
 
 const defaultMenus = {
@@ -34,7 +34,7 @@ export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
     })
     const [$selectedMenu, setSelectedMenu] = useObserver();
 
-    useObserverListener($selectedMenu,(newValue) => {
+    useObserverListener($selectedMenu, (newValue) => {
         window.location.hash = `#page-renderer/${newValue.id}`;
         setShowMenu(false);
     });

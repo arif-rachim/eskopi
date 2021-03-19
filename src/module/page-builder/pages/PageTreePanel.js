@@ -18,9 +18,7 @@ export default function PageTreePanel({$selectedPage, setSelectedPage}) {
     const [$pageResource, setPageResource] = useResource({url: `/db/${SYSTEM_PAGES}`});
 
     useResourceListener($pageResource, (status, data) => {
-        debugger;
         if (status === 'success') {
-
             if (Array.isArray(data)) {
                 setPages(data[0]);
             } else {

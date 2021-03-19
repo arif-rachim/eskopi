@@ -1,7 +1,7 @@
 import {ThemeContextProvider} from "components/useTheme";
 import {LayerContextProvider} from "components/useLayers";
 import useRouter, {RouterProvider} from "./components/useRouter";
-import {Suspense, useCallback, useMemo, useState} from "react";
+import {Suspense, useCallback, useEffect, useState} from "react";
 import LoginScreen from "module/login";
 import {AuthCheck, UserProvider} from "components/authentication/useUser";
 import ErrorBoundary from "components/error-boundary/ErrorBoundary"
@@ -9,7 +9,7 @@ import AppShell from "components/app-shell/AppShell";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {v4 as uuid} from "uuid";
 import Pages from "components/page/Pages";
-import useObserver, {useObserverListener} from "components/useObserver";
+import useObserver, {useObserverListener, useObserverValue} from "components/useObserver";
 
 function handleOnChange(setActiveTab) {
     return (index) => setActiveTab(index);
@@ -48,12 +48,14 @@ function App() {
             return [...pages, {pages: [NewElement], title: NewElement.Element.title, id: uuid()}];
         })
     })
-
     const [$activeTab, setActiveTab] = useObserver(0);
-    const bookTitles = JSON.stringify(books.map(book => book.title));
+    const [$bookTitles, setBookTitles] = useObserver(books.map(book => book.title));
+    useEffect(() => {
+        setBookTitles(books.map(book => book.title))
+    }, [books]);
     return <AuthCheck fallback={<LoginScreen/>}>
         <Vertical height={'100%'}>
-            <TabMenu data={useMemo(() => JSON.parse(bookTitles), [bookTitles])} $value={$activeTab}
+            <TabMenu $data={$bookTitles} $value={$activeTab}
                 // eslint-disable-next-line
                      onChange={useCallback(handleOnChange(setActiveTab), [])}
                 // eslint-disable-next-line
@@ -101,8 +103,8 @@ function CloseIcon({onClose}) {
     </Vertical>
 }
 
-function TabMenu({data = [], $value, onChange, onClose}) {
-
+function TabMenu({$data, $value, onChange, onClose}) {
+    const data = useObserverValue($data);
     return <Horizontal color={"light"} bB={1}>
         {data.map((title, index) => {
             return <TabButton key={index} index={index} $selectedIndex={$value} onChange={onChange} title={title}

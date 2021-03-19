@@ -1,7 +1,6 @@
 import {Horizontal, Vertical} from "../../../components/layout/Layout";
 import useForm, {Controller} from "../../../components/useForm";
 import Input from "../../../components/input/Input";
-import {useObserverListener} from "../../../components/useObserver";
 import InputNumber from "components/input/InputNumber";
 import Button from "components/button/Button";
 import InputDate from "components/input/InputDate";
@@ -17,9 +16,6 @@ const requiredValidator = (value) => {
 
 function Form() {
     const {control, handleSubmit, $value} = useForm();
-    useObserverListener($value, value => {
-        console.log(value);
-    })
     return <Vertical p={2}>
         <form action="" onSubmit={handleSubmit(data => {
             debugger
