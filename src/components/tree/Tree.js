@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Horizontal} from "components/layout/Layout";
+import {Horizontal, Vertical} from "components/layout/Layout";
 import List from "components/list/List";
 import useObserver, {ObserverValue, useObserverListener, useObserverValue} from "components/useObserver";
 import Button from "components/button/Button";
@@ -24,13 +24,14 @@ export const DefaultTreeDataKey = (data) => data?.id;
 export default function Tree({
                                  $data,
                                  itemRenderer = DefaultTreeItemRenderer,
-                                 rowRenderer = DefaultTreeItemRenderer,
+                                 rowRenderer = DefaultTreeRowRenderer,
                                  dataKey = DefaultTreeDataKey,
                                  onKeyboardDown,
                                  onKeyboardUp,
                                  domRef,
                                  compRef,
                                  rowProps,
+                                 $value, onChange,
                                  ...props
                              }) {
 
@@ -58,7 +59,7 @@ export default function Tree({
                  dataKey={dataKey}
                  onKeyboardUp={onKeyboardUp}
                  onKeyboardDown={onKeyboardDown} $collapsedNode={$collapsedNode}
-                 setCollapsedNode={setCollapsedNode} rowProps={rowProps} {...props} />
+                 setCollapsedNode={setCollapsedNode} rowProps={rowProps} $value={$value} onChange={onChange} {...props} />
 }
 
 
@@ -152,23 +153,25 @@ function ToggleButton({$open, setOpen, width}) {
     </Button>;
 }
 
-export function DefaultTreeItemRenderer({
-                                            $value,
-                                            onChange,
-                                            index,
-                                            data,
-                                            setData,
-                                            dataKey,
-                                            listRenderer,
-                                            $collapsedNode,
-                                            setCollapsedNode,
-                                            rowProps,
-                                            ...props
-                                        }) {
+export function DefaultTreeRowRenderer({
+                                           $value,
+                                           onChange,
+                                           index,
+                                           data,
+                                           setData,
+                                           dataKey,
+                                           listRenderer,
+                                           $collapsedNode,
+                                           setCollapsedNode,
+                                           rowProps,
+                                           ...props
+                                       }) {
     rowProps = rowProps || {};
     const key = data.key_.join(':');
 
-    const [$collapsed, setCollapsed] = useObserver($collapsedNode.current[key] === true);
+    const [$collapsed, setCollapsed] = useObserver(() => {
+        return $collapsedNode?.current[key] === true
+    });
     useObserverListener($collapsed, (value) => {
         if (value) {
             setCollapsedNode(oldKey => {
@@ -219,4 +222,10 @@ export function DefaultTreeItemRenderer({
                    {...props}/>
 
     </Horizontal>
+}
+
+function DefaultTreeItemRenderer(props) {
+    return <Vertical>
+        {props.data.name}
+    </Vertical>
 }

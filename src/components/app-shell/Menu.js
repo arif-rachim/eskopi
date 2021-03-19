@@ -1,10 +1,12 @@
-import {useObserverValue} from "components/useObserver";
+import useObserver, {useObserverListener, useObserverMapper, useObserverValue} from "components/useObserver";
 import useClickOutside from "components/useClickOutside";
 import useForm, {Controller} from "components/useForm";
 import {Vertical} from "components/layout/Layout";
 import Input from "components/input/Input";
 import {useRef} from "react";
-import useResource from "components/useResource";
+import useResource, {useResourceListener} from "components/useResource";
+import {SYSTEM_PAGE_DESIGNS, SYSTEM_PAGES} from "../SystemTableName";
+import Tree from "../tree/Tree";
 
 const defaultMenus = {
     'Page Builder': {
@@ -23,7 +25,19 @@ export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
     });
     const menus = defaultMenus; // later on we can pull dynamic menus from database.
     const {control} = useForm({search: ''});
-    const [$onPageLoad, doLoadPage] = useResource({url: '/db/page'});
+    const [$onPageLoad, doLoadPage] = useResource({url: `/db/${SYSTEM_PAGES}`});
+    const [$menuTree, setMenuTree] = useObserver();
+    useResourceListener($onPageLoad, (status, pageLoad) => {
+        if (status === 'success') {
+            setMenuTree(pageLoad[0]);
+        }
+    })
+    const [$selectedMenu, setSelectedMenu] = useObserver();
+
+    useObserverListener($selectedMenu,(newValue) => {
+        window.location.hash = `#page-renderer/${newValue.id}`;
+        setShowMenu(false);
+    });
 
     return <Vertical domRef={domRef}
                      top={0} height={'100%'} brightness={0.5}
@@ -48,5 +62,19 @@ export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
                 {menu}
             </Vertical>
         })}
+
+        <Tree $data={useObserverMapper($menuTree, tree => tree?.children)}
+              $value={$selectedMenu}
+              onChange={(value) => setSelectedMenu(value)}
+              rowProps={{
+                  color: "light",
+                  cursor: "pointer",
+                  brightness: -0.2,
+                  brightnessHover: -0.6,
+                  brightnessMouseDown: -0.9,
+                  bB: 1,
+                  p: 1
+              }}
+        />
     </Vertical>
 }

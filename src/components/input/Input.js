@@ -107,7 +107,8 @@ function Input({
             propsRef.current.userPerformChange = true;
             setLocalValue(data.target.value);
             if (propsRef.current.onChange) {
-                propsRef.current.onChange(data.target.value.toUpperCase());
+                const val = autoCaps ? data.target.value.toUpperCase():data.target.value;
+                propsRef.current.onChange(val);
             }
             propsRef.current.userPerformChange = false;
         }

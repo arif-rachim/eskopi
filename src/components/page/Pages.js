@@ -16,12 +16,11 @@ function Page({Element, index, $activeIndex}) {
     useObserverListener($activeIndex, (activeIndex) => setVisible(activeIndex === index));
     const pageRef = useRef();
 
-
     return <Vertical domRef={pageRef} $visible={$visible} height={'100%'}>
         <PageDimensionProvider pageRef={pageRef}>
             <SlideDownStackPanelContextProvider>
                 <PageLayerContextProvider>
-                    <Element.Element {...Element.params} path={Element.key}/>
+                    <Element.Element params={Element.params} path={Element.key}/>
                 </PageLayerContextProvider>
             </SlideDownStackPanelContextProvider>
         </PageDimensionProvider>
