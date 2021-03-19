@@ -1,7 +1,7 @@
 import {ThemeContextProvider} from "components/useTheme";
 import {LayerContextProvider} from "components/useLayers";
 import useRouter, {RouterProvider} from "./components/useRouter";
-import {Suspense, useCallback, useEffect, useState} from "react";
+import {Suspense, useCallback, useState} from "react";
 import LoginScreen from "module/login";
 import {AuthCheck, UserProvider} from "components/authentication/useUser";
 import ErrorBoundary from "components/error-boundary/ErrorBoundary"
@@ -9,7 +9,7 @@ import AppShell from "components/app-shell/AppShell";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {v4 as uuid} from "uuid";
 import Pages from "components/page/Pages";
-import useObserver, {useObserverListener, useObserverValue} from "components/useObserver";
+import useObserver, {ObserverValue, useObserverListener, useObserverValue} from "components/useObserver";
 
 function handleOnChange(setActiveTab) {
     return (index) => setActiveTab(index);
@@ -36,8 +36,7 @@ function handleOnClose(setBooks, setActiveTab) {
 
 function App() {
     const $element = useRouter();
-
-    const [books, setBooks] = useState([{
+    const [$books, setBooks] = useObserver([{
         pages: [$element.current],
         title: $element.current.Element.title,
         id: uuid()
@@ -49,10 +48,10 @@ function App() {
         })
     })
     const [$activeTab, setActiveTab] = useObserver(0);
-    const [$bookTitles, setBookTitles] = useObserver(books.map(book => book.title));
-    useEffect(() => {
+    const [$bookTitles, setBookTitles] = useObserver($books.current.map(book => book.title));
+    useObserverListener($books, books => {
         setBookTitles(books.map(book => book.title))
-    }, [books]);
+    });
     return <AuthCheck fallback={<LoginScreen/>}>
         <Vertical height={'100%'}>
             <TabMenu $data={$bookTitles} $value={$activeTab}
@@ -61,9 +60,12 @@ function App() {
                 // eslint-disable-next-line
                      onClose={useCallback(handleOnClose(setBooks, setActiveTab), [])}/>
             <Vertical height={'100%'}>
-                {books.map((book, index) => {
-                    return <Pages key={book.id} index={index} $activeIndex={$activeTab} {...book}/>
-                })}
+                <ObserverValue $observers={$books}>
+                    {(books) => books.map((book, index) => {
+                        return <Pages key={book.id} index={index} $activeIndex={$activeTab} {...book}/>
+                    })}
+                </ObserverValue>
+
             </Vertical>
         </Vertical>
     </AuthCheck>
