@@ -9,15 +9,18 @@ import {v4 as uuid} from "uuid";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import Panel from "components/panel/Panel";
+import {SYSTEM_PAGES} from "components/SystemTableName";
 
 export default function PageTreePanel({$selectedPage, setSelectedPage}) {
     const $value = $selectedPage;
     const onChange = setSelectedPage;
     const [$pages, setPages] = useObserver({children: []});
-    const [$pageResource, setPageResource] = useResource({url: '/db/pages'});
+    const [$pageResource, setPageResource] = useResource({url: `/db/${SYSTEM_PAGES}`});
 
     useResourceListener($pageResource, (status, data) => {
+        debugger;
         if (status === 'success') {
+
             if (Array.isArray(data)) {
                 setPages(data[0]);
             } else {
@@ -57,7 +60,7 @@ function HeaderRenderer({$showDelete, showConfirmation, $value, $pages, setPageR
                 const pages = JSON.parse(JSON.stringify($pages.current));
                 const selectedItem = $value.current;
                 pages.children = removeTreeDataFromKey(pages.children, selectedItem.key_, DefaultTreeDataKey);
-                setPageResource('/db/pages', pages);
+                setPageResource(`/db/${SYSTEM_PAGES}`, pages);
             }
         }}>
             <svg viewBox='0 0 512 512' width={16} height={16}>
@@ -83,7 +86,8 @@ function HeaderRenderer({$showDelete, showConfirmation, $value, $pages, setPageR
             } else {
                 oldPages.children.push({id: uuid(), name, children: []});
             }
-            setPageResource('/db/pages', oldPages);
+            oldPages.a = 'c';
+            setPageResource(`/db/${SYSTEM_PAGES}`, oldPages);
         }}>
             <svg viewBox='0 0 512 512' width={16} height={16}>
                 <path fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round'
@@ -112,7 +116,7 @@ function PageDetail({closePanel}) {
         })}>
             <Vertical gap={10}>
                 <Controller render={Input} label={'Page Name'} name={'name'} control={control}
-                            validator={requiredValidator('Name is mandatory')} autoFocus={true}/>
+                            validator={requiredValidator('Name is mandatory')} autoFocus={true} autoCaps={false}/>
                 <Horizontal gap={5}>
                     <Button color={"primary"} type={'submit'} flex={1}>Save</Button>
                     <Button type={'button'} onClick={async () => {

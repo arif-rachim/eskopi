@@ -4,6 +4,7 @@ import useForm, {Controller} from "components/useForm";
 import {Vertical} from "components/layout/Layout";
 import Input from "components/input/Input";
 import {useRef} from "react";
+import useResource from "components/useResource";
 
 const defaultMenus = {
     'Page Builder': {
@@ -22,6 +23,8 @@ export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
     });
     const menus = defaultMenus; // later on we can pull dynamic menus from database.
     const {control} = useForm({search: ''});
+    const [$onPageLoad, doLoadPage] = useResource({url: '/db/page'});
+
     return <Vertical domRef={domRef}
                      top={0} height={'100%'} brightness={0.5}
                      position={"absolute"}

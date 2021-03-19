@@ -2,12 +2,13 @@ import express from "express";
 import {dbCreate, dbFindOne, dbUpdate} from "./database.js";
 import passwordHash from "password-hash";
 import jwt from "jsonwebtoken";
+import {SYSTEM_USERS} from "../src/components/SystemTableName.js";
 
 const router = express.Router();
 
 router.post('/sign-in', (req, res) => {
     const {email, password} = req.body;
-    const user = dbFindOne('users', {email});
+    const user = dbFindOne(SYSTEM_USERS, {email});
     if (user && passwordHash.verify(password, user.password)) {
         const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1800s'});
         return res.json({error: false, data: {...user, token: token}});
@@ -24,7 +25,7 @@ router.get('/sign-out', (req, res) => {
 router.post('/change-password', (req, res) => {
     const {oldPassword, newPassword} = req.body;
     const {email} = req.user;
-    const user = dbFindOne('users', {email});
+    const user = dbFindOne(SYSTEM_USERS, {email});
     if (user && passwordHash.verify(oldPassword, user.password)) {
         dbUpdate(user.id_, {password: passwordHash.generate(newPassword)});
         return res.json({error: false, data: `${user.email} password successfully updated.`});
@@ -35,13 +36,13 @@ router.post('/change-password', (req, res) => {
 router.post('/register', (req, res) => {
     const {email, password, name} = req.body;
     try {
-        if (dbFindOne('users', {email})) {
+        if (dbFindOne(SYSTEM_USERS, {email})) {
             return res.json({error: 'Email already registered'});
         }
     } catch (err) {
         // good we expect error due to no data
     }
-    const user = dbCreate('users', {email, password: passwordHash.generate(password), name});
+    const user = dbCreate(SYSTEM_USERS, {email, password: passwordHash.generate(password), name});
     return res.json({error: false, data: {...user, password: ''}});
 })
 

@@ -11,6 +11,7 @@ import useResource, {useResourceListener} from "components/useResource";
 import Button from "components/button/Button";
 import {isNullOrUndefined} from "components/utils";
 import {useInfoMessage} from "components/dialog/Dialog";
+import {SYSTEM_PAGE_DESIGNS} from "components/SystemTableName";
 
 
 const handleRootDragEnter = (dragHoverCountRef) => (event) => {
@@ -54,12 +55,11 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
     const showInfo = useInfoMessage();
     useResourceListener($onPageDataSave, async (status, result) => {
         if (status === 'success') {
-            debugger;
             await showInfo();
         }
     });
     useObserverListener($selectedPage, selectedPage => {
-        doLoadDetail('/db/page-design', {a: 'r', pageId: $selectedPage.current.id});
+        doLoadDetail(`/db/${SYSTEM_PAGE_DESIGNS}`, {a: 'r', pageId: $selectedPage.current.id});
     });
     useResourceListener($onPageDetailFetched, (status, result) => {
         if (status === 'success') {
@@ -81,7 +81,7 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
                 const data = $data.current;
                 data.pageId = $selectedPage.current.id;
                 data.a = data.id_ ? 'u' : 'c';
-                doSavePage('/db/page-design', data);
+                doSavePage(`/db/${SYSTEM_PAGE_DESIGNS}`, data);
             })} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
                 <Vertical domRef={rootRef} color={"light"} brightness={0} flex={1} elevation={1}
                           onDragEnter={handleRootDragEnter(dragHoverCountRef)}

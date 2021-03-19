@@ -61,7 +61,7 @@ const getEntity = (params) => {
  */
 const onActionCreate = (params, queries) => {
     if (params.length !== 1) {
-        throw new Error('Entity deletion should have at least 2 param');
+        throw new Error('Entity creation should have at least 2 param');
     }
     const [entityType] = params;
     store[entityType] = store[entityType] || [];
@@ -79,7 +79,7 @@ const onActionCreate = (params, queries) => {
  */
 const onActionUpdate = (params, queries) => {
     if (params.length !== 2) {
-        throw new Error('Entity deletion should have at least 2 param');
+        throw new Error('Entity update should have at least 2 param');
     }
     const [, entityId] = params;
     const entity = warehouse[entityId];
@@ -268,22 +268,23 @@ export function processRequest(params, query) {
     if (a === undefined) {
         throw new Error('Action identified in the request');
     }
-    if (a === ACTION_CREATE) {
+
+    if (a.toString() === ACTION_CREATE) {
         return onActionCreate(params, queries);
     }
-    if (a === ACTION_UPDATE) {
+    if (a.toString() === ACTION_UPDATE) {
         return onActionUpdate(params, queries);
     }
-    if (a === ACTION_DELETE) {
+    if (a.toString() === ACTION_DELETE) {
         return onActionDelete(params, queries);
     }
-    if (a === ACTION_READ) {
+    if (a.toString() === ACTION_READ) {
         return onActionRead(params, queries);
     }
-    if (a === ACTION_LINK) {
+    if (a.toString() === ACTION_LINK) {
         return onActionLink(params, queries);
     }
-    if (a === ACTION_UNLINK) {
+    if (a.toString() === ACTION_UNLINK) {
         return onActionUnlink(params, queries);
     }
     throw new Error(`Unable to process request [${params}] ${JSON.stringify(query)}`);
@@ -303,37 +304,37 @@ router.get('/*', (req, res) => {
 
 router.post('/*', (req, res) => {
     const {params, query} = getParamsAndQuery(req);
-    let suggestedAction = query.a || ACTION_READ;
+    let action = query.a;
     const dataAlreadyExist = 'id_' in query && query.id_ in warehouse;
     if (dataAlreadyExist) {
-        suggestedAction = ACTION_UPDATE;
+        if (isNullOrUndefined(action)) {
+            action = ACTION_READ;
+        }
+        if (action === ACTION_CREATE) {
+            action = ACTION_UPDATE;
+        }
         if (params.length === 1) {
             params.push(query.id_);
         }
+    } else {
+        if (isNullOrUndefined(action)) {
+            action = ACTION_READ;
+        }
+        if (action === ACTION_DELETE) {
+            action = ACTION_READ;
+        }
+        if (action === ACTION_UPDATE) {
+            action = ACTION_CREATE;
+        }
     }
     try {
-        const data = processRequest(params, {a: suggestedAction, ...query});
+        const data = processRequest(params, {...query, a: action});
         return res.json({error: false, data});
     } catch (err) {
         return res.json({error: err.message});
     }
 });
 
-router.delete('/*', (req, res) => {
-    const {params, query} = getParamsAndQuery(req);
-
-    const dataAlreadyExist = 'id_' in query && query.id_ in warehouse;
-    if (dataAlreadyExist && params.length === 1) {
-        params.push(query.id_);
-    }
-
-    try {
-        const data = processRequest(params, {a: ACTION_DELETE, ...query});
-        return res.json({error: false, data});
-    } catch (err) {
-        return res.json({error: err.message});
-    }
-})
 
 function toCamelCase(object) {
     return Object.keys(object).reduce((acc, key) => {
@@ -409,6 +410,16 @@ initialization().then(() => {
 }).catch(err => {
     log(err);
 })
+
+
+/**
+ * Function to check if a param is null or undefined
+ * @param {any} param
+ * @returns {boolean}
+ */
+export function isNullOrUndefined(param) {
+    return param === undefined || param === null;
+}
 
 export const dbCreate = (type, config) => processRequest([type], {a: ACTION_CREATE, ...config});
 export const dbFind = (type, config) => processRequest([type], {a: ACTION_READ, ...config});
