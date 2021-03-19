@@ -60,7 +60,7 @@ function HeaderRenderer({$showDelete, showConfirmation, $value, $pages, setPageR
                 const pages = JSON.parse(JSON.stringify($pages.current));
                 const selectedItem = $value.current;
                 pages.children = removeTreeDataFromKey(pages.children, selectedItem.key_, DefaultTreeDataKey);
-                setPageResource(`/db/${SYSTEM_PAGES}`, pages);
+                setPageResource(`/db/${SYSTEM_PAGES}`, {...pages, a: 'u'});
             }
         }}>
             <svg viewBox='0 0 512 512' width={16} height={16}>
