@@ -6,12 +6,13 @@ import BorderMarginPaddingPanel from "../properties/BorderMarginPaddingPanel";
 import AlignmentAndGap from "../properties/AlignmentAndGap";
 import WidthAndHeightPanel from "../properties/WidthAndHeightPanel";
 import ColorBrightnessOpacity from "../properties/ColorBrightnessOpacity";
-import NumberInputController from "module/page-builder/controls/controller/NumberInputController";
-import DateInputController from "module/page-builder/controls/controller/DateInputController";
-import TimeInputController from "module/page-builder/controls/controller/TimeInputController";
+
 import NameAndIdPanel from "module/page-builder/properties/NameAndId";
 import TextInputController from "module/page-renderer/controller/TextInputController";
 import withTemplate from "module/page-builder/controls/controller/withTemplate";
+import NumberInputController from "module/page-renderer/controller/NumberInputController";
+import DateInputController from "module/page-renderer/controller/DateInputController";
+import TimeInputController from "module/page-renderer/controller/TimeInputController";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
@@ -42,9 +43,9 @@ export const ControlMapper = {
     [Controls.BUTTON]: ButtonController,
     [Controls.TEXT_INPUT]: withTemplate(TextInputController),
     [Controls.TEXT_AREA]: TextAreaController,
-    [Controls.NUMBER_INPUT]: NumberInputController,
-    [Controls.DATE_INPUT]: DateInputController,
-    [Controls.TIME_INPUT]: TimeInputController,
+    [Controls.NUMBER_INPUT]: withTemplate(NumberInputController),
+    [Controls.DATE_INPUT]: withTemplate(DateInputController),
+    [Controls.TIME_INPUT]: withTemplate(TimeInputController),
 }
 
 export const ControlPropertiesCatalog = {
