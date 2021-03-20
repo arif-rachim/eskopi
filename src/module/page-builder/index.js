@@ -9,7 +9,11 @@ import OutlinePanel from "./outline/OutlinePanel";
 
 export const DropListenerContext = createContext(null);
 export default function PageBuilder({setTitle}) {
-    useEffect(() => setTitle('Page Builder'), [setTitle]);
+    useEffect(() => {
+        if (setTitle) {
+            setTitle('Page Builder')
+        }
+    }, [setTitle]);
     const [$selectedPage, setSelectedPage] = useObserver();
     const [$data, setData] = useObserver({});
     const [$selectedController, setSelectedController] = useObserver();

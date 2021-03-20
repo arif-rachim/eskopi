@@ -5,17 +5,16 @@ import {Vertical} from "components/layout/Layout";
 export default function TextInputController({
                                                 data,
                                                 control,
+                                                containerProps,
+                                                style,
                                                 ...controllerProps
                                             }) {
-    const {id, children, type, parentIds, width, ...props} = data;
-
-    return <Vertical p={2} pT={1} pB={1} width={width}>
+    const {children, type, parentIds, width, ...props} = data;
+    return <Vertical p={2} pT={1} pB={1} width={width} {...containerProps}>
         <Controller render={Input} type={"input"} label={"Input"} control={control}
                     disabled={false}
                     autoComplete={'off'}
-                    style={{
-                        transition: 'all 100ms cubic-bezier(0,0,0.7,0.9)'
-                    }}
+                    style={style}
                     {...controllerProps} {...props}/>
     </Vertical>
 }

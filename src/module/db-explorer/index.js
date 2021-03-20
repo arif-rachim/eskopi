@@ -7,7 +7,11 @@ import Table from "components/table/Table";
 import {useEffect} from "react";
 
 function DBExplorer({setTitle}) {
-    useEffect(() => setTitle('DB Explorer'), [setTitle]);
+    useEffect(() => {
+        if (setTitle) {
+            setTitle('DB Explorer')
+        }
+    }, [setTitle]);
     const [$table, setTable] = useObserver([]);
     const [$tableResource] = useResource({url: '/db'});
     const [$selectedTable, setSelectedTable] = useObserver();

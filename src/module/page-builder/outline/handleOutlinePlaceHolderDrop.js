@@ -74,7 +74,7 @@ export default function handleOutlinePlaceHolderDrop(treeRef, setData) {
                         }
                     }
 
-                    nodeToBeUpdated = nodeToBeUpdated.children.find(d => d.id === parentNode.id);
+                    nodeToBeUpdated = nodeToBeUpdated.children.find(d => d.id === parentNode?.id);
                     if (nodeToBeUpdated === undefined) {
                         return oldData;
                     }
