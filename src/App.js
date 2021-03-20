@@ -65,7 +65,7 @@ function App() {
             books.forEach(book => {
                 const bookId = book.id;
                 if (nextTitles[bookId] === undefined) {
-                    nextTitles[bookId] = bookId;
+                    nextTitles[bookId] = '';
                 }
             });
             return nextTitles;

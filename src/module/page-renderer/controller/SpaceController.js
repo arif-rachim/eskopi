@@ -4,6 +4,8 @@ import {ControllerMapper} from "module/page-renderer/ControllerMapper";
 export default function SpaceController({
                                             data,
                                             control,
+                                            style,
+                                            containerProps,
                                             ...controllerProps
                                         }) {
     const {id, layout, children, type, parentIds, ...props} = data;
@@ -19,6 +21,7 @@ export default function SpaceController({
         }}
         data-id={id}
         data-layout={isHorizontal ? 'horizontal' : 'vertical'}
+        {...containerProps}
         {...controllerProps}
         {...props}
     >

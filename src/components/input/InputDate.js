@@ -85,7 +85,7 @@ export default function InputDate({
                           mask.typedValue = $nameValue.current;
                           maskRef.current = mask;
                       }}
-                      onAccept={_ => {
+                      onComplete={_ => {
                           onChange(maskRef.current.typedValue);
                       }}
                       $errors={$errors}

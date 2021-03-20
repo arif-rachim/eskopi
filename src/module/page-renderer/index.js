@@ -1,6 +1,6 @@
 import useResource, {useResourceListener} from "components/useResource";
 import {SYSTEM_PAGE_DESIGNS, SYSTEM_PAGES} from "components/SystemTableName";
-import useObserver, {ObserverValue, useObserverMapper} from "components/useObserver";
+import useObserver, {ObserverValue, useObserverListener, useObserverMapper} from "components/useObserver";
 import useForm from "components/useForm";
 import {ControllerMapper} from "module/page-renderer/ControllerMapper";
 import {useInfoMessage} from "components/dialog/Dialog";
@@ -41,7 +41,8 @@ export default function PageRenderer({params, setTitle}) {
             }
         }
     })
-    const {control, handleSubmit, reset} = useForm();
+    const {control, handleSubmit, reset,$value} = useForm();
+
     const [$onSavePage, doSavaPage] = useResource();
     const showInfo = useInfoMessage();
     useResourceListener($onSavePage, (status, response) => {

@@ -1,5 +1,4 @@
 import SpaceTemplate from "module/page-builder/controls/controller/SpaceTemplate";
-import LabelController from "module/page-builder/controls/controller/LabelController";
 import BorderMarginPaddingPanel from "../properties/BorderMarginPaddingPanel";
 import AlignmentAndGap from "../properties/AlignmentAndGap";
 import WidthAndHeightPanel from "../properties/WidthAndHeightPanel";
@@ -13,6 +12,7 @@ import DateInputController from "module/page-renderer/controller/DateInputContro
 import TimeInputController from "module/page-renderer/controller/TimeInputController";
 import TextAreaController from "module/page-renderer/controller/TextAreaController";
 import ButtonController from "module/page-renderer/controller/ButtonController";
+import LabelController from "../../page-renderer/controller/LabelController";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
@@ -39,7 +39,7 @@ export const ControlsNaming = {
 
 export const ControlMapper = {
     [Controls.SPACE]: SpaceTemplate,
-    [Controls.LABEL]: LabelController,
+    [Controls.LABEL]: withTemplate(LabelController),
     [Controls.BUTTON]: withTemplate(ButtonController),
     [Controls.TEXT_INPUT]: withTemplate(TextInputController),
     [Controls.TEXT_AREA]: withTemplate(TextAreaController),

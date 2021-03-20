@@ -12,7 +12,6 @@ export function formatTime(date) {
     if (isNullOrUndefined(date)) {
         return '  :  ';
     }
-
     let hours = padZero(date.getHours());
     let minutes = padZero(date.getMinutes());
     return [hours, minutes].join(':');
@@ -84,7 +83,7 @@ export default function InputTime({
                           mask.typedValue = $nameValue.current;
                           maskRef.current = mask;
                       }}
-                      onAccept={_ => {
+                      onComplete={_ => {
                           onChange(maskRef.current.typedValue);
                       }}
                       $errors={$errors}
