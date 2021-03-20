@@ -83,13 +83,13 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
                 data.a = data.id_ ? 'u' : 'c';
                 doSavePage(`/db/${SYSTEM_PAGE_DESIGNS}`, data);
             })} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                <Vertical domRef={rootRef} color={"light"} brightness={0} flex={1} elevation={1}
+                <Vertical domRef={rootRef} color={"light"} brightness={0} elevation={1}
                           onDragEnter={handleRootDragEnter(dragHoverCountRef)}
                           onDragOver={handleRootDragOver()}
                           onDragLeave={handleRootDragLeave(dragHoverCountRef)}
                           onDrop={handleRootDrop(dragHoverCountRef, dropListener)} p={2}
                           onClick={() => setSelectedController(null)}
-                          data-layout={'vertical'} height={'100%'} mB={2}>
+                          data-layout={'vertical'} style={{height: 'calc(100% - 55px)'}} mB={2}>
 
                     <ObserverValue $observers={useObserverMapper($data, data => {
                         return data.children

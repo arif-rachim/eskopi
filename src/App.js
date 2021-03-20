@@ -1,7 +1,7 @@
 import {ThemeContextProvider} from "components/useTheme";
 import {LayerContextProvider} from "components/useLayers";
 import useRouter, {RouterProvider} from "./components/useRouter";
-import {Suspense, useCallback, useState} from "react";
+import {createContext, Suspense, useCallback, useState} from "react";
 import LoginScreen from "module/login";
 import {AuthCheck, UserProvider} from "components/authentication/useUser";
 import ErrorBoundary from "components/error-boundary/ErrorBoundary"
@@ -9,7 +9,12 @@ import AppShell from "components/app-shell/AppShell";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {v4 as uuid} from "uuid";
 import Pages from "components/page/Pages";
-import useObserver, {ObserverValue, useObserverListener, useObserverValue} from "components/useObserver";
+import useObserver, {
+    ObserverValue,
+    useObserverListener,
+    useObserverMapper,
+    useObserverValue
+} from "components/useObserver";
 
 function handleOnChange(setActiveTab) {
     return (index) => setActiveTab(index);
@@ -28,45 +33,74 @@ function handleOnClose(setBooks, setActiveTab) {
                 }
                 return currentActiveTab;
             })
-
             return newBooks;
         });
     };
 }
 
+const TitlesContext = createContext([]);
+
 function App() {
     const $element = useRouter();
     const [$books, setBooks] = useObserver([{
         pages: [$element.current],
-        title: $element.current.Element.title,
         id: uuid()
     }]);
-
     useObserverListener($element, (NewElement) => {
         setBooks(pages => {
-            return [...pages, {pages: [NewElement], title: NewElement.Element.title, id: uuid()}];
+            return [...pages, {pages: [NewElement], id: uuid()}];
         })
     })
     const [$activeTab, setActiveTab] = useObserver(0);
-    const [$bookTitles, setBookTitles] = useObserver($books.current.map(book => book.title));
-    useObserverListener($books, books => {
-        setBookTitles(books.map(book => book.title))
+    const [$bookTitles, setBookTitles] = useObserver(() => {
+        const titles = {};
+        $books.current.forEach(book => {
+            titles[book.id] = book.id
+        })
+        return titles;
     });
+    useObserverListener($books, books => {
+        setBookTitles(oldTitles => {
+            const booksIds = books.map(book => book.id);
+            const nextTitles = {};
+            Object.keys(oldTitles).forEach(key => {
+                if (booksIds.indexOf(key) >= 0) {
+                    nextTitles[key] = oldTitles[key];
+                }
+            });
+            books.forEach(book => {
+                const bookId = book.id;
+                if (nextTitles[bookId] === undefined) {
+                    nextTitles[bookId] = bookId;
+                }
+            });
+            return nextTitles;
+        })
+    });
+
+    useObserverListener($bookTitles, bookTitles => {
+        console.log(bookTitles);
+        debugger;
+    });
+
     return <AuthCheck fallback={<LoginScreen/>}>
         <Vertical height={'100%'}>
-            <TabMenu $data={$bookTitles} $value={$activeTab}
-                // eslint-disable-next-line
-                     onChange={useCallback(handleOnChange(setActiveTab), [])}
-                // eslint-disable-next-line
-                     onClose={useCallback(handleOnClose(setBooks, setActiveTab), [])}/>
-            <Vertical height={'100%'}>
-                <ObserverValue $observers={$books}>
-                    {(books) => books.map((book, index) => {
-                        return <Pages key={book.id} index={index} $activeIndex={$activeTab} {...book}/>
-                    })}
-                </ObserverValue>
-
-            </Vertical>
+            <TitlesContext.Provider value={setBookTitles}>
+                <TabMenu $data={useObserverMapper($bookTitles, titles => Object.keys(titles).map(key => titles[key]))}
+                         $value={$activeTab}
+                    // eslint-disable-next-line
+                         onChange={useCallback(handleOnChange(setActiveTab), [])}
+                    // eslint-disable-next-line
+                         onClose={useCallback(handleOnClose(setBooks, setActiveTab), [])}/>
+                <Vertical height={'100%'}>
+                    <ObserverValue $observers={$books}>
+                        {(books) => books.map((book, index) => {
+                            return <Pages key={book.id} index={index} $activeIndex={$activeTab}
+                                          setBookTitles={setBookTitles} {...book}/>
+                        })}
+                    </ObserverValue>
+                </Vertical>
+            </TitlesContext.Provider>
         </Vertical>
     </AuthCheck>
 }

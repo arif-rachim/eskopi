@@ -4,8 +4,10 @@ import useObserver, {useObserverListener} from "components/useObserver";
 import Panel from "components/panel/Panel";
 import List from "components/list/List";
 import Table from "components/table/Table";
+import {useEffect} from "react";
 
-function DBExplorer() {
+function DBExplorer({setTitle}) {
+    useEffect(() => setTitle('DB Explorer'), [setTitle]);
     const [$table, setTable] = useObserver([]);
     const [$tableResource] = useResource({url: '/db'});
     const [$selectedTable, setSelectedTable] = useObserver();

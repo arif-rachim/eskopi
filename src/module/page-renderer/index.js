@@ -4,12 +4,16 @@ import {SYSTEM_PAGE_DESIGNS, SYSTEM_PAGES} from "components/SystemTableName";
 import useObserver, {ObserverValue, useObserverMapper} from "components/useObserver";
 import useForm from "components/useForm";
 import {ControllerMapper} from "module/page-renderer/ControllerMapper";
+import {useEffect} from "react";
 
-export default function PageRenderer(props) {
-    const [pageId] = props.params;
+export default function PageRenderer({params, setTitle}) {
+    useEffect(() => setTitle('DynamicPage'), [setTitle]);
+
+    const [pageId] = params;
     const [$onPageDesignLoad] = useResource({url: `/db/${SYSTEM_PAGE_DESIGNS}`, data: {pageId}});
     const [$onPageLoad] = useResource({url: `/db/${SYSTEM_PAGES}`});
     const [$pageDesign, setPageDesign] = useObserver();
+
     useResourceListener($onPageDesignLoad, (status, pageDesign) => {
         if (status === 'success') {
             if (pageDesign.length > 0) {

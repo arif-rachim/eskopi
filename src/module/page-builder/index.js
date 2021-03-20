@@ -1,6 +1,6 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useObserver from "components/useObserver";
-import {createContext, useRef} from "react";
+import {createContext, useEffect, useRef} from "react";
 import PageTreePanel from "module/page-builder/pages/PageTreePanel";
 import ControlListPanel from "module/page-builder/controls/ControlListPanel";
 import DesignerPanel from "module/page-builder/designer/DesignerPanel";
@@ -8,7 +8,8 @@ import PropertiesPanel from "module/page-builder/properties/PropertiesPanel";
 import OutlinePanel from "./outline/OutlinePanel";
 
 export const DropListenerContext = createContext(null);
-export default function PageBuilder() {
+export default function PageBuilder({setTitle}) {
+    useEffect(() => setTitle('Page Builder'), [setTitle]);
     const [$selectedPage, setSelectedPage] = useObserver();
     const [$data, setData] = useObserver({});
     const [$selectedController, setSelectedController] = useObserver();
