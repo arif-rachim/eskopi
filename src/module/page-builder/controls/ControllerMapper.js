@@ -54,6 +54,7 @@ export const ControlPropertiesCatalog = {
     [Controls.DATE_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
     [Controls.TIME_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
     [Controls.NUMBER_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
+    [Controls.BUTTON]: [NameAndIdPanel, WidthAndHeightPanel]
 }
 
 export const Icons = {

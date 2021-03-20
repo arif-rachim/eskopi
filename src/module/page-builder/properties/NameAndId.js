@@ -3,8 +3,13 @@ import {Controller} from "components/useForm";
 import Input from "../../../components/input/Input";
 
 function NameAndIdPanel({control}) {
-    return <Vertical>
-        <Horizontal gap={5} p={2}>
+    return <Vertical p={2} gap={2}>
+        <Controller label={'Label'} horizontalLabelPositionWidth={35}
+                    render={Input} name={'label'} flex={'1 0 auto'}
+                    control={control}
+                    autoCaps={false}
+        />
+        <Horizontal gap={5}>
             <Controller label={'Name'} horizontalLabelPositionWidth={35}
                         render={Input} name={'name'} flex={'1 0 auto'}
                         control={control}
