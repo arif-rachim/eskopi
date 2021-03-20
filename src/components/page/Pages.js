@@ -29,7 +29,6 @@ function Page({Element, index, $activeIndex}) {
 
 const MemoPage = memo(Page);
 export const SetTitleContext = createContext((title) => {
-    debugger;
 });
 export default function Pages({pages, id, $activeIndex, index, setBookTitles}) {
     const {control, handleSubmit} = useForm({address: ''});
@@ -46,6 +45,7 @@ export default function Pages({pages, id, $activeIndex, index, setBookTitles}) {
             newTitles[id] = title;
             return newTitles;
         });
+
     }, [id, setBookTitles]);
     return <SetTitleContext.Provider value={setTitle}>
         <Vertical height={'100%'} width={'100%'} position={'absolute'} $visible={$visible}>

@@ -52,13 +52,7 @@ function App() {
         })
     })
     const [$activeTab, setActiveTab] = useObserver(0);
-    const [$bookTitles, setBookTitles] = useObserver(() => {
-        const titles = {};
-        $books.current.forEach(book => {
-            titles[book.id] = book.id
-        })
-        return titles;
-    });
+    const [$bookTitles, setBookTitles] = useObserver({});
     useObserverListener($books, books => {
         setBookTitles(oldTitles => {
             const booksIds = books.map(book => book.id);
@@ -78,10 +72,6 @@ function App() {
         })
     });
 
-    useObserverListener($bookTitles, bookTitles => {
-        console.log(bookTitles);
-        debugger;
-    });
 
     return <AuthCheck fallback={<LoginScreen/>}>
         <Vertical height={'100%'}>
