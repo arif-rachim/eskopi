@@ -11,7 +11,10 @@ export default function TextInputController({
                                             }) {
     const {children, type, parentIds, width, ...props} = data;
     return <Vertical p={2} pT={1} pB={1} width={width} {...containerProps}>
-        <Controller render={Input} type={"input"} label={"Input"} control={control}
+        <Controller render={Input}
+                    type={"input"}
+                    label={"Input"}
+                    control={control}
                     disabled={false}
                     autoComplete={'off'}
                     style={style}

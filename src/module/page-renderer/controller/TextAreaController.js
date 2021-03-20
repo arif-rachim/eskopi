@@ -5,16 +5,16 @@ import TextArea from "components/input/TextArea";
 export default function TextAreaController({
                                                data,
                                                control,
+                                               style,
+                                               containerProps,
                                                ...controllerProps
                                            }) {
     const {id, children, type, parentIds, width, ...props} = data;
 
-    return <Vertical p={2} pT={1} pB={1} width={width}>
+    return <Vertical p={2} pT={1} pB={1} width={width} {...containerProps}>
         <Controller render={TextArea} rows={3} label={"Text Area"} control={control}
                     disabled={false}
-                    style={{
-                        transition: 'all 100ms cubic-bezier(0,0,0.7,0.9)'
-                    }}
+                    style={style}
                     autoComplete={'off'}
                     {...controllerProps} {...props}/>
     </Vertical>

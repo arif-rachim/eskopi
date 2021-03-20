@@ -12,10 +12,11 @@ export function formatTime(date) {
     if (isNullOrUndefined(date)) {
         return '  :  ';
     }
+
     let hours = padZero(date.getHours());
     let minutes = padZero(date.getMinutes());
-
     return [hours, minutes].join(':');
+
 }
 
 export function parseTime(str) {

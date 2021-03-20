@@ -10,16 +10,14 @@ export function formatDate(date) {
     if (isNullOrUndefined(date)) {
         return '  -   -    ';
     }
-    try {
-        let day = date.getDate();
-        day = day < 10 ? '0' + day : day;
-        let month = MONTH[date.getMonth()];
-        const year = date.getFullYear();
-        return [day, month, year].join('-');
-    } catch (err) {
-        console.warn(err);
-        return '';
-    }
+
+
+    let day = date.getDate();
+    day = day < 10 ? '0' + day : day;
+    let month = MONTH[date.getMonth()];
+    const year = date.getFullYear();
+    return [day, month, year].join('-');
+
 }
 
 export function parseDate(str) {

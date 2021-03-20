@@ -126,6 +126,7 @@ export const RenderLayout = ({value, control, $selectedController, setSelectedCo
         />
     });
 }
+
 const RenderLayoutMemo = memo(RenderLayout);
 
 function DraggableComponent({render, data, ...props}) {

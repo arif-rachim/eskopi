@@ -6,13 +6,13 @@ import {useObserverListener} from "components/useObserver";
 import {isNullOrUndefined} from "components/utils";
 import {handleDragOverControlComponent} from "module/page-builder/designer/handleDragOverControlComponent";
 
-export default function SpaceController({
-                                            data,
-                                            formControl,
-                                            $selectedController,
-                                            setSelectedController,
-                                            ...controllerProps
-                                        }) {
+export default function SpaceTemplate({
+                                          data,
+                                          formControl,
+                                          $selectedController,
+                                          setSelectedController,
+                                          ...controllerProps
+                                      }) {
     const {id, layout, children, type, parentIds, ...props} = data;
     const isHorizontal = layout === 'horizontal';
     const Component = isHorizontal ? Horizontal : Vertical;
@@ -29,8 +29,7 @@ export default function SpaceController({
         onDragOver={() => {
             setHovered(true);
             handleDragOverControlComponent()
-        }
-        }
+        }}
         p={0}
         m={0}
         style={{
