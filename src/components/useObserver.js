@@ -1,5 +1,5 @@
-import {useEffect, useMemo, useRef, useState} from "react";
-import {isFunction} from "components/utils";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {debounce, isFunction} from "components/utils";
 
 /**
  * Utilities to check if an object is an observer.
@@ -20,10 +20,11 @@ export function isObserver(observer) {
  * @returns {[{current:*,addListener:function(callback:function(value:any)):void}, function (value) ]}
  */
 export default function useObserver(defaultValue) {
-    const defaultValueRef = useRef(isFunction(defaultValue) ? defaultValue.call() : defaultValue);
+    const defaultValueRef = useRef(defaultValue);
     return useMemo(() => {
         let listeners = [];
-        const $value = {current: defaultValueRef.current}
+        const current = isFunction(defaultValueRef.current) ? defaultValueRef.current.call() : defaultValueRef.current;
+        const $value = {current}
         /**
          * @param {function(value)} callbackOrValue
          */
@@ -83,7 +84,7 @@ export function useObserverMapper($observer, map = (value) => value) {
  * @param {number} debounceTimeout
  * @returns {*}
  */
-export function useObserverValue(observers, mapper) {
+export function useObserverValue(observers, mapper, debounceTimeout = 0) {
     const observerIsUndefined = observers === undefined;
     const mapperIsUndefined = mapper === undefined;
     const observerIsArray = observerIsUndefined ? false : Array.isArray(observers);
@@ -92,8 +93,7 @@ export function useObserverValue(observers, mapper) {
     }
     const [internalState, setInternalState] = useState(() => observerIsUndefined ? observers : observers.map($o => $o.current));
     // eslint-disable-next-line
-
-    const setState = setInternalState;
+    const setState = useCallback(debounce(setInternalState, debounceTimeout), []);
     useEffect(() => {
         if (observers === undefined) {
             return;
