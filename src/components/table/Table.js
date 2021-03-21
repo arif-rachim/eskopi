@@ -95,7 +95,7 @@ function constructColumns(rows) {
     }, {});
 }
 
-export default function Table({dataKey, $data, domRef, $value, onChange}) {
+export default function Table({dataKey, $data, domRef, $value, onChange, ...props}) {
     const [$selectedRow, setSelectedRow] = useObserver(() => {
         if ($data) {
             return $data.current;
@@ -108,7 +108,7 @@ export default function Table({dataKey, $data, domRef, $value, onChange}) {
         }
     })
     const [$columnsBasedOnData, setColumnsBasedOnData] = useObserver(() => {
-        return constructColumns($data.current);
+        return constructColumns($data?.current);
     });
     const [$persistedColumns, setPersistedColumns] = useObserver(() => {
         return createDefaultColumnsObject(createDefaultColumnsArray($columnsBasedOnData.current));
@@ -151,8 +151,8 @@ export default function Table({dataKey, $data, domRef, $value, onChange}) {
 
     const showPanel = useSlideDownPanel();
 
-    return <Vertical>
-        <Horizontal bB={2} color={'light'} brightness={-1}>
+    return <Vertical height={'100%'} {...props}>
+        <Horizontal bB={2} color={'light'} brightness={-1} style={{minHeight: 25}}>
             <ObserverValue $observers={$actualGridColumn}>
                 {(columns) => {
                     if (columns === undefined) {

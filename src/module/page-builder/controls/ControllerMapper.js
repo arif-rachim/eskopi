@@ -13,6 +13,8 @@ import TimeInputController from "module/page-renderer/controller/TimeInputContro
 import TextAreaController from "module/page-renderer/controller/TextAreaController";
 import ButtonController from "module/page-renderer/controller/ButtonController";
 import LabelController from "../../page-renderer/controller/LabelController";
+import TableInputController from "module/page-renderer/controller/TableInputController";
+import DataPanel from "module/page-builder/properties/DataPanel";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
@@ -22,7 +24,8 @@ export const Controls = {
     LABEL: 'label',
     NUMBER_INPUT: 'numberInput',
     DATE_INPUT: 'dateInput',
-    TIME_INPUT: 'timeInput'
+    TIME_INPUT: 'timeInput',
+    TABLE_INPUT: 'tableInput'
 };
 
 export const ControlsNaming = {
@@ -34,6 +37,7 @@ export const ControlsNaming = {
     [Controls.DATE_INPUT]: 'Date',
     [Controls.TIME_INPUT]: 'Time',
     [Controls.NUMBER_INPUT]: 'Number',
+    [Controls.TABLE_INPUT]: 'Table'
 };
 
 
@@ -46,6 +50,7 @@ export const ControlMapper = {
     [Controls.NUMBER_INPUT]: withTemplate(NumberInputController),
     [Controls.DATE_INPUT]: withTemplate(DateInputController),
     [Controls.TIME_INPUT]: withTemplate(TimeInputController),
+    [Controls.TABLE_INPUT]: withTemplate(TableInputController)
 }
 
 export const ControlPropertiesCatalog = {
@@ -55,7 +60,8 @@ export const ControlPropertiesCatalog = {
     [Controls.DATE_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
     [Controls.TIME_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
     [Controls.NUMBER_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
-    [Controls.BUTTON]: [NameAndIdPanel, WidthAndHeightPanel]
+    [Controls.BUTTON]: [NameAndIdPanel, WidthAndHeightPanel],
+    [Controls.TABLE_INPUT]: [NameAndIdPanel, DataPanel]
 }
 
 export const Icons = {
@@ -164,4 +170,13 @@ export const Icons = {
                   strokeMiterlimit="8" fill="url(#fill1)"/>
         </g>
     </svg>,
+    [Controls.TABLE_INPUT]: <svg viewBox={'0 0 355 355'} width="16" height="16"
+                                 overflow="hidden">
+        <g transform="translate(-136 -104)">
+            <rect x="145" y="112" width="337" height="338" stroke="#000000" strokeWidth="16"
+                  strokeMiterlimit="8" fill="none"/>
+            <path d="M239.5 151.5 239.5 410.825" stroke="#000000" strokeWidth="21.3333"
+                  strokeMiterlimit="8" fill="none" fillRule="evenodd"/>
+        </g>
+    </svg>
 }
