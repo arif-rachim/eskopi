@@ -8,6 +8,7 @@ import ConfigureColumnPanel, {
     createDefaultColumnsObject
 } from "components/table/ConfigureColumnPanel";
 import Button from "components/button/Button";
+import useTheme from "components/useTheme";
 
 function RowItemRenderer(props) {
     const $columns = props.$columns;
@@ -95,7 +96,7 @@ function constructColumns(rows) {
     }, {});
 }
 
-export default function Table({dataKey, $data, domRef, $value, onChange, ...props}) {
+export default function Table({dataKey, $data, domRef, $value, $error, onChange, ...props}) {
     const [$selectedRow, setSelectedRow] = useObserver(() => {
         if ($data) {
             return $data.current;
@@ -150,8 +151,12 @@ export default function Table({dataKey, $data, domRef, $value, onChange, ...prop
     });
 
     const showPanel = useSlideDownPanel();
+    const [theme] = useTheme();
 
     return <Vertical height={'100%'} {...props}>
+        <ObserverValue $observers={$error}>{(error) => {
+            return <Horizontal style={{color: theme.danger}}>{error}</Horizontal>;
+        }}</ObserverValue>
         <Horizontal bB={2} color={'light'} brightness={-1} style={{minHeight: 25}}>
             <ObserverValue $observers={$actualGridColumn}>
                 {(columns) => {

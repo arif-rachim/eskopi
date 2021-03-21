@@ -25,7 +25,7 @@ export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
     });
     const menus = defaultMenus; // later on we can pull dynamic menus from database.
     const {control} = useForm({search: ''});
-    const [$onPageLoad, doLoadPage] = useResource({url: `/db/${SYSTEM_PAGES}`});
+    const [$onPageLoad] = useResource({url: `/db/${SYSTEM_PAGES}`});
     const [$menuTree, setMenuTree] = useObserver();
     useResourceListener($onPageLoad, (status, pageLoad) => {
         if (status === 'success') {

@@ -2,12 +2,12 @@ import InputMask from "components/input/InputMask";
 import {useObserverListener, useObserverMapper} from "components/useObserver";
 import {useRef} from "react";
 import IMask from "imask";
-import {isNullOrUndefined} from "components/utils";
+import {isDate, isNullOrUndefined} from "components/utils";
 
 const MONTH = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
 export function formatDate(date) {
-    if (isNullOrUndefined(date)) {
+    if (isNullOrUndefined(date) || !isDate(date)) {
         return '  -   -    ';
     }
 

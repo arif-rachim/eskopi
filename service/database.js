@@ -5,6 +5,7 @@ import {access, readFile, writeFile} from "fs/promises";
 import {constants} from "fs";
 import express from "express";
 import log from "./logger.js";
+import {SYSTEM_PAGES} from "../src/components/SystemTableName.js";
 
 
 const router = express.Router();
@@ -170,6 +171,22 @@ function filterByQuery(array, query) {
 }
 
 /**
+ * Function to flattened tree
+ * @param tree
+ * @returns {*}
+ */
+function flatTree(tree) {
+    return tree.children.reduce((result, child) => {
+        result[child.id] = child;
+        if ('children' in child && child.children.length > 0) {
+            const children = flatTree(child);
+            result = {...result, ...children};
+        }
+        return result;
+    }, {})
+}
+
+/**
  * @param {string[]} params
  * @param {object} queries
  * @returns {*&{id_: string, created_: string, type_ : string, modified_ : string, associated_ : string[]}}
@@ -184,7 +201,17 @@ const onActionRead = (params, queries) => {
     }
 
     if (params.length === 0) {
-        return Object.keys(store);
+        // lets get the warehouse
+        const pages = dbFind(SYSTEM_PAGES);
+        const keys = Object.keys(store);
+        let dict = {};
+        if (pages && pages.length > 0) {
+            dict = flatTree(pages[0]);
+        }
+        return keys.map(key => {
+            const name = key in dict ? dict[key].name : key;
+            return ({id: key, label: name})
+        });
     }
 
     let [entity, props] = getEntity(params);

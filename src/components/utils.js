@@ -82,6 +82,20 @@ export function handleDouble(callback) {
 
 export const isUuid = (id) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
 
+/**
+ * To check if parameter is undefined or null
+ * @param b
+ * @returns {boolean}
+ */
 export function isUndefinedOrNull(b) {
     return b === undefined || b === null;
+}
+
+/**
+ * Function to check if object is date
+ * @param date
+ * @returns {boolean}
+ */
+export function isDate(date) {
+    return Object.prototype.toString.call(date) === '[object Date]'
 }

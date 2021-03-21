@@ -7,6 +7,8 @@ import NumberInputController from "./controller/NumberInputController";
 import DateInputController from "./controller/DateInputController";
 import TimeInputController from "./controller/TimeInputController";
 import {Controls} from "module/page-builder/controls/ControllerMapper";
+import TableInputController from "module/page-renderer/controller/TableInputController";
+import withTableData from "components/input/withTableData";
 
 export const ControllerMapper = {
     [Controls.SPACE]: SpaceController,
@@ -17,4 +19,5 @@ export const ControllerMapper = {
     [Controls.NUMBER_INPUT]: NumberInputController,
     [Controls.DATE_INPUT]: DateInputController,
     [Controls.TIME_INPUT]: TimeInputController,
+    [Controls.TABLE_INPUT]: withTableData(TableInputController),
 }

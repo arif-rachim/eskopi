@@ -3,12 +3,18 @@ import useObserver, {useObserverListener, useObserverValue} from "components/use
 import {useState} from "react";
 import {isFunction} from "components/utils";
 
+
 const DEFAULT_DATA_KEY = (data) => {
-    if (data && !('id' in data)) {
-        console.error('There is no `id` key in ', data);
+    if (data && 'id_' in data) {
+        return data.id_;
     }
-    return data?.id
+    if (data && 'id' in data) {
+        return data.id;
+    }
+    return undefined;
 };
+
+const DEFAULT_DATA_TO_LABEL = (data) => data;
 
 function handleOnRowChange(onChange, setSelectedRow) {
     return function onRowChange(data) {
@@ -24,6 +30,7 @@ function handleOnRowChange(onChange, setSelectedRow) {
  * @param {any[]} $data
  * @param {React.FunctionComponent} itemRenderer
  * @param {function(data:*):string} dataKey
+ * @param {function(data:*):string} dataToLabel
  * @param {any} domRef
  * @param {observer} $value
  * @param {function(data)} onChange
@@ -33,13 +40,15 @@ function handleOnRowChange(onChange, setSelectedRow) {
  */
 export default function List({
                                  $data,
-                                 itemRenderer = DefaultItemRender,
+                                 itemRenderer = DefaultItemRenderer,
                                  dataKey = DEFAULT_DATA_KEY,
+                                 dataToLabel = DEFAULT_DATA_TO_LABEL,
                                  domRef,
                                  $value,
                                  onChange,
                                  ...props
                              }) {
+
     const [$selectedRow, setSelectedRow] = useObserver(() => {
         if ($value) {
             return $value.current;
@@ -84,6 +93,7 @@ export default function List({
                              data={data}
                              index={index}
                              dataKey={dataKey}
+                             dataToLabel={dataToLabel}
                              $value={$selectedRow}
                              $list={$data}
                              onChange={handleOnRowChange(onChange, setSelectedRow)} {...props}/>
@@ -92,7 +102,7 @@ export default function List({
 }
 
 
-function DefaultItemRender({data, onChange, $value, dataKey}) {
+function DefaultItemRenderer({data, onChange, $value, dataKey, dataToLabel}) {
     const [selected, setSelected] = useState(() => {
         if ($value?.current) {
             return dataKey($value.current) === dataKey(data)
@@ -101,10 +111,11 @@ function DefaultItemRender({data, onChange, $value, dataKey}) {
     })
     useObserverListener($value, (selectedItem) => {
         setSelected(dataKey(selectedItem) === dataKey(data))
-    })
+    });
+    const value = dataToLabel.call(null, data);
     return <Vertical p={1} color={"light"} brightness={selected ? -1 : 0} onClick={() => {
         if (isFunction(onChange)) {
             onChange(data);
         }
-    }}>{data}</Vertical>
+    }}>{value}</Vertical>
 }

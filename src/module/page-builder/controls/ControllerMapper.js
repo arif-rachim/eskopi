@@ -15,6 +15,7 @@ import ButtonController from "module/page-renderer/controller/ButtonController";
 import LabelController from "../../page-renderer/controller/LabelController";
 import TableInputController from "module/page-renderer/controller/TableInputController";
 import DataPanel from "module/page-builder/properties/DataPanel";
+import withTableData from "components/input/withTableData";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
@@ -50,7 +51,7 @@ export const ControlMapper = {
     [Controls.NUMBER_INPUT]: withTemplate(NumberInputController),
     [Controls.DATE_INPUT]: withTemplate(DateInputController),
     [Controls.TIME_INPUT]: withTemplate(TimeInputController),
-    [Controls.TABLE_INPUT]: withTemplate(TableInputController)
+    [Controls.TABLE_INPUT]: withTemplate(withTableData(TableInputController))
 }
 
 export const ControlPropertiesCatalog = {

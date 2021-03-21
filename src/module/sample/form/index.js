@@ -15,7 +15,7 @@ const requiredValidator = (value) => {
 }
 
 function Form() {
-    const {control, handleSubmit, $value} = useForm();
+    const {control, handleSubmit} = useForm();
     return <Vertical p={2}>
         <form action="" onSubmit={handleSubmit(data => {
             debugger

@@ -1,6 +1,6 @@
 import Input from "components/input/Input";
 import usePopup from "components/usePopup";
-import useObserver, {useObserverListener} from "components/useObserver";
+import useObserver, {useObserverListener, useObserverMapper} from "components/useObserver";
 import List from "components/list/List";
 import {useRef} from 'react';
 import useClickOutside from "components/useClickOutside";
@@ -73,6 +73,7 @@ export default function Select({
                                    $data,
                                    itemRenderer,
                                    dataKey,
+                                   dataToLabel = defaultDataToLabel,
                                    ...props
                                }) {
     let domRef = useRef();
@@ -80,14 +81,15 @@ export default function Select({
     const [$showPopup, setShowPopup] = useObserver(false);
     const showPopup = usePopup();
 
-
     useObserverListener($showPopup, (isShowPopup) => {
         (async () => {
             if (isShowPopup) {
                 const selectedItem = await showPopup(closePanel => <PopupMenu parentRef={domRef} closePanel={closePanel}
                                                                               itemRenderer={itemRenderer}
                                                                               dataKey={dataKey}
-                                                                              $data={$data} $value={$value}/>, {
+                                                                              $data={$data} $value={$value}
+                                                                              dataToLabel={dataToLabel}
+                />, {
                     anchorRef: domRef,
                     matchWithAnchorWidth: true
                 })
@@ -98,8 +100,10 @@ export default function Select({
             }
         })();
     });
+    const $nameValue = useObserverMapper($value, value => dataToLabel(value[name]));
+    const $nameErrors = useObserverMapper($errors, value => dataToLabel(value[name]));
+
     return <Input inputRef={domRef}
-                  name={name}
                   $disabled={$disabled}
                   className={className}
                   color={color}
@@ -113,13 +117,13 @@ export default function Select({
                   r={r} rTL={rTL} rTR={rTR} rBL={rBL} rBR={rBR}
                   onChange={onChange} onBlur={onBlur}
                   autoCaps={autoCaps}
-                  $value={$value}
-                  $errors={$errors}
+                  $value={$nameValue}
+                  $errors={$nameErrors}
                   onFocus={() => setShowPopup(true)}
     />
 }
 
-function PopupMenu({parentRef, closePanel, itemRenderer, dataKey, $data}) {
+function PopupMenu({parentRef, closePanel, itemRenderer, dataKey, $data, dataToLabel}) {
     const domRef = useRef();
     useClickOutside([parentRef, domRef], () => {
         closePanel(false);
@@ -131,6 +135,13 @@ function PopupMenu({parentRef, closePanel, itemRenderer, dataKey, $data}) {
     });
     return <Vertical domRef={domRef} pL={0.5} pR={0.5}>
         <List itemRenderer={itemRenderer} dataKey={dataKey} $data={$data} $value={$value}
-              onChange={onChange}/>
+              onChange={onChange}
+              dataToLabel={dataToLabel}
+        />
     </Vertical>
+}
+
+
+function defaultDataToLabel(data) {
+    return data && data.toString();
 }

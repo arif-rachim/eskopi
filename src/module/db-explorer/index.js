@@ -23,7 +23,7 @@ function DBExplorer({setTitle}) {
         }
     });
     useObserverListener($selectedTable, selectedTable => {
-        setTableContentResource('/db/' + selectedTable);
+        setTableContentResource('/db/' + selectedTable.id);
     });
     useResourceListener($tableContentResource, (status, tableContent) => {
         if (status === 'success') {
@@ -33,7 +33,12 @@ function DBExplorer({setTitle}) {
     return <Horizontal width={'100%'} height={'100%'}>
         <Vertical color={'light'} brightness={1} bR={1} height={'100%'} flex={'0 0 200px'}>
             <Panel headerTitle={'Tables'}>
-                <List $data={$table} dataKey={data => data} $value={$selectedTable} onChange={setSelectedTable}/>
+                <List $data={$table}
+                      dataKey={data => data?.id}
+                      $value={$selectedTable}
+                      onChange={setSelectedTable}
+                      dataToLabel={data => data?.label}
+                />
             </Panel>
         </Vertical>
         <Vertical color={'light'} brightness={1} flex={'1 0 auto'}>

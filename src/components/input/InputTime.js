@@ -2,14 +2,14 @@ import InputMask from "components/input/InputMask";
 import {useObserverListener, useObserverMapper} from "components/useObserver";
 import {useRef} from "react";
 import IMask from "imask";
-import {isNullOrUndefined} from "components/utils";
+import {isDate, isNullOrUndefined} from "components/utils";
 
 function padZero(value) {
     return value < 10 ? '0' + value : value;
 }
 
 export function formatTime(date) {
-    if (isNullOrUndefined(date)) {
+    if (isNullOrUndefined(date) || !isDate(date)) {
         return '  :  ';
     }
     let hours = padZero(date.getHours());

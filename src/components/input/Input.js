@@ -3,6 +3,7 @@ import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
 import React, {useMemo, useRef, useState} from "react";
 import {useObserverListener, useObserverMapper, useObserverValue} from "components/useObserver";
+import {isNullOrUndefined} from "components/utils";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
@@ -73,8 +74,8 @@ function Input({
     const [theme] = useTheme();
     const ref = useRef();
     inputRef = inputRef || ref;
-    const $nameValue = useObserverMapper($value, value => value[name]);
-    const $errorValue = useObserverMapper($errors, value => value[name]);
+    const $nameValue = useObserverMapper($value, mapToNameFactory(name));
+    const $errorValue = useObserverMapper($errors, mapToNameFactory(name));
     const propsRef = useRef({userPerformChange: false});
     propsRef.current.onChange = onChange;
 
@@ -112,7 +113,7 @@ function Input({
             }
             propsRef.current.userPerformChange = false;
         }
-    }, []);
+    }, [autoCaps]);
 
     useObserverListener($nameValue, nameValue => {
         if (propsRef.current.userPerformChange) {
@@ -133,5 +134,15 @@ function Input({
                   }}
                   {...props}/>
 }
+
+function mapToNameFactory(name) {
+    return function mapToName(value) {
+        if ((isNullOrUndefined(name) || name === '') && typeof value === 'string') {
+            return value;
+        }
+        return value && name in value ? value[name] : undefined;
+    }
+}
+
 
 export default React.memo(Input);
