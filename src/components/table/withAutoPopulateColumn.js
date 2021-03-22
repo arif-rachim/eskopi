@@ -4,9 +4,7 @@ export default function withAutoPopulateColumn(Component) {
     return function WithAutoPopulateColumn({$data, ...props}) {
         const [$columns, setColumns] = useObserver(constructColumns($data?.current));
         useObserverListener($data, data => {
-            if (Object.keys($columns.current).length === 0) {
-                setColumns(constructColumns(data));
-            }
+            setColumns(constructColumns(data));
         });
         return <Component $columns={$columns} $data={$data} {...props}/>
     }

@@ -15,7 +15,7 @@ import ButtonController from "module/page-renderer/controller/ButtonController";
 import LabelController from "../../page-renderer/controller/LabelController";
 import TableInputController from "module/page-renderer/controller/TableInputController";
 import DataPanel from "module/page-designer/properties/DataPanel";
-import withTableData from "components/input/withTableData";
+import withTableData from "components/table/withTableData";
 import withAutoPopulateColumn from "components/table/withAutoPopulateColumn";
 import SpaceController from "module/page-renderer/controller/SpaceController";
 

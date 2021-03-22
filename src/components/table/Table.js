@@ -5,11 +5,23 @@ import {useState} from "react";
 import useTheme from "components/useTheme";
 import {mapToNameFactory} from "components/input/Input";
 
-function RowItemRenderer(props) {
-    const $columns = props.$columns;
-    const data = props.data;
-    const onRowClicked = props.onChange;
-    const $selectedRow = props.$value;
+/**
+ *
+ * @param $columns is the columns array
+ * @param $list is the Table $data
+ * @param $value is the selectedRow
+ * @param data is the currentRow value
+ * @param dataKey is the row dataKey callback function
+ * @param dataToLabel is the dataItem to string
+ * @param index is the rowIndex
+ * @param onChange is the onChange selected row
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
+ */
+function RowItemRenderer({$columns, $list, $value, data, dataKey, dataToLabel, index, onChange, ...props}) {
+    const onRowClicked = onChange;
+    const $selectedRow = $value;
     const [rowIsSelected, setRowIsSelected] = useState(false);
     useObserverListener($selectedRow, selectedRow => setRowIsSelected(selectedRow === data));
     return <Vertical color={"light"} brightness={rowIsSelected ? -0.5 : 0.5}>
@@ -21,17 +33,23 @@ function RowItemRenderer(props) {
             <ObserverValue $observers={$columns}>
                 {(columns) => {
                     columns = columns || [];
-                    return Object.keys(columns).map(columnKey => {
+                    return Object.keys(columns).map((columnKey, colIndex) => {
+                        const column = columns[columnKey];
+                        const Renderer = column['renderer'] || DefaultCellRenderer;
                         let value = data[columnKey];
-                        value = value === undefined ? '' : value;
-                        const valueIsArray = Array.isArray(value);
-                        return <Horizontal bL={1} p={1} overflow={'hidden'}
-                                           width={$columns.current[columnKey].width}
-                                           key={columnKey} vAlign={'center'} style={{minWidth: 55}}>
-                            <Horizontal flex={'1 0 auto'}>
-                                {valueIsArray ? `${value.length}` : value}
-                            </Horizontal>
-                        </Horizontal>
+                        return <Vertical bL={1} p={1} overflow={'hidden'}
+                                         width={$columns.current[columnKey].width}
+                                         key={columnKey} vAlign={'center'} style={{minWidth: 55}}>
+                            <Renderer
+                                value={value}
+                                $columns={$columns}
+                                field={columnKey}
+                                rowData={data}
+                                $tableData={$list}
+                                rowIndex={index}
+                                colIndex={colIndex}
+                            />
+                        </Vertical>
 
                     })
                 }}
@@ -40,6 +58,11 @@ function RowItemRenderer(props) {
     </Vertical>
 }
 
+function DefaultCellRenderer({value, ...props}) {
+    return <Vertical>
+        {value?.toString()}
+    </Vertical>;
+}
 
 function handleOnChange(onChange, setSelectedRow) {
     return function onChangeListener(data) {
@@ -87,8 +110,10 @@ export default function Table({dataKey, name, $columns, $data, $errors, domRef, 
                         return <Horizontal/>;
                     }
                     return Object.keys(columns).map(col => {
+                        const column = columns[col];
+                        const title = column.title || col;
                         return <Horizontal key={col} width={columns[col].width} p={1} bL={2}
-                                           style={{fontWeight: 'bold', minWidth: 55}}>{col}</Horizontal>
+                                           style={{fontWeight: 'bold', minWidth: 55}}>{title}</Horizontal>
                     });
                 }}
             </ObserverValue>

@@ -74,8 +74,8 @@ function AddTablePanel(props) {
     })}>
         <Vertical gap={2} p={2} elevation={2} width={300}>
             <Controller control={control} render={Input} name={"tableName"}
-                        label={'AutoPopulateColumnTable Name'}
-                        validator={requiredValidator('AutoPopulateColumnTable Name')}/>
+                        label={'Table Name'}
+                        validator={requiredValidator('Table Name')}/>
             <Controller control={control}
                         render={Table}
                         name={"fields"}
@@ -88,7 +88,7 @@ function AddTablePanel(props) {
                     setTableData(oldData => {
                         return [...oldData, {
                             id: uuid(),
-                            name: 'string',
+                            name: '',
                             type: 'string'
                         }]
                     })

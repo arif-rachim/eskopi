@@ -167,6 +167,7 @@ export function DefaultTreeRowRenderer({
                                            rowProps,
                                            ...props
                                        }) {
+
     rowProps = rowProps || {};
     const key = data.key_.join(':');
 
