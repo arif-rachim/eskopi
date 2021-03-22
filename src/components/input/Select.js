@@ -1,10 +1,11 @@
-import Input from "components/input/Input";
+import Input, {mapToNameFactory} from "components/input/Input";
 import usePopup from "components/usePopup";
 import useObserver, {useObserverListener, useObserverMapper} from "components/useObserver";
 import List from "components/list/List";
 import {useRef} from 'react';
 import useClickOutside from "components/useClickOutside";
 import {Vertical} from "components/layout/Layout";
+import {isNullOrUndefined} from "components/utils";
 
 /**
  *
@@ -76,6 +77,7 @@ export default function Select({
                                    dataToLabel = defaultDataToLabel,
                                    ...props
                                }) {
+
     let domRef = useRef();
     domRef = inputRef || domRef;
     const [$showPopup, setShowPopup] = useObserver(false);
@@ -84,24 +86,26 @@ export default function Select({
     useObserverListener($showPopup, (isShowPopup) => {
         (async () => {
             if (isShowPopup) {
-                const selectedItem = await showPopup(closePanel => <PopupMenu parentRef={domRef} closePanel={closePanel}
+                const selectedItem = await showPopup(closePanel => <PopupMenu parentRef={domRef}
+                                                                              closePanel={closePanel}
                                                                               itemRenderer={itemRenderer}
                                                                               dataKey={dataKey}
-                                                                              $data={$data} $value={$value}
+                                                                              $data={$data}
+                                                                              $value={$value}
                                                                               dataToLabel={dataToLabel}
                 />, {
                     anchorRef: domRef,
                     matchWithAnchorWidth: true
                 })
                 setShowPopup(false);
-                if (selectedItem) {
+                if (onChange && selectedItem) {
                     onChange(selectedItem);
                 }
             }
         })();
     });
-    const $nameValue = useObserverMapper($value, value => dataToLabel(value[name]));
-    const $nameErrors = useObserverMapper($errors, value => dataToLabel(value[name]));
+    const $nameValue = useObserverMapper($value, mapToNameFactory(name, dataToLabel));
+    const $nameErrors = useObserverMapper($errors, mapToNameFactory(name));
 
     return <Input inputRef={domRef}
                   $disabled={$disabled}
@@ -123,19 +127,16 @@ export default function Select({
     />
 }
 
-function PopupMenu({parentRef, closePanel, itemRenderer, dataKey, $data, dataToLabel}) {
+function PopupMenu({parentRef, closePanel, itemRenderer, dataKey, $data, dataToLabel, $value}) {
+
     const domRef = useRef();
     useClickOutside([parentRef, domRef], () => {
         closePanel(false);
     });
 
-    const [$value, onChange] = useObserver($data.current);
-    useObserverListener($value, (selectedItem) => {
-        closePanel(selectedItem);
-    });
     return <Vertical domRef={domRef} pL={0.5} pR={0.5}>
         <List itemRenderer={itemRenderer} dataKey={dataKey} $data={$data} $value={$value}
-              onChange={onChange}
+              onChange={closePanel}
               dataToLabel={dataToLabel}
         />
     </Vertical>
@@ -143,5 +144,8 @@ function PopupMenu({parentRef, closePanel, itemRenderer, dataKey, $data, dataToL
 
 
 function defaultDataToLabel(data) {
+    if (isNullOrUndefined(data)) {
+        return '';
+    }
     return data && data.toString();
 }

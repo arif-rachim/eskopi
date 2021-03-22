@@ -1,7 +1,7 @@
 import List from "components/list/List";
 import useObserver, {ObserverValue, useObserverListener, useObserverMapper} from "components/useObserver";
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {useState} from "react";
+import {createContext, useState} from "react";
 import useTheme from "components/useTheme";
 import {mapToNameFactory} from "components/input/Input";
 
@@ -20,6 +20,7 @@ import {mapToNameFactory} from "components/input/Input";
  * @constructor
  */
 function RowItemRenderer({$columns, $list, $value, data, dataKey, dataToLabel, index, onChange, ...props}) {
+
     const onRowClicked = onChange;
     const $selectedRow = $value;
     const [rowIsSelected, setRowIsSelected] = useState(false);
@@ -73,7 +74,7 @@ function handleOnChange(onChange, setSelectedRow) {
     };
 }
 
-
+const TableContext = createContext({});
 export default function Table({dataKey, name, $columns, $data, $errors, domRef, $value, onChange, ...props}) {
 
     const $nameValue = useObserverMapper($value, mapToNameFactory(name));
@@ -99,33 +100,49 @@ export default function Table({dataKey, name, $columns, $data, $errors, domRef, 
     });
 
     const [theme] = useTheme();
-    return <Vertical height={'100%'} {...props}>
-        <ObserverValue $observers={$errorValue}>{(error) => {
-            return <Horizontal style={{color: theme.danger}}>{error}</Horizontal>;
-        }}</ObserverValue>
-        <Horizontal bB={2} color={'light'} brightness={-1} style={{minHeight: 25}}>
-            <ObserverValue $observers={$localColumns}>
-                {(columns) => {
-                    if (columns === undefined) {
-                        return <Horizontal/>;
-                    }
-                    return Object.keys(columns).map(col => {
-                        const column = columns[col];
-                        const title = column.title || col;
-                        return <Horizontal key={col} width={columns[col].width} p={1} bL={2}
-                                           style={{fontWeight: 'bold', minWidth: 55}}>{title}</Horizontal>
-                    });
-                }}
-            </ObserverValue>
-        </Horizontal>
-        <List itemRenderer={RowItemRenderer}
-              onChange={handleOnChange(onChange, setSelectedRow)}
-              $value={$selectedRow}
-              dataKey={dataKey}
-              $data={$tableData}
-              domRef={domRef}
-              $columns={$localColumns}
-        />
-    </Vertical>
+    return <TableContext.Provider
+        value={{
+            $selectedRow,
+            setSelectedRow,
+            $tableData,
+            setTableData,
+            $localColumns,
+            setLocalColumns,
+            name,
+            $value,
+            $errors,
+            $nameValue,
+            $errorValue,
+            onChange
+        }}>
+        <Vertical height={'100%'} {...props}>
+            <ObserverValue $observers={$errorValue}>{(error) => {
+                return <Horizontal style={{color: theme.danger}}>{error}</Horizontal>;
+            }}</ObserverValue>
+            <Horizontal bB={2} color={'light'} brightness={-1} style={{minHeight: 25}}>
+                <ObserverValue $observers={$localColumns}>
+                    {(columns) => {
+                        if (columns === undefined) {
+                            return <Horizontal/>;
+                        }
+                        return Object.keys(columns).map(col => {
+                            const column = columns[col];
+                            const title = column.title || col;
+                            return <Horizontal key={col} width={columns[col].width} p={1} bL={2}
+                                               style={{fontWeight: 'bold', minWidth: 55}}>{title}</Horizontal>
+                        });
+                    }}
+                </ObserverValue>
+            </Horizontal>
+            <List itemRenderer={RowItemRenderer}
+                  onChange={handleOnChange(onChange, setSelectedRow)}
+                  $value={$selectedRow}
+                  dataKey={dataKey}
+                  $data={$tableData}
+                  domRef={domRef}
+                  $columns={$localColumns}
+            />
+        </Vertical>
+    </TableContext.Provider>
 }
 

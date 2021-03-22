@@ -89,7 +89,7 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
                           onDragLeave={handleRootDragLeave(dragHoverCountRef)}
                           onDrop={handleRootDrop(dragHoverCountRef, dropListener)} p={2}
                           onClick={() => setSelectedController(null)}
-                          data-layout={'vertical'} style={{height: 'calc(100% - 55px)'}} mB={2}>
+                          data-layout={'vertical'} style={{height: 'calc(100% - 55px)'}} mB={2} overflow={"auto"}>
 
                     <ObserverValue $observers={useObserverMapper($data, data => {
                         return data.children

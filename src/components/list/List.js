@@ -5,6 +5,9 @@ import {isFunction} from "components/utils";
 
 
 const DEFAULT_DATA_KEY = (data) => {
+    if (data && typeof data === 'string') {
+        return data;
+    }
     if (data && 'id_' in data) {
         return data.id_;
     }
@@ -102,7 +105,7 @@ export default function List({
 }
 
 
-function DefaultItemRenderer({data, onChange, $value, dataKey, dataToLabel}) {
+function DefaultItemRenderer({data, onChange, $value, dataKey, dataToLabel, ...props}) {
     const [selected, setSelected] = useState(() => {
         if ($value?.current) {
             return dataKey($value.current) === dataKey(data)
@@ -113,9 +116,9 @@ function DefaultItemRenderer({data, onChange, $value, dataKey, dataToLabel}) {
         setSelected(dataKey(selectedItem) === dataKey(data))
     });
     const value = dataToLabel.call(null, data);
-    return <Vertical p={1} color={"light"} brightness={selected ? -1 : 0} onClick={() => {
+    return <Vertical color={"light"} brightness={selected ? -2 : 0} onClick={() => {
         if (isFunction(onChange)) {
             onChange(data);
         }
-    }}>{value}</Vertical>
+    }} p={2}>{value}</Vertical>
 }

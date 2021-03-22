@@ -69,7 +69,7 @@ export default function useObserver(defaultValue) {
  * @returns {{current: *}|(function(value))}
  */
 export function useObserverMapper($observer, map = (value) => value) {
-    const [$newObserver, setNewObserver] = useObserver(map($observer.current));
+    const [$newObserver, setNewObserver] = useObserver(map($observer?.current));
     useObserverListener($observer, (newValue) => {
         const newMapValue = map(newValue);
         setNewObserver(newMapValue);

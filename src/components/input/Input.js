@@ -135,13 +135,23 @@ function Input({
                   {...props}/>
 }
 
-export function mapToNameFactory(name) {
+export function mapToNameFactory(name, converter = textConverter) {
     return function mapToName(value) {
-        if ((isNullOrUndefined(name) || name === '') && typeof value === 'string') {
-            return value;
+        if ((isNullOrUndefined(name) || name === '')) {
+            return converter(value);
         }
-        return value && name in value ? value[name] : undefined;
+        return value && name in value ? converter(value[name]) : undefined;
     }
+}
+
+function textConverter(value) {
+    if (value === undefined) {
+        return value;
+    }
+    if (Object.keys(value).length === 0) {
+        return undefined;
+    }
+    return value;
 }
 
 
