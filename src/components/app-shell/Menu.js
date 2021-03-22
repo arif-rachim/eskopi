@@ -9,11 +9,14 @@ import {SYSTEM_PAGES} from "../SystemTableName";
 import Tree from "../tree/Tree";
 
 const defaultMenus = {
-    'Page Builder': {
-        path: 'page-builder'
+    'Page Designer': {
+        path: 'page-designer'
     },
     'DB Explorer': {
         path: 'db-explorer'
+    },
+    'DB Designer': {
+        path: 'db-designer'
     },
 };
 

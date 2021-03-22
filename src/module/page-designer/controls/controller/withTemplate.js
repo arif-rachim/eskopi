@@ -1,6 +1,6 @@
 import {useObserverListener} from "components/useObserver";
 import {isNullOrUndefined} from "components/utils";
-import {handleDragOverControlComponent} from "module/page-builder/designer/handleDragOverControlComponent";
+import {handleDragOverControlComponent} from "module/page-designer/designer/handleDragOverControlComponent";
 import {useState} from "react";
 
 export default function withTemplate(Component) {

@@ -1,5 +1,6 @@
 import Table from "components/table/Table";
-import {useObserverListener, useObserverMapper} from "components/useObserver";
+import {useObserverMapper} from "components/useObserver";
+import {mapToNameFactory} from "components/input/Input";
 
 export default function TableInput({
                                        name,
@@ -11,8 +12,8 @@ export default function TableInput({
                                        $errors,
                                        ...props
                                    }) {
-    const $nameValue = useObserverListener($value, value => (name && name in value) ? value[name] : undefined);
-    const $errorValue = useObserverMapper($errors, value => (name && name in value) ? value[name] : undefined);
+    const $nameValue = useObserverMapper($value, mapToNameFactory(name));
+    const $errorValue = useObserverMapper($errors, mapToNameFactory(name));
     return <Table onChange={onChange} dataKey={dataKey} $data={$data} domRef={domRef} $value={$nameValue}
                   $error={$errorValue} {...props}/>
 }

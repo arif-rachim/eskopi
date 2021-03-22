@@ -1,12 +1,12 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {memo, useContext, useRef, useState} from "react";
-import {DropListenerContext} from "module/page-builder/index";
+import {DropListenerContext} from "module/page-designer/index";
 import {ObserverValue, useObserverListener, useObserverMapper} from "components/useObserver";
 import useForm from "components/useForm";
-import {getPlaceHolder, usePlaceHolderListener} from "module/page-builder/designer/getPlaceHolder";
-import {handlePlaceHolderDrop} from "module/page-builder/designer/handlePlaceHolderDrop";
-import {ControlMapper} from "module/page-builder/controls/ControllerMapper";
-import getOutlinePlaceHolder from "module/page-builder/outline/getOutlinePlaceHolder";
+import {getPlaceHolder, usePlaceHolderListener} from "module/page-designer/designer/getPlaceHolder";
+import {handlePlaceHolderDrop} from "module/page-designer/designer/handlePlaceHolderDrop";
+import {ControlMapper} from "module/page-designer/controls/ControllerMapper";
+import getOutlinePlaceHolder from "module/page-designer/outline/getOutlinePlaceHolder";
 import useResource, {useResourceListener} from "components/useResource";
 import Button from "components/button/Button";
 import {isNullOrUndefined} from "components/utils";

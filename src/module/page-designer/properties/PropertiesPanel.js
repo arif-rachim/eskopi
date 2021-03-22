@@ -2,7 +2,7 @@ import useObserver, {ObserverValue, useObserverListener} from "components/useObs
 import useForm from "components/useForm";
 import {isNullOrUndefined} from "components/utils";
 import Panel from "components/panel/Panel";
-import {ControlPropertiesCatalog} from "module/page-builder/controls/ControllerMapper"
+import {ControlPropertiesCatalog} from "module/page-designer/controls/ControllerMapper"
 import CollapsiblePanel from "components/panel/CollapsiblePanel";
 
 /**

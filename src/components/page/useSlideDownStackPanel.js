@@ -4,14 +4,14 @@ import useSlideDownPanel from "components/page/useSlideDownPanel";
 export default function useSlideDownStackPanel(animationDuration = 300) {
     const showSlideDown = useSlideDownPanel(animationDuration);
     const layers = useContext(SlideDownStackPanelContext);
-    return useCallback((render) => new Promise(resolve => {
+    return useCallback((render, props) => new Promise(resolve => {
         const Render = render;
         const actionRef = {current: {}};
         if (layers.current.length > 0) {
             const {setShowPanel} = layers.current[layers.current.length - 1].current;
             setShowPanel(false);
         }
-        const promise = showSlideDown(({closePanel}) => <Render closePanel={closePanel}/>, {
+        const promise = showSlideDown(({closePanel}) => <Render closePanel={closePanel} {...props}/>, {
             actionRef,
             showOverlayLayer: layers.current.length === 0
         });

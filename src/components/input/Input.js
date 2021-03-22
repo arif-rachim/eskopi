@@ -135,7 +135,7 @@ function Input({
                   {...props}/>
 }
 
-function mapToNameFactory(name) {
+export function mapToNameFactory(name) {
     return function mapToName(value) {
         if ((isNullOrUndefined(name) || name === '') && typeof value === 'string') {
             return value;

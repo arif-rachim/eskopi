@@ -1,8 +1,8 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {useContext, useState} from "react";
-import {DropListenerContext} from "module/page-builder/index";
+import {DropListenerContext} from "module/page-designer/index";
 import Panel from "components/panel/Panel";
-import {Controls, ControlsNaming, Icons} from "module/page-builder/controls/ControllerMapper";
+import {Controls, ControlsNaming, Icons} from "module/page-designer/controls/ControllerMapper";
 
 
 export default function ControlListPanel() {

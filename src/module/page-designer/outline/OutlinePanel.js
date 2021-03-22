@@ -2,12 +2,12 @@ import Panel from "../../../components/panel/Panel";
 import Tree from "components/tree/Tree";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {useObserverMapper} from "components/useObserver";
-import {ControlsNaming} from "module/page-builder/controls/ControllerMapper";
+import {ControlsNaming} from "module/page-designer/controls/ControllerMapper";
 import {useContext, useRef, useState} from "react";
-import {DropListenerContext} from "module/page-builder/index";
-import getOutlinePlaceHolder, {useOutlinePlaceHolderListener} from "module/page-builder/outline/getOutlinePlaceHolder";
-import handleOutlinePlaceHolderDrop from "module/page-builder/outline/handleOutlinePlaceHolderDrop";
-import {getPlaceHolder} from "module/page-builder/designer/getPlaceHolder";
+import {DropListenerContext} from "module/page-designer/index";
+import getOutlinePlaceHolder, {useOutlinePlaceHolderListener} from "module/page-designer/outline/getOutlinePlaceHolder";
+import handleOutlinePlaceHolderDrop from "module/page-designer/outline/handleOutlinePlaceHolderDrop";
+import {getPlaceHolder} from "module/page-designer/designer/getPlaceHolder";
 
 function handlePlaceHolderDragOver(event) {
     event.preventDefault();

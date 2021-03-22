@@ -6,7 +6,7 @@ import TextAreaController from "./controller/TextAreaController";
 import NumberInputController from "./controller/NumberInputController";
 import DateInputController from "./controller/DateInputController";
 import TimeInputController from "./controller/TimeInputController";
-import {Controls} from "module/page-builder/controls/ControllerMapper";
+import {Controls} from "module/page-designer/controls/ControllerMapper";
 import TableInputController from "module/page-renderer/controller/TableInputController";
 import withTableData from "components/input/withTableData";
 

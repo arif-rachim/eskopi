@@ -1,17 +1,17 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useObserver from "components/useObserver";
 import {createContext, useEffect, useRef} from "react";
-import PageTreePanel from "module/page-builder/pages/PageTreePanel";
-import ControlListPanel from "module/page-builder/controls/ControlListPanel";
-import DesignerPanel from "module/page-builder/designer/DesignerPanel";
-import PropertiesPanel from "module/page-builder/properties/PropertiesPanel";
+import PageTreePanel from "module/page-designer/pages/PageTreePanel";
+import ControlListPanel from "module/page-designer/controls/ControlListPanel";
+import DesignerPanel from "module/page-designer/designer/DesignerPanel";
+import PropertiesPanel from "module/page-designer/properties/PropertiesPanel";
 import OutlinePanel from "./outline/OutlinePanel";
 
 export const DropListenerContext = createContext(null);
-export default function PageBuilder({setTitle}) {
+export default function PageDesigner({setTitle}) {
     useEffect(() => {
         if (setTitle) {
-            setTitle('Page Builder')
+            setTitle('Page Designer')
         }
     }, [setTitle]);
     const [$selectedPage, setSelectedPage] = useObserver();
@@ -55,7 +55,6 @@ export default function PageBuilder({setTitle}) {
     </DropListenerContext.Provider>
 }
 
-PageBuilder.title = 'Page Builder';
 
 
 

@@ -1,12 +1,12 @@
-import SpaceTemplate from "module/page-builder/controls/controller/SpaceTemplate";
+import SpaceTemplate from "module/page-designer/controls/controller/SpaceTemplate";
 import BorderMarginPaddingPanel from "../properties/BorderMarginPaddingPanel";
 import AlignmentAndGap from "../properties/AlignmentAndGap";
 import WidthAndHeightPanel from "../properties/WidthAndHeightPanel";
 import ColorBrightnessOpacity from "../properties/ColorBrightnessOpacity";
 
-import NameAndIdPanel from "module/page-builder/properties/NameAndId";
+import NameAndIdPanel from "module/page-designer/properties/NameAndId";
 import TextInputController from "module/page-renderer/controller/TextInputController";
-import withTemplate from "module/page-builder/controls/controller/withTemplate";
+import withTemplate from "module/page-designer/controls/controller/withTemplate";
 import NumberInputController from "module/page-renderer/controller/NumberInputController";
 import DateInputController from "module/page-renderer/controller/DateInputController";
 import TimeInputController from "module/page-renderer/controller/TimeInputController";
@@ -14,7 +14,7 @@ import TextAreaController from "module/page-renderer/controller/TextAreaControll
 import ButtonController from "module/page-renderer/controller/ButtonController";
 import LabelController from "../../page-renderer/controller/LabelController";
 import TableInputController from "module/page-renderer/controller/TableInputController";
-import DataPanel from "module/page-builder/properties/DataPanel";
+import DataPanel from "module/page-designer/properties/DataPanel";
 import withTableData from "components/input/withTableData";
 
 export const Controls = {

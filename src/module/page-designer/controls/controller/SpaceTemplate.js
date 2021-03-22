@@ -1,10 +1,10 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {RenderLayout} from "module/page-builder/designer/DesignerPanel";
-import {getPlaceHolder} from "module/page-builder/designer/getPlaceHolder";
+import {RenderLayout} from "module/page-designer/designer/DesignerPanel";
+import {getPlaceHolder} from "module/page-designer/designer/getPlaceHolder";
 import {useState} from "react";
 import {useObserverListener} from "components/useObserver";
 import {isNullOrUndefined} from "components/utils";
-import {handleDragOverControlComponent} from "module/page-builder/designer/handleDragOverControlComponent";
+import {handleDragOverControlComponent} from "module/page-designer/designer/handleDragOverControlComponent";
 
 export default function SpaceTemplate({
                                           data,

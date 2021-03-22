@@ -1,7 +1,7 @@
-import PageBuilder from "module/page-builder";
+import PageDesigner from "module/page-designer";
 
 function Home() {
-    return <PageBuilder/>
+    return <PageDesigner/>
 }
 
 Home.title = 'Home';

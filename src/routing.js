@@ -1,8 +1,9 @@
+import db_designer from "./module/db-designer/index";
 import db_explorer from "./module/db-explorer/index";
 import _ from "./module/index";
 import login from "./module/login/index";
 import login_registration from "./module/login/registration/index";
-import page_builder from "./module/page-builder/index";
+import page_designer from "./module/page-designer/index";
 import page_renderer from "./module/page-renderer/index";
 import sample_checkbox from "./module/sample/checkbox/index";
 import sample_custom_controller from "./module/sample/custom-controller/index";
@@ -17,11 +18,12 @@ import sample_use_observer from "./module/sample/use-observer/index";
 import sample_use_observer_two from "./module/sample/use-observer-two/index";
 
 const routing = {
+    'db-designer': db_designer,
     'db-explorer': db_explorer,
     '': _,
     'login': login,
     'login/registration': login_registration,
-    'page-builder': page_builder,
+    'page-designer': page_designer,
     'page-renderer': page_renderer,
     'sample/checkbox': sample_checkbox,
     'sample/custom-controller': sample_custom_controller,

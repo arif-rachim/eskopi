@@ -46,6 +46,7 @@ export default function useForm(defaultValue = {}) {
         setErrors,
         validateOn: {},
         validator: {},
+        onChange: {}
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleSubmit = useCallback(handleSubmitFactory(control), []);
@@ -159,6 +160,8 @@ const callbackOnChange = (propsRef) => function onChangeCallback(value) {
  * @param {React.Element} render
  * @param {number} horizontalLabelPositionWidth
  * @param {React.MutableRefObject<{validateOn: {}, $errors: (React.MutableRefObject<*>|setObserver), $value: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>} control
+ * @param {any} containerStyle
+ * @param props
  * @returns {JSX.Element}
  * @constructor
  */
@@ -187,6 +190,8 @@ export function Controller({
     const onBlur = useCallback(callbackOnBlur(propsRef), []);
     // eslint-disable-next-line
     const onChange = useCallback(callbackOnChange(propsRef), []);
+    control.current.onChange[name] = onChange;
+
     const Render = useRef(render).current;
     containerStyle = containerStyle || {};
 
