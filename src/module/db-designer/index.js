@@ -13,7 +13,6 @@ import Input from "components/input/Input";
 import {isUndefinedOrNull} from "components/utils";
 import {v4 as uuid} from "uuid";
 import Table from "components/table/Table";
-import Select from "components/input/Select";
 
 
 export default function DbDesigner({setTitle}) {
@@ -56,41 +55,10 @@ function PanelHeaderRenderer() {
     </Horizontal>
 }
 
-function NameCellRenderer(props) {
-    return <Input/>
-}
-
-function TypeCellRenderer(props) {
-    const [$data] = useObserver([
-        {id: 'STRING', label: 'STRING'},
-        {id: 'NUMBER', label: 'NUMBER'},
-        {id: 'DATE', label: 'DATE'},
-        {id: 'BOOLEAN', label: 'BOOLEAN'},
-        {id: 'ARRAY', label: 'ARRAY'}]);
-    const [$selectedItem, setSelectedItem] = useObserver();
-
-    return <Select $data={$data}
-                   $value={$selectedItem}
-                   onChange={setSelectedItem}
-                   dataKey={data => data?.id}
-                   dataToLabel={data => data?.label}/>
-}
-
 function AddTablePanel(props) {
     const {control, handleSubmit} = useForm();
-    const [$columns] = useObserver({
-        name: {
-            title: 'Name',
-            width: '70%',
-            renderer: NameCellRenderer
-        },
-        type: {
-            title: 'Type',
-            width: '30%',
-            renderer: TypeCellRenderer
-        }
-    });
     const [$tableData, setTableData] = useObserver([]);
+    const [$columns, setColumns] = useObserver({});
     return <form action="" onSubmit={handleSubmit(data => {
         debugger;
         console.log(data);
@@ -105,7 +73,7 @@ function AddTablePanel(props) {
                         label={'Fields'}
                         $columns={$columns}
                         $data={$tableData}
-                        validator={requiredValidator('AutoPopulateColumnTable Name')}/>
+                        validator={requiredValidator('Table Name')}/>
             <Horizontal hAlign={'right'} gap={2}>
                 <Button type={'button'} onClick={() => {
                     setTableData(oldData => {
@@ -123,6 +91,7 @@ function AddTablePanel(props) {
 
         </Vertical>
     </form>
+
 }
 
 function requiredValidator(fieldName) {
