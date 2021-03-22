@@ -1,5 +1,5 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {ControllerMapper} from "module/page-renderer/ControllerMapper";
+import {ControlForPageRenderer} from "module/page-designer/controls/ControllerMapper";
 
 export default function SpaceController({
                                             data,
@@ -26,7 +26,7 @@ export default function SpaceController({
         {...props}
     >
         {children.map(child => {
-            const ChildRender = ControllerMapper[child.type];
+            const ChildRender = ControlForPageRenderer[child.type];
             return <ChildRender key={child.id} data={child} control={control}/>
         })}
 

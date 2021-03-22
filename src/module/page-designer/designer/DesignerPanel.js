@@ -5,7 +5,7 @@ import {ObserverValue, useObserverListener, useObserverMapper} from "components/
 import useForm from "components/useForm";
 import {getPlaceHolder, usePlaceHolderListener} from "module/page-designer/designer/getPlaceHolder";
 import {handlePlaceHolderDrop} from "module/page-designer/designer/handlePlaceHolderDrop";
-import {ControlMapper} from "module/page-designer/controls/ControllerMapper";
+import {ControlForPageDesigner} from "module/page-designer/controls/ControllerMapper";
 import getOutlinePlaceHolder from "module/page-designer/outline/getOutlinePlaceHolder";
 import useResource, {useResourceListener} from "components/useResource";
 import Button from "components/button/Button";
@@ -117,7 +117,7 @@ export const RenderLayout = ({value, control, $selectedController, setSelectedCo
         return false;
     }
     return value.map(child => {
-        const ChildRender = ControlMapper[child.type];
+        const ChildRender = ControlForPageDesigner[child.type];
         return <DraggableComponent render={ChildRender} key={child.id}
                                    data={child}
                                    formControl={control}

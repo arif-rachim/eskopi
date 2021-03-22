@@ -2,8 +2,8 @@ import {Horizontal, Vertical} from "components/layout/Layout";
 import {useEffect} from "react";
 import Panel from "components/panel/Panel";
 import List from "components/list/List";
-import Table from "components/table/Table";
-import useObserver, {useObserverListener} from "components/useObserver";
+import AutoPopulateColumnTable from "components/table/AutoPopulateColumnTable";
+import useObserver from "components/useObserver";
 import useResource, {useResourceListener} from "components/useResource";
 import {SYSTEM_TABLES} from "components/SystemTableName";
 import Button from "components/button/Button";
@@ -12,7 +12,8 @@ import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import {isUndefinedOrNull} from "components/utils";
 import {v4 as uuid} from "uuid";
-import TableInput from "components/input/TableInput";
+import Table from "components/table/Table";
+
 
 export default function DbDesigner({setTitle}) {
     useEffect(() => {
@@ -21,7 +22,7 @@ export default function DbDesigner({setTitle}) {
     const [$onTableLoaded] = useResource({url: `/db/${SYSTEM_TABLES}`})
     const [$table, setTable] = useObserver([]);
     const [$selectedTable, setSelectedTable] = useObserver();
-    const [$tableContent, setTableContent] = useObserver();
+    const [$tableContent] = useObserver();
     useResourceListener($onTableLoaded, (status, result) => {
         if (status === 'success') {
             setTable(result);
@@ -39,7 +40,7 @@ export default function DbDesigner({setTitle}) {
             </Panel>
         </Vertical>
         <Vertical color={'light'} brightness={1} flex={'1 0 auto'}>
-            <Table $data={$tableContent} dataKey={data => data?.id_}/>
+            <AutoPopulateColumnTable $data={$tableContent} dataKey={data => data?.id_}/>
         </Vertical>
     </Horizontal>
 }
@@ -55,10 +56,7 @@ function PanelHeaderRenderer() {
 }
 
 function AddTablePanel(props) {
-    const {control, handleSubmit, $value} = useForm();
-    useObserverListener($value, value => {
-        console.log(value);
-    });
+    const {control, handleSubmit} = useForm();
     const [$columns] = useObserver({
         name: {
             title: 'Name',
@@ -76,15 +74,15 @@ function AddTablePanel(props) {
     })}>
         <Vertical gap={2} p={2} elevation={2} width={300}>
             <Controller control={control} render={Input} name={"tableName"}
-                        label={'Table Name'}
-                        validator={requiredValidator('Table Name')}/>
+                        label={'AutoPopulateColumnTable Name'}
+                        validator={requiredValidator('AutoPopulateColumnTable Name')}/>
             <Controller control={control}
-                        render={TableInput}
+                        render={Table}
                         name={"fields"}
                         label={'Fields'}
                         $columns={$columns}
                         $data={$tableData}
-                        validator={requiredValidator('Table Name')}/>
+                        validator={requiredValidator('AutoPopulateColumnTable Name')}/>
             <Horizontal hAlign={'right'} gap={2}>
                 <Button type={'button'} onClick={() => {
                     setTableData(oldData => {

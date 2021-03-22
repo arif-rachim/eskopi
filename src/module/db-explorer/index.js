@@ -3,7 +3,7 @@ import useResource, {useResourceListener} from "components/useResource";
 import useObserver, {useObserverListener} from "components/useObserver";
 import Panel from "components/panel/Panel";
 import List from "components/list/List";
-import Table from "components/table/Table";
+import AutoPopulateColumnTable from "components/table/AutoPopulateColumnTable";
 import {useEffect} from "react";
 
 function DBExplorer({setTitle}) {
@@ -42,7 +42,7 @@ function DBExplorer({setTitle}) {
             </Panel>
         </Vertical>
         <Vertical color={'light'} brightness={1} flex={'1 0 auto'}>
-            <Table $data={$tableContent} dataKey={data => data?.id_}/>
+            <AutoPopulateColumnTable $data={$tableContent} dataKey={data => data?.id_}/>
         </Vertical>
     </Horizontal>
 }

@@ -1,6 +1,7 @@
 import {Controller} from "components/useForm";
 import {Vertical} from "components/layout/Layout";
-import TableInput from "components/input/TableInput";
+import Table from "components/table/Table";
+
 
 export default function TableInputController({
                                                  data,
@@ -11,7 +12,7 @@ export default function TableInputController({
                                              }) {
     const {children, type, parentIds, width, ...props} = data;
     return <Vertical p={2} pT={1} pB={1} width={width} {...containerProps}>
-        <Controller render={TableInput}
+        <Controller render={Table}
                     control={control}
                     style={style}
                     {...controllerProps} {...props}/>

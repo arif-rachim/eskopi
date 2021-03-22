@@ -60,7 +60,7 @@ function DatabaseCrud() {
             actionCreateResource('/db/' + table, dataToSave);
         })}>
             <Vertical gap={2}>
-                <Controller control={control} render={Input} label={'Table Name'} name={'table'}/>
+                <Controller control={control} render={Input} label={'AutoPopulateColumnTable Name'} name={'table'}/>
                 <ObserverValue $observers={$tableProps}>
                     {(props) => {
                         const propsArray = Object.keys(props);

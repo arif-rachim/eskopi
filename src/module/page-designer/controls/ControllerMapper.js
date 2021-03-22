@@ -16,6 +16,8 @@ import LabelController from "../../page-renderer/controller/LabelController";
 import TableInputController from "module/page-renderer/controller/TableInputController";
 import DataPanel from "module/page-designer/properties/DataPanel";
 import withTableData from "components/input/withTableData";
+import withAutoPopulateColumn from "components/table/withAutoPopulateColumn";
+import SpaceController from "module/page-renderer/controller/SpaceController";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
@@ -41,17 +43,28 @@ export const ControlsNaming = {
     [Controls.TABLE_INPUT]: 'Table'
 };
 
+export const ControlForPageRenderer = {
+    [Controls.SPACE]: SpaceController,
+    [Controls.LABEL]: LabelController,
+    [Controls.BUTTON]: ButtonController,
+    [Controls.TEXT_INPUT]: TextInputController,
+    [Controls.TEXT_AREA]: TextAreaController,
+    [Controls.NUMBER_INPUT]: NumberInputController,
+    [Controls.DATE_INPUT]: DateInputController,
+    [Controls.TIME_INPUT]: TimeInputController,
+    [Controls.TABLE_INPUT]: withTableData(withAutoPopulateColumn(TableInputController)),
+}
 
-export const ControlMapper = {
+export const ControlForPageDesigner = {
     [Controls.SPACE]: SpaceTemplate,
-    [Controls.LABEL]: withTemplate(LabelController),
-    [Controls.BUTTON]: withTemplate(ButtonController),
-    [Controls.TEXT_INPUT]: withTemplate(TextInputController),
-    [Controls.TEXT_AREA]: withTemplate(TextAreaController),
-    [Controls.NUMBER_INPUT]: withTemplate(NumberInputController),
-    [Controls.DATE_INPUT]: withTemplate(DateInputController),
-    [Controls.TIME_INPUT]: withTemplate(TimeInputController),
-    [Controls.TABLE_INPUT]: withTemplate(withTableData(TableInputController))
+    [Controls.LABEL]: withTemplate(ControlForPageRenderer[Controls.LABEL]),
+    [Controls.BUTTON]: withTemplate(ControlForPageRenderer[Controls.BUTTON]),
+    [Controls.TEXT_INPUT]: withTemplate(ControlForPageRenderer[Controls.TEXT_INPUT]),
+    [Controls.TEXT_AREA]: withTemplate(ControlForPageRenderer[Controls.TEXT_AREA]),
+    [Controls.NUMBER_INPUT]: withTemplate(ControlForPageRenderer[Controls.NUMBER_INPUT]),
+    [Controls.DATE_INPUT]: withTemplate(ControlForPageRenderer[Controls.DATE_INPUT]),
+    [Controls.TIME_INPUT]: withTemplate(ControlForPageRenderer[Controls.TIME_INPUT]),
+    [Controls.TABLE_INPUT]: withTemplate(ControlForPageRenderer[Controls.TABLE_INPUT])
 }
 
 export const ControlPropertiesCatalog = {
