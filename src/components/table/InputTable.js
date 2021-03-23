@@ -1,8 +1,8 @@
 import {ObserverValue} from "components/useObserver";
 import {Horizontal, Vertical} from "components/layout/Layout";
-import ListInput from "components/list/ListInput";
+import InputList from "components/list/InputList";
 
-export default function TableInput({dataKey, name, $columns, $errors, domRef, $value, onChange, ...props}) {
+export default function InputTable({dataKey, name, $columns, $errors, domRef, $value, onChange, ...props}) {
 
     return <Vertical height={'100%'} {...props}>
         <Horizontal bB={2} color={'light'} brightness={-1} style={{minHeight: 25}}>
@@ -20,7 +20,7 @@ export default function TableInput({dataKey, name, $columns, $errors, domRef, $v
                 }}
             </ObserverValue>
         </Horizontal>
-        <ListInput itemRenderer={RowItemRenderer}
+        <InputList itemRenderer={RowItemRenderer}
                    name={name}
                    dataKey={dataKey}
                    $value={$value}
@@ -46,7 +46,7 @@ export default function TableInput({dataKey, name, $columns, $errors, domRef, $v
  * @returns {JSX.Element}
  * @constructor
  */
-function RowItemRenderer({$columns, $list, $value, data, dataKey, dataToLabel, index, onChange, ...props}) {
+function RowItemRenderer({data, index, dataKey, dataToLabel, $value, onChange, $columns, ...props}) {
     return <Vertical color={"light"} brightness={0.5}>
         <Horizontal bB={1}>
             <ObserverValue $observers={$columns}>
@@ -64,7 +64,7 @@ function RowItemRenderer({$columns, $list, $value, data, dataKey, dataToLabel, i
                                 $columns={$columns}
                                 field={columnKey}
                                 rowData={data}
-                                $tableData={$list}
+                                $tableData={$value}
                                 rowIndex={index}
                                 colIndex={colIndex}
                                 onChange={(value) => {

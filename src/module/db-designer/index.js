@@ -14,7 +14,7 @@ import {isUndefinedOrNull} from "components/utils";
 import {v4 as uuid} from "uuid";
 import {useConfirmMessage} from "../../components/dialog/Dialog";
 import Select from "components/input/Select";
-import TableInput from "components/table/TableInput";
+import InputTable from "components/table/InputTable";
 
 
 export default function DbDesigner({setTitle}) {
@@ -97,7 +97,7 @@ function AddTablePanel(props) {
                         label={'Table Name'}
                         validator={requiredValidator('Table Name')}/>
             <Controller control={control}
-                        render={TableInput}
+                        render={InputTable}
                         name={"fields"}
                         label={'Fields'}
                         $columns={$columns}

@@ -148,7 +148,7 @@ export function mapToNameFactory(name, converter = textConverter) {
 }
 
 function textConverter(value) {
-    if (value === undefined) {
+    if (isNullOrUndefined(value)) {
         return value;
     }
     if (Object.keys(value).length === 0) {

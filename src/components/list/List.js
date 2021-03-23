@@ -1,7 +1,8 @@
 import {Vertical} from "components/layout/Layout";
-import useObserver, {useObserverListener, useObserverValue} from "components/useObserver";
-import {useState} from "react";
-import {isFunction} from "components/utils";
+import useObserver, {ObserverValue, useObserverListener, useObserverMapper} from "components/useObserver";
+import {useCallback, useState} from "react";
+import {isFunction, isNullOrUndefined} from "components/utils";
+import {mapToNameFactory} from "components/input/Input";
 
 
 const DEFAULT_DATA_KEY = (data) => {
@@ -42,29 +43,61 @@ function handleOnRowChange(onChange, setSelectedRow) {
  * @constructor
  */
 export default function List({
+                                 name,
                                  $data,
                                  itemRenderer = DefaultItemRenderer,
                                  dataKey = DEFAULT_DATA_KEY,
                                  dataToLabel = DEFAULT_DATA_TO_LABEL,
                                  domRef,
                                  $value,
+                                 $errors,
                                  onChange,
                                  ...props
                              }) {
 
-    const [$selectedRow, setSelectedRow] = useObserver(() => {
-        if ($value) {
-            return $value.current;
+    const $nameValue = useObserverMapper($value, mapToNameFactory(name));
+    const $errorValue = useObserverMapper($errors, mapToNameFactory(name));
+
+    const [$selectedRow, setSelectedRow] = useObserver($nameValue?.current);
+    const [$tableData, setTableData] = useObserver($data?.current);
+
+    const onChangeCallback = useCallback((newValue) => {
+        if (isNullOrUndefined(onChange)) {
+            return;
         }
-        return undefined;
+        onChange(oldState => {
+            oldState = oldState || {};
+            const nextState = {...oldState};
+            if (isNullOrUndefined(name) || name === '') {
+                const oldValue = nextState;
+                return isFunction(newValue) ? newValue(oldValue) : newValue;
+            } else {
+                const oldValue = nextState[name];
+                nextState[name] = isFunction(newValue) ? newValue(oldValue) : newValue;
+                return nextState;
+            }
+        })
+    }, [name, onChange]);
+
+    useObserverListener($nameValue, (value) => {
+        if ($selectedRow.current !== value) {
+            setSelectedRow(value);
+        }
+    })
+
+    useObserverListener($data, data => {
+        if ($tableData.current !== data) {
+            setTableData(data);
+        }
     });
-    useObserverListener($value, (newValue) => {
+
+    useObserverListener($nameValue, (newValue) => {
         if ($selectedRow.current !== newValue) {
             setSelectedRow(newValue);
         }
     })
     const Renderer = itemRenderer;
-    const data = useObserverValue($data) || [];
+
     return <Vertical domRef={domRef} tabIndex={0} style={{outline: 'none'}} onKeyDown={(event) => {
         if (event.code === 'ArrowDown') {
             event.preventDefault();
@@ -73,8 +106,8 @@ export default function List({
             if (($data.current.length - 1) > currentSelectedIndex) {
                 const nextRow = $data.current[currentSelectedIndex + 1];
                 setSelectedRow(nextRow);
-                if (onChange) {
-                    onChange(nextRow);
+                if (onChangeCallback) {
+                    onChangeCallback(nextRow);
                 }
             }
         }
@@ -91,16 +124,22 @@ export default function List({
             }
         }
     }}>
-        {data.map((data, index) => {
-            return <Renderer key={dataKey.apply(data, [data])}
-                             data={data}
-                             index={index}
-                             dataKey={dataKey}
-                             dataToLabel={dataToLabel}
-                             $value={$selectedRow}
-                             $list={$data}
-                             onChange={handleOnRowChange(onChange, setSelectedRow)} {...props}/>
-        })}
+        <ObserverValue $observers={$data}>
+            {(data) => {
+                data = data || [];
+                return data.map((data, index) => {
+                    return <Renderer key={dataKey.apply(data, [data])}
+                                     data={data}
+                                     index={index}
+                                     dataKey={dataKey}
+                                     dataToLabel={dataToLabel}
+                                     $value={$selectedRow}
+                                     $list={$data}
+                                     onChange={handleOnRowChange(onChange, setSelectedRow)} {...props}/>
+                })
+
+            }}
+        </ObserverValue>
     </Vertical>
 }
 

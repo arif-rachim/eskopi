@@ -1,9 +1,8 @@
 import List from "components/list/List";
-import useObserver, {ObserverValue, useObserverListener, useObserverMapper} from "components/useObserver";
+import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {createContext, useContext, useState} from "react";
-import useTheme from "components/useTheme";
-import {mapToNameFactory} from "components/input/Input";
+
 
 /**
  *
@@ -65,14 +64,6 @@ function DefaultCellRenderer({value, ...props}) {
     </Vertical>;
 }
 
-function handleOnChange(onChange, setSelectedRow) {
-    return function onChangeListener(data) {
-        setSelectedRow(data);
-        if (onChange) {
-            onChange(data);
-        }
-    };
-}
 
 const TableContext = createContext({});
 
@@ -82,48 +73,24 @@ export function useTableContext() {
 
 export default function Table({dataKey, name, $columns, $data, $errors, domRef, $value, onChange, ...props}) {
 
-    const $nameValue = useObserverMapper($value, mapToNameFactory(name));
-    const $errorValue = useObserverMapper($errors, mapToNameFactory(name));
-
     const [$localColumns, setLocalColumns] = useObserver($columns?.current)
-    const [$selectedRow, setSelectedRow] = useObserver($nameValue?.current);
-    const [$tableData, setTableData] = useObserver($data?.current);
-    useObserverListener($nameValue, (value) => {
-        if ($selectedRow.current !== value) {
-            setSelectedRow(value);
-        }
-    })
+
     useObserverListener($columns, (columns) => {
         if ($localColumns.current !== columns) {
             setLocalColumns(columns)
         }
     })
-    useObserverListener($data, data => {
-        if ($tableData.current !== data) {
-            setTableData(data);
-        }
-    });
 
-    const [theme] = useTheme();
     return <TableContext.Provider
         value={{
-            $selectedRow,
-            setSelectedRow,
-            $tableData,
-            setTableData,
             $localColumns,
             setLocalColumns,
             name,
             $value,
             $errors,
-            $nameValue,
-            $errorValue,
             onChange
         }}>
         <Vertical height={'100%'} {...props}>
-            <ObserverValue $observers={$errorValue}>{(error) => {
-                return <Horizontal style={{color: theme.danger}}>{error}</Horizontal>;
-            }}</ObserverValue>
             <Horizontal bB={2} color={'light'} brightness={-1} style={{minHeight: 25}}>
                 <ObserverValue $observers={$localColumns}>
                     {(columns) => {
@@ -140,10 +107,11 @@ export default function Table({dataKey, name, $columns, $data, $errors, domRef, 
                 </ObserverValue>
             </Horizontal>
             <List itemRenderer={RowItemRenderer}
-                  onChange={handleOnChange(onChange, setSelectedRow)}
-                  $value={$selectedRow}
+                  onChange={onChange}
+                  name={name}
+                  $value={$value}
                   dataKey={dataKey}
-                  $data={$tableData}
+                  $data={$data}
                   domRef={domRef}
                   $columns={$localColumns}
             />

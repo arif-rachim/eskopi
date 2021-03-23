@@ -49,7 +49,7 @@ function handleOnRowChange(fieldName, rowIndex, onChange) {
  * @returns {JSX.Element}
  * @constructor
  */
-export default function ListInput({
+export default function InputList({
                                       name,
                                       itemRenderer = DefaultItemRenderer,
                                       dataKey = DEFAULT_DATA_KEY,
@@ -71,14 +71,14 @@ export default function ListInput({
                              index={index}
                              dataKey={dataKey}
                              dataToLabel={dataToLabel}
-                             $list={$nameValue}
+                             $value={$nameValue}
                              onChange={handleOnRowChange(name, index, onChange)} {...props}/>
         })}
     </Vertical>
 }
 
 
-function DefaultItemRenderer({data, index, dataKey, dataToLabel, $list, onChange, ...props}) {
+function DefaultItemRenderer({data, index, dataKey, dataToLabel, $value, onChange, ...props}) {
     const value = dataToLabel.call(null, data);
     return <Vertical color={"light"} p={2}>{value}</Vertical>
 }
