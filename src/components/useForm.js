@@ -2,7 +2,7 @@ import React, {useCallback, useRef} from "react";
 import useObserver from "components/useObserver";
 import {Horizontal, Vertical} from "./layout/Layout";
 import Label from "./label/Label";
-import {isNullOrUndefined} from "components/utils";
+import {isFunction, isNullOrUndefined} from "components/utils";
 
 /**
  * Create onSubmit handler
@@ -52,12 +52,12 @@ export default function useForm(defaultValue = {}) {
     const isModified = useCallback(() => {
         const keys = Object.keys(control.current.modified);
         for (const key of keys) {
-            if(control.current.modified[key] === true){
+            if (control.current.modified[key] === true) {
                 return true;
             }
         }
         return false;
-    },[]);
+    }, []);
     control.current.isModified = isModified;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleSubmit = useCallback(handleSubmitFactory(control), []);
@@ -145,8 +145,17 @@ const callbackOnBlur = (propsRef) => () => {
  * @param {Object} propsRef
  * @returns {function(*=): void}
  */
-const callbackOnChange = (propsRef) => function onChangeCallback(value) {
+const callbackOnChange = (propsRef) => function onChangeCallback(valueOrSetState) {
     const {control, name, validator} = propsRef.current;
+    if (isNullOrUndefined(name) || name === '') {
+        console.warn('When declaring controller, name cannot be null or undefined or empty string');
+        return;
+    }
+    let value = valueOrSetState;
+    if (isFunction(valueOrSetState)) {
+        const oldValue = control.current?.$value?.current[name];
+        value = valueOrSetState.call(null, oldValue);
+    }
     // here we flag that the user actually did perform editing
     control.current.userEditingField[name] = true;
     // here is the flag to store the value

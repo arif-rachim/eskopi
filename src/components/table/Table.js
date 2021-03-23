@@ -1,7 +1,7 @@
 import List from "components/list/List";
 import useObserver, {ObserverValue, useObserverListener, useObserverMapper} from "components/useObserver";
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {createContext, useState} from "react";
+import {createContext, useContext, useState} from "react";
 import useTheme from "components/useTheme";
 import {mapToNameFactory} from "components/input/Input";
 
@@ -75,6 +75,11 @@ function handleOnChange(onChange, setSelectedRow) {
 }
 
 const TableContext = createContext({});
+
+export function useTableContext() {
+    return useContext(TableContext);
+}
+
 export default function Table({dataKey, name, $columns, $data, $errors, domRef, $value, onChange, ...props}) {
 
     const $nameValue = useObserverMapper($value, mapToNameFactory(name));

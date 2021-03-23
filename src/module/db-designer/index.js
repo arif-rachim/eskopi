@@ -3,7 +3,7 @@ import {useEffect} from "react";
 import Panel from "components/panel/Panel";
 import List from "components/list/List";
 import AutoPopulateColumnTable from "components/table/AutoPopulateColumnTable";
-import useObserver from "components/useObserver";
+import useObserver, {useObserverMapper} from "components/useObserver";
 import useResource, {useResourceListener} from "components/useResource";
 import {SYSTEM_TABLES} from "components/SystemTableName";
 import Button from "components/button/Button";
@@ -12,8 +12,9 @@ import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import {isUndefinedOrNull} from "components/utils";
 import {v4 as uuid} from "uuid";
-import Table from "components/table/Table";
 import {useConfirmMessage} from "../../components/dialog/Dialog";
+import Select from "components/input/Select";
+import TableInput from "components/table/TableInput";
 
 
 export default function DbDesigner({setTitle}) {
@@ -56,28 +57,34 @@ function PanelHeaderRenderer() {
     </Horizontal>
 }
 
-function NameCellRenderer(props){
-    debugger;
+function NameCellRenderer(props) {
     return <Input/>
 }
 
-function TypeCellRenderer(props){
-    return <Input />
+function TypeCellRenderer({$tableData, rowIndex, colIndex, field, onChange, ...props}) {
+    debugger;
+    const [$data] = useObserver(['STRING', 'NUMBER', 'DATE', 'BOOLEAN', 'ARRAY']);
+    const $value = useObserverMapper($tableData, tableData => {
+        return tableData[rowIndex][field];
+    })
+
+    return <Select $data={$data} $value={$value} onChange={(value) => {
+        onChange(value);
+    }}/>
 }
 
 function AddTablePanel(props) {
     const {control, handleSubmit} = useForm();
-    const [$tableData, setTableData] = useObserver([]);
-    const [$columns, setColumns] = useObserver({
-        name : {
-            title : 'Name',
-            width : '70%',
-            renderer : NameCellRenderer
+    const [$columns] = useObserver({
+        name: {
+            title: 'Name',
+            width: '70%',
+            renderer: NameCellRenderer
         },
-        type : {
-            title : 'Type',
-            width : '30%',
-            renderer : TypeCellRenderer
+        type: {
+            title: 'Type',
+            width: '30%',
+            renderer: TypeCellRenderer
         }
     });
     const showConfirmation = useConfirmMessage();
@@ -90,31 +97,27 @@ function AddTablePanel(props) {
                         label={'Table Name'}
                         validator={requiredValidator('Table Name')}/>
             <Controller control={control}
-                        render={Table}
+                        render={TableInput}
                         name={"fields"}
                         label={'Fields'}
                         $columns={$columns}
-                        $data={$tableData}
                         validator={requiredValidator('Table Name')}/>
             <Horizontal hAlign={'right'} gap={2}>
                 <Button type={'button'} onClick={() => {
-                    setTableData(oldData => {
-                        return [...oldData, {
-                            id: uuid(),
-                            name: '',
-                            type: 'string'
-                        }]
+                    control.current.onChange.fields(oldField => {
+                        oldField = oldField || [];
+                        return [...oldField, {id: uuid(), name: '', type: ''}]
                     })
                 }}>Add Field</Button>
                 <Horizontal flex={'1 0 auto'}/>
                 <Button type={'submit'}>Save</Button>
                 <Button type={'reset'} onClick={async () => {
-                    if(control.current.isModified()){
+                    if (control.current.isModified()) {
                         const answer = await showConfirmation('Are you sure you want to cancel changes ?');
-                        if(answer === 'YES'){
+                        if (answer === 'YES') {
                             props.closePanel(false);
                         }
-                    }else{
+                    } else {
                         props.closePanel(false);
                     }
                 }}>Cancel</Button>
@@ -133,3 +136,4 @@ function requiredValidator(fieldName) {
         return '';
     }
 }
+
