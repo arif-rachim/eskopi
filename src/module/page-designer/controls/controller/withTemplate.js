@@ -7,13 +7,14 @@ export default function withTemplate(Component) {
     return function ControlledComponent({
                                             data,
                                             formControl,
-                                            $selectedController,
-                                            setSelectedController,
                                             ...controllerProps
                                         }) {
         const {id} = data;
         const [isHovered, setHovered] = useState(false);
         const [isFocused, setFocused] = useState(false);
+
+        const {$selectedController, setSelectedController} = controllerProps;
+
         useObserverListener($selectedController, selectedController => {
             if (isNullOrUndefined(selectedController)) {
                 return setFocused(false);
@@ -21,7 +22,8 @@ export default function withTemplate(Component) {
             setFocused(selectedController.id === id);
         });
 
-        return <Component data={data} control={formControl}
+        return <Component data={data}
+                          control={formControl}
                           containerProps={{
                               onDragOver: handleDragOverControlComponent()
                           }}
@@ -46,6 +48,7 @@ export default function withTemplate(Component) {
                                   setSelectedController(data);
                               }
                           }}
+
                           {...controllerProps}
         />
     }

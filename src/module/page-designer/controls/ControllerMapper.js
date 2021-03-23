@@ -1,4 +1,3 @@
-import SpaceTemplate from "module/page-designer/controls/controller/SpaceTemplate";
 import BorderMarginPaddingPanel from "../properties/BorderMarginPaddingPanel";
 import AlignmentAndGap from "../properties/AlignmentAndGap";
 import WidthAndHeightPanel from "../properties/WidthAndHeightPanel";
@@ -18,6 +17,7 @@ import DataPanel from "module/page-designer/properties/DataPanel";
 import withTableData from "components/table/withTableData";
 import withAutoPopulateColumn from "components/table/withAutoPopulateColumn";
 import SpaceController from "module/page-renderer/controller/SpaceController";
+import SpaceLite from "module/page-designer/controls/controller/SpaceLite";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
@@ -56,7 +56,7 @@ export const ControlForPageRenderer = {
 }
 
 export const ControlForPageDesigner = {
-    [Controls.SPACE]: SpaceTemplate,
+    [Controls.SPACE]: withTemplate(SpaceLite),
     [Controls.LABEL]: withTemplate(ControlForPageRenderer[Controls.LABEL]),
     [Controls.BUTTON]: withTemplate(ControlForPageRenderer[Controls.BUTTON]),
     [Controls.TEXT_INPUT]: withTemplate(ControlForPageRenderer[Controls.TEXT_INPUT]),

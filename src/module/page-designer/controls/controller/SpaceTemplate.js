@@ -67,9 +67,9 @@ export default function SpaceTemplate({
         {...controllerProps}
         {...props}
     >
-        <RenderLayout value={children} control={formControl} $selectedController={$selectedController}
-                      setSelectedController={setSelectedController}
-        />
+        <RenderLayout value={children} control={formControl}
+                      $selectedController={$selectedController}
+                      setSelectedController={setSelectedController}/>
 
     </Component>
 }
