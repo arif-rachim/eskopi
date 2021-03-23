@@ -16,14 +16,14 @@ import TableInputController from "module/page-renderer/controller/TableInputCont
 import DataPanel from "module/page-designer/properties/DataPanel";
 import withTableData from "components/table/withTableData";
 import withAutoPopulateColumn from "components/table/withAutoPopulateColumn";
-import SpaceController from "module/page-renderer/controller/SpaceController";
-import SpaceLite from "module/page-designer/controls/controller/SpaceLite";
+import GroupController from "module/page-renderer/controller/GroupController";
+import GroupTemplate from "module/page-designer/controls/controller/GroupTemplate";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
     TEXT_AREA: 'textArea',
     BUTTON: 'button',
-    SPACE: 'space',
+    GROUP: 'space',
     LABEL: 'label',
     NUMBER_INPUT: 'numberInput',
     DATE_INPUT: 'dateInput',
@@ -35,7 +35,7 @@ export const ControlsNaming = {
     [Controls.TEXT_INPUT]: 'Text Input',
     [Controls.TEXT_AREA]: 'Text Area',
     [Controls.BUTTON]: 'Button',
-    [Controls.SPACE]: 'Group',
+    [Controls.GROUP]: 'Group',
     [Controls.LABEL]: 'Label',
     [Controls.DATE_INPUT]: 'Date',
     [Controls.TIME_INPUT]: 'Time',
@@ -44,7 +44,7 @@ export const ControlsNaming = {
 };
 
 export const ControlForPageRenderer = {
-    [Controls.SPACE]: SpaceController,
+    [Controls.GROUP]: GroupController,
     [Controls.LABEL]: LabelController,
     [Controls.BUTTON]: ButtonController,
     [Controls.TEXT_INPUT]: TextInputController,
@@ -56,7 +56,7 @@ export const ControlForPageRenderer = {
 }
 
 export const ControlForPageDesigner = {
-    [Controls.SPACE]: withTemplate(SpaceLite),
+    [Controls.GROUP]: withTemplate(GroupTemplate),
     [Controls.LABEL]: withTemplate(ControlForPageRenderer[Controls.LABEL]),
     [Controls.BUTTON]: withTemplate(ControlForPageRenderer[Controls.BUTTON]),
     [Controls.TEXT_INPUT]: withTemplate(ControlForPageRenderer[Controls.TEXT_INPUT]),
@@ -68,7 +68,7 @@ export const ControlForPageDesigner = {
 }
 
 export const ControlPropertiesCatalog = {
-    [Controls.SPACE]: [BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity],
+    [Controls.GROUP]: [BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.TEXT_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.TEXT_AREA]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.DATE_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
@@ -79,7 +79,7 @@ export const ControlPropertiesCatalog = {
 }
 
 export const Icons = {
-    [Controls.SPACE]: <svg
+    [Controls.GROUP]: <svg
         height={16}
         width={16}
         viewBox="0 0 68.153976 68.153977">

@@ -6,7 +6,7 @@ import {useState} from "react";
 export default function withTemplate(Component) {
     return function ControlledComponent({
                                             data,
-                                            formControl,
+                                            control,
                                             ...controllerProps
                                         }) {
         const {id} = data;
@@ -23,7 +23,7 @@ export default function withTemplate(Component) {
         });
 
         return <Component data={data}
-                          control={formControl}
+                          control={control}
                           containerProps={{
                               onDragOver: handleDragOverControlComponent()
                           }}

@@ -1,7 +1,7 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {ControlForPageRenderer} from "module/page-designer/controls/ControllerMapper";
 
-export default function SpaceController({
+export default function GroupController({
                                             data,
                                             control,
                                             style,

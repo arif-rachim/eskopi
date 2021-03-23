@@ -123,7 +123,7 @@ export const RenderLayout = ({value, control, $selectedController, setSelectedCo
         const ChildRender = ControlForPageDesigner[child.type];
         return <DraggableComponent render={ChildRender} key={child.id}
                                    data={child}
-                                   formControl={control}
+                                   control={control}
                                    $selectedController={$selectedController}
                                    setSelectedController={setSelectedController}
         />
