@@ -13,8 +13,6 @@ export default function DateInputController({
     return <Vertical p={2} pT={1} pB={1} width={width} {...containerProps}>
         <Controller render={InputDate}
                     control={control}
-                    name={"date"}
-                    label={"Date"}
                     style={style}
                     {...controllerProps} {...props}/>
     </Vertical>

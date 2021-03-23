@@ -14,7 +14,6 @@ export default function TimeInputController({
     return <Vertical p={2} pT={1} pB={1} width={width} {...containerProps}>
         <Controller render={InputTime}
                     control={control}
-                    label={"Time"}
                     style={style}
                     {...controllerProps} {...props}/>
     </Vertical>

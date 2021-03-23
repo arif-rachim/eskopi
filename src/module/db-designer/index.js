@@ -13,6 +13,7 @@ import Input from "components/input/Input";
 import {isUndefinedOrNull} from "components/utils";
 import {v4 as uuid} from "uuid";
 import Table from "components/table/Table";
+import {useConfirmMessage} from "../../components/dialog/Dialog";
 
 
 export default function DbDesigner({setTitle}) {
@@ -55,10 +56,31 @@ function PanelHeaderRenderer() {
     </Horizontal>
 }
 
+function NameCellRenderer(props){
+    debugger;
+    return <Input/>
+}
+
+function TypeCellRenderer(props){
+    return <Input />
+}
+
 function AddTablePanel(props) {
     const {control, handleSubmit} = useForm();
     const [$tableData, setTableData] = useObserver([]);
-    const [$columns, setColumns] = useObserver({});
+    const [$columns, setColumns] = useObserver({
+        name : {
+            title : 'Name',
+            width : '70%',
+            renderer : NameCellRenderer
+        },
+        type : {
+            title : 'Type',
+            width : '30%',
+            renderer : TypeCellRenderer
+        }
+    });
+    const showConfirmation = useConfirmMessage();
     return <form action="" onSubmit={handleSubmit(data => {
         debugger;
         console.log(data);
@@ -86,7 +108,16 @@ function AddTablePanel(props) {
                 }}>Add Field</Button>
                 <Horizontal flex={'1 0 auto'}/>
                 <Button type={'submit'}>Save</Button>
-                <Button type={'reset'}>Cancel</Button>
+                <Button type={'reset'} onClick={async () => {
+                    if(control.current.isModified()){
+                        const answer = await showConfirmation('Are you sure you want to cancel changes ?');
+                        if(answer === 'YES'){
+                            props.closePanel(false);
+                        }
+                    }else{
+                        props.closePanel(false);
+                    }
+                }}>Cancel</Button>
             </Horizontal>
 
         </Vertical>

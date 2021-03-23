@@ -35,6 +35,7 @@ const handleSubmitFactory = (control) => (callback) => (event) => {
 export default function useForm(defaultValue = {}) {
     const [$errors, setErrors] = useObserver({});
     const [$value, setValue] = useObserver({});
+
     const control = useRef({
         defaultValue,
         userEditingField: {},
@@ -48,6 +49,16 @@ export default function useForm(defaultValue = {}) {
         validator: {},
         onChange: {}
     });
+    const isModified = useCallback(() => {
+        const keys = Object.keys(control.current.modified);
+        for (const key of keys) {
+            if(control.current.modified[key] === true){
+                return true;
+            }
+        }
+        return false;
+    },[]);
+    control.current.isModified = isModified;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleSubmit = useCallback(handleSubmitFactory(control), []);
     const reset = useCallback(function resetForm(defaultValue) {

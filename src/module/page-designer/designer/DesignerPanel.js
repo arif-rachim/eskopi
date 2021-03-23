@@ -48,7 +48,10 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
     const dropListener = useContext(DropListenerContext);
     usePlaceHolderListener("drop", handlePlaceHolderDrop(rootRef, setData));
     const dragHoverCountRef = useRef(0);
-    const {control, handleSubmit} = useForm();
+    const {control, handleSubmit,$value} = useForm();
+    useObserverListener($value,value => {
+        console.log('We got value',value);
+    })
     const [$onPageDataSave, doSavePage] = useResource();
     const [$onPageDetailFetched, doLoadDetail] = useResource();
     const $hasSelectedPage = useObserverMapper($selectedPage, selectedPage => !isNullOrUndefined(selectedPage))

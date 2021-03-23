@@ -137,6 +137,9 @@ function Input({
 
 export function mapToNameFactory(name, converter = textConverter) {
     return function mapToName(value) {
+        if(JSON.stringify(value) === '{}'){
+            return undefined;
+        }
         if ((isNullOrUndefined(name) || name === '')) {
             return converter(value);
         }

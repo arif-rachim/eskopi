@@ -14,7 +14,6 @@ export default function TextInputController({
         <Controller render={Input}
                     type={"input"}
                     control={control}
-                    disabled={false}
                     autoComplete={'off'}
                     style={style}
                     {...controllerProps} {...props}/>

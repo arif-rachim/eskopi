@@ -14,7 +14,6 @@ export default function NumberInputController({
     return <Vertical p={2} pT={1} pB={1} width={width} {...containerProps}>
         <Controller render={InputNumber}
                     control={control}
-                    label={"Number"}
                     style={style}
                     {...controllerProps} {...props}/>
     </Vertical>

@@ -12,7 +12,7 @@ export default function TextAreaController({
     const {id, children, type, parentIds, width, ...props} = data;
 
     return <Vertical p={2} pT={1} pB={1} width={width} {...containerProps}>
-        <Controller render={TextArea} rows={3} label={"Text Area"} control={control}
+        <Controller render={TextArea} rows={3}  control={control}
                     disabled={false}
                     style={style}
                     autoComplete={'off'}

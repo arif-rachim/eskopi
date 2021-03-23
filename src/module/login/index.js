@@ -60,7 +60,7 @@ export default function LoginScreen() {
                     <Button type={"button"} color={"secondary"} mL={1}
                             onClick={async () => {
                                 const email = await showPanel(closePanel => <RegistrationScreen onClose={closePanel}/>)
-                                control.current.setValue('email', email);
+                                control.current.onChange.email(email);
                             }} $disabled={$isPending}>Register</Button>
                     <Horizontal width={'100%'}/>
                     <Button type={"submit"} style={{whiteSpace: 'nowrap'}} $disabled={$isPending}>Log In</Button>
