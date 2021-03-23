@@ -91,6 +91,16 @@ export function isUndefinedOrNull(b) {
     return b === undefined || b === null;
 }
 
+
+/**
+ * To check if parameter is empty
+ * @param p
+ * @returns {boolean}
+ */
+export function isEmpty(p) {
+    return isNullOrUndefined(p) || p === '';
+}
+
 /**
  * Function to check if object is date
  * @param date

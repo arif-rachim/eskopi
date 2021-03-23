@@ -10,7 +10,7 @@ import Button from "components/button/Button";
 import useSlideDownStackPanel from "components/page/useSlideDownStackPanel";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
-import {isUndefinedOrNull} from "components/utils";
+import {isEmpty, isUndefinedOrNull} from "components/utils";
 import {v4 as uuid} from "uuid";
 import {useConfirmMessage} from "../../components/dialog/Dialog";
 import Select from "components/input/Select";
@@ -57,19 +57,32 @@ function PanelHeaderRenderer() {
     </Horizontal>
 }
 
-function NameCellRenderer(props) {
-    return <Input/>
+function NameCellRenderer({$tableData, rowIndex, colIndex, field, onChange, ...props}) {
+    const $value = useObserverMapper($tableData, tableData => {
+        return tableData[rowIndex][field];
+    });
+    return <Input $value={$value} onChange={value => {
+        onChange((oldValue) => {
+            const nextValue = {...oldValue};
+            nextValue[field] = value
+            return nextValue;
+        });
+    }}/>
 }
 
 function TypeCellRenderer({$tableData, rowIndex, colIndex, field, onChange, ...props}) {
-    debugger;
+
     const [$data] = useObserver(['STRING', 'NUMBER', 'DATE', 'BOOLEAN', 'ARRAY']);
     const $value = useObserverMapper($tableData, tableData => {
         return tableData[rowIndex][field];
-    })
+    });
 
     return <Select $data={$data} $value={$value} onChange={(value) => {
-        onChange(value);
+        onChange((oldValue) => {
+            const nextValue = {...oldValue};
+            nextValue[field] = value
+            return nextValue;
+        });
     }}/>
 }
 
@@ -101,8 +114,8 @@ function AddTablePanel(props) {
                         name={"fields"}
                         label={'Fields'}
                         $columns={$columns}
-                        validator={requiredValidator('Table Name')}/>
-            <Horizontal hAlign={'right'} gap={2}>
+                        validator={tableRequiredValidator('Table Name')}/>
+            <Horizontal hAlign={'right'} gap={2} mT={3}>
                 <Button type={'button'} onClick={() => {
                     control.current.onChange.fields(oldField => {
                         oldField = oldField || [];
@@ -130,8 +143,26 @@ function AddTablePanel(props) {
 
 function requiredValidator(fieldName) {
     return function validator(value) {
+        if (isEmpty(value)) {
+            return fieldName + ' is mandatory';
+        }
+        return '';
+    }
+}
+
+function tableRequiredValidator(fieldName) {
+    return function validator(value) {
+
         if (isUndefinedOrNull(value) || value === '') {
             return fieldName + ' is required';
+        }
+        for (const row of value) {
+            if (isEmpty(row.name)) {
+                return fieldName + ':name is required';
+            }
+            if (isEmpty(row.type)) {
+                return fieldName + ':type is required';
+            }
         }
         return '';
     }

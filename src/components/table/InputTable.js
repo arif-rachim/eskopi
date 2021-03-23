@@ -27,6 +27,7 @@ export default function InputTable({dataKey, name, $columns, $errors, domRef, $v
                    $errors={$errors}
                    domRef={domRef}
                    $columns={$columns}
+                   onChange={onChange}
         />
     </Vertical>
 }
@@ -67,11 +68,7 @@ function RowItemRenderer({data, index, dataKey, dataToLabel, $value, onChange, $
                                 $tableData={$value}
                                 rowIndex={index}
                                 colIndex={colIndex}
-                                onChange={(value) => {
-                                    onChange(oldRow => {
-
-                                    })
-                                }}
+                                onChange={onChange}
                             />
                         </Vertical>
 

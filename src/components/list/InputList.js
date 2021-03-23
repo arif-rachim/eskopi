@@ -2,6 +2,7 @@ import {Vertical} from "components/layout/Layout";
 import {useObserverMapper, useObserverValue} from "components/useObserver";
 import {isFunction} from "components/utils";
 import {mapToNameFactory} from "components/input/Input";
+import useTheme from "components/useTheme";
 
 
 const DEFAULT_DATA_KEY = (data) => {
@@ -19,21 +20,36 @@ const DEFAULT_DATA_KEY = (data) => {
 
 const DEFAULT_DATA_TO_LABEL = (data) => data;
 
-function handleOnRowChange(fieldName, rowIndex, onChange) {
+function handleOnRowChange(rowIndex, onChange) {
     return function onRowChange(data) {
         if (onChange) {
             onChange(oldState => {
-                const nextState = {...oldState};
-                const nextFieldValue = [...nextState[fieldName]];
+                const nextState = [...oldState];
+                const oldValue = nextState[rowIndex];
                 if (isFunction(data)) {
-                    data = data(nextFieldValue[rowIndex])
+                    data = data(oldValue)
                 }
-                nextFieldValue.splice(rowIndex, 1, data);
-                nextState[fieldName] = nextFieldValue;
+                nextState.splice(rowIndex, 1, data);
                 return nextState;
             });
         }
     };
+}
+
+function RenderList({$dataProvider, dataKey, dataToLabel, $nameValue, onChange, props, itemRenderer}) {
+    const Renderer = itemRenderer;
+    const dataProvider = useObserverValue($dataProvider);
+    return <>
+        {dataProvider && dataProvider.map((data, index) => {
+            return <Renderer key={dataKey.apply(data, [data])}
+                             data={data}
+                             index={index}
+                             dataKey={dataKey}
+                             dataToLabel={dataToLabel}
+                             $value={$nameValue}
+                             onChange={handleOnRowChange(index, onChange)} {...props}/>
+        })}
+    </>;
 }
 
 /**
@@ -62,18 +78,20 @@ export default function InputList({
                                   }) {
     const $nameValue = useObserverMapper($value, mapToNameFactory(name));
     const $errorValue = useObserverMapper($errors, mapToNameFactory(name));
-    const Renderer = itemRenderer;
-    const dataProvider = useObserverValue($nameValue);
-    return <Vertical domRef={domRef} tabIndex={0} style={{outline: 'none'}}>
-        {dataProvider && dataProvider.map((data, index) => {
-            return <Renderer key={dataKey.apply(data, [data])}
-                             data={data}
-                             index={index}
-                             dataKey={dataKey}
-                             dataToLabel={dataToLabel}
-                             $value={$nameValue}
-                             onChange={handleOnRowChange(name, index, onChange)} {...props}/>
-        })}
+    const error = useObserverValue($errorValue);
+    const showError = error && error.length > 0;
+    const [theme] = useTheme();
+    return <Vertical domRef={domRef} tabIndex={0} style={{
+        outline: 'none',
+        border: showError ? `1px solid ${theme.danger}` : '1px solid rgba(0,0,0,0)'
+    }}>
+        <RenderList
+            $dataProvider={$nameValue}
+            dataKey={dataKey}
+            dataToLabel={dataToLabel} $nameValue={$nameValue}
+            onChange={onChange}
+            props={props}
+            itemRenderer={itemRenderer}/>
     </Vertical>
 }
 
