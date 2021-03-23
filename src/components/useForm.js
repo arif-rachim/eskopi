@@ -34,7 +34,7 @@ const handleSubmitFactory = (control) => (callback) => (event) => {
  */
 export default function useForm(defaultValue = {}) {
     const [$errors, setErrors] = useObserver({});
-    const [$value, setValue] = useObserver({});
+    const [$value, setValue] = useObserver(defaultValue);
 
     const control = useRef({
         defaultValue,

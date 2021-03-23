@@ -1,5 +1,5 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {createContext, useContext, useEffect} from "react";
+import {createContext, useContext, useEffect, useState} from "react";
 import Panel from "components/panel/Panel";
 import List from "components/list/List";
 import AutoPopulateColumnTable from "components/table/AutoPopulateColumnTable";
@@ -12,7 +12,7 @@ import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import {isEmpty, isUndefinedOrNull} from "components/utils";
 import {v4 as uuid} from "uuid";
-import {useConfirmMessage} from "../../components/dialog/Dialog";
+import {useConfirmMessage, useInfoMessage} from "../../components/dialog/Dialog";
 import Select from "components/input/Select";
 import InputTable from "components/table/InputTable";
 
@@ -50,6 +50,7 @@ export default function DbDesigner({setTitle}) {
                           dataKey={data => data?.id_}
                           $value={$selectedTable}
                           onChange={setSelectedTable}
+                          itemRenderer={TableItemRenderer}
                           dataToLabel={data => data?.tableName}
                     />
                 </Panel>
@@ -61,13 +62,32 @@ export default function DbDesigner({setTitle}) {
     </DbDesignerContext.Provider>
 }
 
+function TableItemRenderer({dataToLabel, data, $value, onChange, ...props}) {
+    const [isSelected, setIsSelected] = useState(false);
+    const {reloadTable} = useContext(DbDesignerContext);
+    const showSlideDown = useSlideDownStackPanel();
+    useObserverListener($value, selectedRow => {
+        setIsSelected(selectedRow.id_ === data.id_);
+    });
+    return <Horizontal vAlign={'center'} color={"light"} brightness={isSelected ? -1 : 0}
+                       onClick={() => onChange(data)}>
+        <Horizontal flex={'1 0 auto'}>
+            {dataToLabel(data)}
+        </Horizontal>
+        <Button onClick={async () => {
+            await showSlideDown(TableForm, {data});
+            reloadTable();
+        }}>Edit</Button>
+    </Horizontal>
+}
+
 function PanelHeaderRenderer() {
     const {reloadTable} = useContext(DbDesignerContext);
     const showSlideDown = useSlideDownStackPanel();
     return <Horizontal vAlign={'center'}>
         <Horizontal flex={'1 0 auto'}>{'Tables'}</Horizontal>
         <Button onClick={async () => {
-            await showSlideDown(AddTablePanel);
+            await showSlideDown(TableForm);
             reloadTable();
         }}>Add</Button>
     </Horizontal>
@@ -102,8 +122,8 @@ function TypeCellRenderer({$tableData, rowIndex, colIndex, field, onChange, ...p
     }}/>
 }
 
-function AddTablePanel(props) {
-    const {control, handleSubmit} = useForm();
+function TableForm({data, ...props}) {
+    const {control, handleSubmit} = useForm(data);
     const [$columns] = useObserver({
         name: {
             title: 'Name',
@@ -116,11 +136,13 @@ function AddTablePanel(props) {
             renderer: TypeCellRenderer
         }
     });
+    const showInformation = useInfoMessage();
     const showConfirmation = useConfirmMessage();
+
     const [$onTableSaved, doSaveTable] = useResource();
     useResourceListener($onTableSaved, async (status, response) => {
         if (status === 'success') {
-            await showConfirmation('Data saved successfully');
+            await showInformation('Data saved successfully');
             props.closePanel(true);
         }
     });
