@@ -1,9 +1,9 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {useEffect} from "react";
+import {createContext, useContext, useEffect} from "react";
 import Panel from "components/panel/Panel";
 import List from "components/list/List";
 import AutoPopulateColumnTable from "components/table/AutoPopulateColumnTable";
-import useObserver, {useObserverMapper} from "components/useObserver";
+import useObserver, {useObserverListener, useObserverMapper} from "components/useObserver";
 import useResource, {useResourceListener} from "components/useResource";
 import {SYSTEM_TABLES} from "components/SystemTableName";
 import Button from "components/button/Button";
@@ -16,43 +16,59 @@ import {useConfirmMessage} from "../../components/dialog/Dialog";
 import Select from "components/input/Select";
 import InputTable from "components/table/InputTable";
 
-
+const DbDesignerContext = createContext({});
 export default function DbDesigner({setTitle}) {
     useEffect(() => {
         setTitle('DB Designer');
     }, [setTitle]);
-    const [$onTableLoaded] = useResource({url: `/db/${SYSTEM_TABLES}`})
+    const [$onTableLoaded, reloadTable] = useResource({url: `/db/${SYSTEM_TABLES}`})
+    const [$onTableDetailLoaded, doLoadTableDetail] = useResource();
     const [$table, setTable] = useObserver([]);
     const [$selectedTable, setSelectedTable] = useObserver();
-    const [$tableContent] = useObserver();
+    const [$tableContent, setTableContent] = useObserver();
     useResourceListener($onTableLoaded, (status, result) => {
         if (status === 'success') {
             setTable(result);
         }
-    })
-    return <Horizontal width={'100%'} height={'100%'}>
-        <Vertical color={'light'} brightness={1} bR={1} height={'100%'} flex={'0 0 200px'}>
-            <Panel headerTitle={'Tables'} headerRenderer={PanelHeaderRenderer}>
-                <List $data={$table}
-                      dataKey={data => data?.id_}
-                      $value={$selectedTable}
-                      onChange={setSelectedTable}
-                      dataToLabel={data => data?.label}
-                />
-            </Panel>
-        </Vertical>
-        <Vertical color={'light'} brightness={1} flex={'1 0 auto'}>
-            <AutoPopulateColumnTable $data={$tableContent} dataKey={data => data?.id_}/>
-        </Vertical>
-    </Horizontal>
+    });
+
+    useResourceListener($onTableDetailLoaded, (status, result) => {
+        if (status === 'success') {
+            setTableContent(result.fields);
+        }
+    });
+
+    useObserverListener($selectedTable, selectedTable => {
+        doLoadTableDetail(`/db/${SYSTEM_TABLES}/${$selectedTable.current.id_}`);
+    });
+
+    return <DbDesignerContext.Provider value={{reloadTable}}>
+        <Horizontal width={'100%'} height={'100%'}>
+            <Vertical color={'light'} brightness={1} bR={1} height={'100%'} flex={'0 0 200px'}>
+                <Panel headerTitle={'Tables'} headerRenderer={PanelHeaderRenderer}>
+                    <List $data={$table}
+                          dataKey={data => data?.id_}
+                          $value={$selectedTable}
+                          onChange={setSelectedTable}
+                          dataToLabel={data => data?.tableName}
+                    />
+                </Panel>
+            </Vertical>
+            <Vertical color={'light'} brightness={1} flex={'1 0 auto'}>
+                <AutoPopulateColumnTable $data={$tableContent} dataKey={data => data?.id}/>
+            </Vertical>
+        </Horizontal>
+    </DbDesignerContext.Provider>
 }
 
 function PanelHeaderRenderer() {
+    const {reloadTable} = useContext(DbDesignerContext);
     const showSlideDown = useSlideDownStackPanel();
     return <Horizontal vAlign={'center'}>
         <Horizontal flex={'1 0 auto'}>{'Tables'}</Horizontal>
         <Button onClick={async () => {
             await showSlideDown(AddTablePanel);
+            reloadTable();
         }}>Add</Button>
     </Horizontal>
 }
@@ -101,9 +117,15 @@ function AddTablePanel(props) {
         }
     });
     const showConfirmation = useConfirmMessage();
+    const [$onTableSaved, doSaveTable] = useResource();
+    useResourceListener($onTableSaved, async (status, response) => {
+        if (status === 'success') {
+            await showConfirmation('Data saved successfully');
+            props.closePanel(true);
+        }
+    });
     return <form action="" onSubmit={handleSubmit(data => {
-        debugger;
-        console.log(data);
+        doSaveTable(`/db/${SYSTEM_TABLES}`, {...data, a: 'c'});
     })}>
         <Vertical gap={2} p={2} elevation={2} width={300}>
             <Controller control={control} render={Input} name={"tableName"}

@@ -136,17 +136,18 @@ export default function useResource({url, data, timeoutMs = 100} = {timeoutMs: 1
         setResourceObserver(propsRef.current.suspenseObject);
     });
 
-    const setResource = useCallback((url, data) => {
+    const setResource = useCallback((urlPath, data) => {
+        urlPath = urlPath || url;
         if (data === undefined) {
-            propsRef.current.suspenseObject = suspensify(get(url, token), setIsPending);
+            propsRef.current.suspenseObject = suspensify(get(urlPath, token), setIsPending);
         } else {
-            propsRef.current.suspenseObject = suspensify(post(url, data, token), setIsPending);
+            propsRef.current.suspenseObject = suspensify(post(urlPath, data, token), setIsPending);
         }
         propsRef.current.timer = setTimeout(() => {
             propsRef.current.timer = null;
             setResourceObserver(propsRef.current.suspenseObject);
         }, timeoutMs);
-    }, [setIsPending, setResourceObserver, timeoutMs, token]);
+    }, [setIsPending, setResourceObserver, timeoutMs, token, url]);
     return [
         $resource,
         setResource,
