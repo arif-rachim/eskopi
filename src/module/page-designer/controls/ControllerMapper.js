@@ -18,12 +18,15 @@ import withTableData from "components/table/withTableData";
 import withAutoPopulateColumn from "components/table/withAutoPopulateColumn";
 import GroupController from "module/page-renderer/controller/GroupController";
 import GroupTemplate from "module/page-designer/controls/controller/GroupTemplate";
+import FormTemplate from "module/page-designer/controls/controller/FormTemplate";
+import FormController from "module/page-renderer/controller/FormController";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
     TEXT_AREA: 'textArea',
     BUTTON: 'button',
     GROUP: 'space',
+    FORM: 'form',
     LABEL: 'label',
     NUMBER_INPUT: 'numberInput',
     DATE_INPUT: 'dateInput',
@@ -40,10 +43,12 @@ export const ControlsNaming = {
     [Controls.DATE_INPUT]: 'Date',
     [Controls.TIME_INPUT]: 'Time',
     [Controls.NUMBER_INPUT]: 'Number',
-    [Controls.TABLE_INPUT]: 'Table'
+    [Controls.TABLE_INPUT]: 'Table',
+    [Controls.FORM]: 'Form'
 };
 
 export const ControlForPageRenderer = {
+    [Controls.FORM]: FormController,
     [Controls.GROUP]: GroupController,
     [Controls.LABEL]: LabelController,
     [Controls.BUTTON]: ButtonController,
@@ -56,6 +61,7 @@ export const ControlForPageRenderer = {
 }
 
 export const ControlForPageDesigner = {
+    [Controls.FORM]: withTemplate(FormTemplate),
     [Controls.GROUP]: withTemplate(GroupTemplate),
     [Controls.LABEL]: withTemplate(ControlForPageRenderer[Controls.LABEL]),
     [Controls.BUTTON]: withTemplate(ControlForPageRenderer[Controls.BUTTON]),
@@ -68,6 +74,7 @@ export const ControlForPageDesigner = {
 }
 
 export const ControlPropertiesCatalog = {
+    [Controls.FORM]: [BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.GROUP]: [BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.TEXT_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.TEXT_AREA]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
@@ -79,6 +86,39 @@ export const ControlPropertiesCatalog = {
 }
 
 export const Icons = {
+    [Controls.FORM]: <svg
+        height={16}
+        width={16}
+        viewBox="0 0 68.153976 68.153977">
+        <defs
+            id="defs2">
+            <clipPath
+                id="clip0">
+                <rect
+                    x="581"
+                    y="204"
+                    width="343"
+                    height="340"
+                    id="rect833"/>
+            </clipPath>
+        </defs>
+        <g
+            transform="translate(-101.31109,-145.6641)">
+            <path
+                id="rect875"
+                style={{
+                    fill: '#000000',
+                    fillOpacity: 1,
+                    stroke: 'none',
+                    strokeWidth: 30.2362,
+                    strokeMiterlimit: 4,
+                    strokeDasharray: 'none',
+                    strokeOpacity: 1
+                }}
+                d="M 41.416016,36.365234 V 293.95508 H 145.9668 V 237.89062 H 97.480469 V 92.429688 H 145.9668 V 36.365234 Z m 153.039064,0 v 56.064454 h 48.48633 V 237.89062 h -48.48633 v 56.06446 H 299.00586 V 36.365234 Z"
+                transform="matrix(0.26458333,0,0,0.26458333,90.353101,136.04247)"/>
+        </g>
+    </svg>,
     [Controls.GROUP]: <svg
         height={16}
         width={16}

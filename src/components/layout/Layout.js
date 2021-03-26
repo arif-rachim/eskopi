@@ -143,6 +143,7 @@ function handleMouse(hasMouseDownOrHoverBrightness, setMouseOver, action, callba
 }
 
 /**
+ * @param {string} element - default element would be div
  * @param {*} theme
  * @param {boolean} horizontal
  * @param {JSX.Element[]} children
@@ -213,6 +214,7 @@ function handleMouse(hasMouseDownOrHoverBrightness, setMouseOver, action, callba
  * @constructor
  */
 function Layout({
+                    element = 'div',
                     theme,
                     domRef,
                     horizontal = false,
@@ -315,27 +317,27 @@ function Layout({
 
     const hasMouseHover = brightnessHover !== undefined;
     const hasMouseDown = brightnessMouseDown !== undefined;
+    const Element = element;
 
-
-    return <div ref={domRef} className={[...classNames, ...className].join(' ')}
-                style={{
-                    ...dimensionStyle,
-                    ...colorStyle,
-                    ...paddingMarginStyle,
-                    ...borderStyle,
-                    ...radiusStyle,
-                    ...childrenPositionStyle,
-                    ...blurStyle,
-                    ...elevationStyle,
-                    ...internalStyle,
-                    ...style
-                }} {...props}
-                onMouseEnter={handleMouse(hasMouseHover, setMouseOver, true, props.onMouseEnter)}
-                onMouseLeave={handleMouse(hasMouseHover, setMouseOver, false, props.onMouseLeave)}
-                onMouseDown={handleMouse(hasMouseDown, setMouseDown, true, props.onMouseDown)}
-                onMouseUp={handleMouse(hasMouseDown, setMouseDown, false, props.onMouseUp)}
-                onClick={onClick}
-    >{childrenClone}</div>
+    return <Element ref={domRef} className={[...classNames, ...className].join(' ')}
+                    style={{
+                        ...dimensionStyle,
+                        ...colorStyle,
+                        ...paddingMarginStyle,
+                        ...borderStyle,
+                        ...radiusStyle,
+                        ...childrenPositionStyle,
+                        ...blurStyle,
+                        ...elevationStyle,
+                        ...internalStyle,
+                        ...style
+                    }} {...props}
+                    onMouseEnter={handleMouse(hasMouseHover, setMouseOver, true, props.onMouseEnter)}
+                    onMouseLeave={handleMouse(hasMouseHover, setMouseOver, false, props.onMouseLeave)}
+                    onMouseDown={handleMouse(hasMouseDown, setMouseDown, true, props.onMouseDown)}
+                    onMouseUp={handleMouse(hasMouseDown, setMouseDown, false, props.onMouseUp)}
+                    onClick={onClick}
+    >{childrenClone}</Element>
 }
 
 

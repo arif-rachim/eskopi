@@ -11,30 +11,29 @@ function AlignmentAndGap({control}) {
     return <Vertical>
         <Horizontal gap={5} p={2}>
             <Controller label={'Layout'} horizontalLabelPositionWidth={60}
-                        render={Select} name={'layout'} flex={'1 0 auto'}
+                        render={Select} name={'layout'}
                         $data={$layoutData}
                         dataKey={data => data}
                         control={control}
-                        containerStyle={{width: '50%'}}
+                        containerStyle={{width: '49%'}}
             />
-            <Controller label={'Gap'} horizontalLabelPositionWidth={60} render={Input} name={'gap'}
-                        flex={'1 0 auto'} control={control}
-                        containerStyle={{width: '50%'}}
+            <Controller label={'Gap'} horizontalLabelPositionWidth={60} render={Input} name={'gap'} control={control}
+                        containerStyle={{width: '49%'}}
             />
         </Horizontal>
         <Horizontal gap={5} p={2}>
             <Controller label={'Vertical'} horizontalLabelPositionWidth={60}
-                        render={Select} name={'vAlign'} flex={'1 0 auto'}
+                        render={Select} name={'vAlign'}
                         $data={$verticalData}
                         dataKey={data => data}
                         control={control}
-                        containerStyle={{width: '50%'}}
+                        containerStyle={{width: '49%'}}
             />
             <Controller label={'Horizontal'} horizontalLabelPositionWidth={60} render={Select} name={'hAlign'}
                         flex={'1 0 auto'} control={control}
                         dataKey={data => data}
                         $data={$horizontalData}
-                        containerStyle={{width: '50%'}}
+                        containerStyle={{width: '49%'}}
             />
         </Horizontal>
     </Vertical>

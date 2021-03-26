@@ -11,23 +11,23 @@ function ColorBrightnessOpacity({control}) {
             <Controller label={'Color'} horizontalLabelPositionWidth={60}
                         render={Select} name={'color'} flex={'1 0 auto'}
                         control={control}
-                        containerStyle={{width: '50%'}}
+                        containerStyle={{width: '49%'}}
                         $data={$color}
                         dataKey={data => data}
             />
             <Controller label={'Brightness'} horizontalLabelPositionWidth={60} render={Input} name={'brightness'}
                         flex={'1 0 auto'} control={control}
-                        containerStyle={{width: '50%'}}
+                        containerStyle={{width: '49%'}}
             />
         </Horizontal>
         <Horizontal gap={5} p={2}>
             <Controller label={'Alpha'} horizontalLabelPositionWidth={60}
                         render={Input} name={'alpha'} flex={'1 0 auto'}
                         control={control}
-                        containerStyle={{width: '50%'}}/>
+                        containerStyle={{width: '49%'}}/>
             <Controller label={'Opacity'} horizontalLabelPositionWidth={60} render={Input} name={'opacity'}
                         flex={'1 0 auto'} control={control}
-                        containerStyle={{width: '50%'}}
+                        containerStyle={{width: '49%'}}
             />
         </Horizontal>
     </Vertical>

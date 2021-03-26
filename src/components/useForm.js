@@ -216,30 +216,24 @@ export function Controller({
     containerStyle = containerStyle || {};
 
     const isHorizontal = horizontalLabelPositionWidth > 0;
-    return <Vertical overflow={'visible'} style={containerStyle}>
-        <label>
-            <Vertical overflow={'visible'}>
-                {isHorizontal &&
-                <Horizontal flex={'1 0 auto'} vAlign={'center'}>
-                    <Horizontal style={{fontSize: '0.8rem', whiteSpace: 'nowrap'}}
-                                flex={`0 0 ${horizontalLabelPositionWidth}px`}>{label}</Horizontal>
+    if (isHorizontal) {
+        return <Horizontal element={'label'} overflow={'visible'} flex={'1 0 auto'} vAlign={'center'}
+                           style={containerStyle}>
+            <Horizontal style={{fontSize: '0.8rem', whiteSpace: 'nowrap'}}
+                        flex={`0 0 ${horizontalLabelPositionWidth}px`}>{label}</Horizontal>
+            <Render name={name} onBlur={onBlur} onChange={onChange} $value={control.current.$value}
+                    $errors={control.current.$errors} {...props} style={{...props.style, width: '100%'}}/>
+            <Label name={name} color={'danger'} $value={control.current.$errors}
+                   style={{fontSize: '0.7rem', position: 'absolute', bottom: -12, right: 0}}/>
+        </Horizontal>
+    }
+    return <Vertical element={'label'} overflow={'visible'} style={containerStyle}>
+        <Horizontal style={{fontSize: '0.8rem'}}>{label}</Horizontal>
+        <Render name={name} onBlur={onBlur} onChange={onChange} $value={control.current.$value}
+                $errors={control.current.$errors} {...props}/>
+        <Label name={name} color={'danger'} $value={control.current.$errors}
+               style={{fontSize: '0.7rem', position: 'absolute', bottom: -12, right: 0}}/>
+    </Vertical>
 
-                    <Render name={name} onBlur={onBlur} onChange={onChange} $value={control.current.$value}
-                            $errors={control.current.$errors} {...props} style={{...props.style, width: '100%'}}/>
-
-                </Horizontal>
-                }
-                {!isHorizontal &&
-                <Vertical>
-                    <Horizontal style={{fontSize: '0.8rem'}}>{label}</Horizontal>
-                    <Render name={name} onBlur={onBlur} onChange={onChange} $value={control.current.$value}
-                            $errors={control.current.$errors} {...props}/>
-                </Vertical>
-                }
-                <Label name={name} color={'danger'} $value={control.current.$errors}
-                       style={{fontSize: '0.7rem', position: 'absolute', bottom: -12, right: 0}}/>
-            </Vertical>
-        </label>
-    </Vertical>;
 }
 

@@ -47,7 +47,7 @@ export default function PageRenderer({params, setTitle}) {
     const showInfo = useInfoMessage();
     useResourceListener($onSavePage, (status, response) => {
         if (status === 'success') {
-            showInfo('Data saved succesfully');
+            showInfo('Data saved succesfully').then();
             reset(response);
         }
     });
