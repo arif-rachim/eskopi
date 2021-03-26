@@ -31,7 +31,8 @@ export default function Tree({
                                  domRef,
                                  compRef,
                                  rowProps,
-                                 $value, onChange,
+                                 $value,
+                                 onChange,
                                  ...props
                              }) {
 

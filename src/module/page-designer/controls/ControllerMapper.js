@@ -20,6 +20,7 @@ import GroupController from "module/page-renderer/controller/GroupController";
 import GroupTemplate from "module/page-designer/controls/controller/GroupTemplate";
 import FormTemplate from "module/page-designer/controls/controller/FormTemplate";
 import FormController from "module/page-renderer/controller/FormController";
+import FormPanel from "module/page-designer/properties/FormPanel";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
@@ -74,7 +75,7 @@ export const ControlForPageDesigner = {
 }
 
 export const ControlPropertiesCatalog = {
-    [Controls.FORM]: [BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity],
+    [Controls.FORM]: [FormPanel, BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.GROUP]: [BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.TEXT_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.TEXT_AREA]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],

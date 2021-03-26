@@ -5,3 +5,7 @@
 .input {
     box-sizing: border-box;
 }
+
+.editor textarea:focus {
+    outline: none;
+}

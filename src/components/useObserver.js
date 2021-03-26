@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {debounce, isFunction} from "components/utils";
+import {debounce, isFunction, isNullOrUndefined} from "components/utils";
 
 /**
  * Utilities to check if an object is an observer.
@@ -157,10 +157,11 @@ export function useObserverListener(observers, listener = undefined) {
             listenerRef.current.apply(null, [newValues]);
         };
         const removeListeners = observers.map(($o, index) => {
-            if ($o === undefined) {
-                debugger;
+            if (isNullOrUndefined($o) || !isFunction($o.addListener)) {
+                return () => {
+                };
             }
-            return $o.addListener(listener(index))
+            return $o.addListener(listener(index));
         });
         return () => removeListeners.forEach(removeListener => removeListener.call())
         // eslint-disable-next-line

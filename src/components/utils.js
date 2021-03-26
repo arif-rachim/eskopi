@@ -1,3 +1,5 @@
+import {v4 as uuid} from "uuid";
+
 /**
  * Function to check if the parameter given is a function
  * @param {any} functionToCheck
@@ -108,4 +110,12 @@ export function isEmpty(p) {
  */
 export function isDate(date) {
     return Object.prototype.toString.call(date) === '[object Date]'
+}
+
+/**
+ * Function to generate UID
+ * @returns {string}
+ */
+export function generateUid() {
+    return uuid();
 }

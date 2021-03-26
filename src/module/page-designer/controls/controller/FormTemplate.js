@@ -15,7 +15,7 @@ export default function FormTemplate({
                           setSelectedController={setSelectedController}
                           $selectedController={$selectedController}
                           control={control}
-                          element={'form'}
+                          element={'div'}
                           {...controllerProps}
     />
 }

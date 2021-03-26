@@ -52,20 +52,15 @@ export default function PageRenderer({params, setTitle}) {
         }
     });
 
-    return <form action="" style={{height: '100%', display: 'flex', flexDirection: 'column'}}
-                 onSubmit={handleSubmit((data) => {
-                     doSavaPage(`/db/${$pageInfo.current.id}`, {...data, a: 'c'});
-                 })}>
-        <ObserverValue $observers={useObserverMapper($pageDesign, data => data?.children)}>{
-            (children) => {
-                children = children || [];
-                return children.map(child => {
-                    const ChildRender = ControlForPageRenderer[child.type];
-                    return <ChildRender key={child.id} data={child} control={control}/>
-                });
-            }
-        }</ObserverValue>
-    </form>
+    return <ObserverValue $observers={useObserverMapper($pageDesign, data => data?.children)}>{
+        (children) => {
+            children = children || [];
+            return children.map(child => {
+                const ChildRender = ControlForPageRenderer[child.type];
+                return <ChildRender key={child.id} data={child} control={control}/>
+            });
+        }
+    }</ObserverValue>
 }
 
 

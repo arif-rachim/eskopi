@@ -11,7 +11,7 @@ export const DropListenerContext = createContext(null);
 export default function PageDesigner({setTitle}) {
     useEffect(() => {
         if (setTitle) {
-            setTitle('Page Designer')
+            setTitle('Designer')
         }
     }, [setTitle]);
     const [$selectedPage, setSelectedPage] = useObserver();
@@ -34,22 +34,22 @@ export default function PageDesigner({setTitle}) {
                                    $selectedController={$selectedController}
                     />
                 </Vertical>
-                <Vertical width={265} color={"light"} brightness={0.5}>
-                    <Vertical height={'50%'}>
+                <Horizontal>
+                    <Vertical width={265} color={"light"} brightness={0.5}>
                         <PropertiesPanel
                             $layout={$data}
                             setLayout={setData}
                             $selectedController={$selectedController}
                         />
-                    </Vertical>
-                    <Vertical height={'50%'}>
+
                         <OutlinePanel $data={$data}
                                       setData={setData}
                                       $selectedController={$selectedController}
                                       setSelectedController={setSelectedController}
                         />
                     </Vertical>
-                </Vertical>
+                </Horizontal>
+
             </Horizontal>
         </Vertical>
     </DropListenerContext.Provider>

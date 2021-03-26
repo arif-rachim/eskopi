@@ -29,6 +29,7 @@ export default function OutlinePanel({$data, setData, $selectedController, setSe
     useOutlinePlaceHolderListener('drop', handleOutlinePlaceHolderDrop(treeRef, setData));
     useOutlinePlaceHolderListener('dragover', handlePlaceHolderDragOver);
     const dropListener = useContext(DropListenerContext);
+
     return <Panel headerTitle={'Outline'} onDrop={handleRootDrop(dropListener)}>
         <Tree $data={useObserverMapper($data, data => data.children)}
               $value={$selectedController}

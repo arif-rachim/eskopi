@@ -8,17 +8,26 @@ import useResource, {useResourceListener} from "components/useResource";
 import {SYSTEM_PAGES} from "../SystemTableName";
 import Tree from "../tree/Tree";
 
-const defaultMenus = {
-    'Page Designer': {
-        path: 'page-designer'
-    },
-    'DB Explorer': {
-        path: 'db-explorer'
-    },
-    'DB Designer': {
-        path: 'db-designer'
-    },
-};
+const defaultMenus = [{
+    id: 'Admin',
+    name: 'Admin',
+    children: [{
+        id: 'Page',
+        name: 'Page',
+        children: [
+            {id: 'PageDesigner', name: 'Designer', path: 'page-designer'},
+            {id: 'PageReducers', name: 'Reducers', path: 'page-reducers'},
+            {id: 'PageListeners', name: 'Listeners', path: 'page-listeners'}
+        ]
+    }, {
+        id: 'Database',
+        name: 'Database',
+        children: [
+            {id: 'DatabaseDesigner', name: 'Designer', path: 'db-designer'},
+            {id: 'DatabaseExplorer', name: 'Explorer', path: 'db-explorer'}
+        ]
+    }]
+}];
 
 export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
 
@@ -26,19 +35,28 @@ export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
     useClickOutside([domRef, menuButtonRef], event => {
         setShowMenu(false);
     });
-    const menus = defaultMenus; // later on we can pull dynamic menus from database.
+
     const {control} = useForm({search: ''});
     const [$onPageLoad] = useResource({url: `/db/${SYSTEM_PAGES}`});
     const [$menuTree, setMenuTree] = useObserver();
+    const [$defaultMenus] = useObserver(defaultMenus);
     useResourceListener($onPageLoad, (status, pageLoad) => {
         if (status === 'success') {
             setMenuTree(pageLoad[0]);
         }
-    })
+    });
+
     const [$selectedMenu, setSelectedMenu] = useObserver();
 
     useObserverListener($selectedMenu, (newValue) => {
-        window.location.hash = `#page-renderer/${newValue.id}`;
+        if (newValue.children && newValue.children.length > 0) {
+            return;
+        }
+        if (newValue.path) {
+            window.location.hash = '#' + newValue.path;
+        } else {
+            window.location.hash = `#page-renderer/${newValue.id}`;
+        }
         setShowMenu(false);
     });
 
@@ -54,18 +72,27 @@ export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
                         placeholder={'Search'}/>
         </Vertical>
 
-        {Object.keys(menus).map(menu => {
-            return <Vertical key={menu} color={"light"} cursor={"pointer"}
-                             brightness={-0.2} brightnessHover={-0.6}
-                             brightnessMouseDown={-0.9}
-                             bB={1} p={1} onClick={() => {
-                window.location.hash = `#${menus[menu].path}`;
-                setShowMenu(false);
-            }}>
-                {menu}
-            </Vertical>
-        })}
-
+        {/*{Object.keys(menus).map(menu => {*/}
+        {/*    return <Vertical key={menu} color={"light"} cursor={"pointer"}*/}
+        {/*                     brightness={-0.2} brightnessHover={-0.6}*/}
+        {/*                     brightnessMouseDown={-0.9}*/}
+        {/*                     bB={1} p={1} onClick={() => {*/}
+        {/*        window.location.hash = `#${menus[menu].path}`;*/}
+        {/*        setShowMenu(false);*/}
+        {/*    }}>*/}
+        {/*        {menu}*/}
+        {/*    </Vertical>*/}
+        {/*})}*/}
+        <Tree $data={$defaultMenus} $value={$selectedMenu}
+              onChange={(value) => setSelectedMenu(value)} rowProps={{
+            color: "light",
+            cursor: "pointer",
+            brightness: -0.2,
+            brightnessHover: -0.6,
+            brightnessMouseDown: -0.9,
+            bB: 1,
+            p: 1
+        }}/>
         <Tree $data={useObserverMapper($menuTree, tree => tree?.children)}
               $value={$selectedMenu}
               onChange={(value) => setSelectedMenu(value)}
