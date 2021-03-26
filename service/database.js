@@ -162,7 +162,7 @@ function filterByQuery(array, query) {
             }
             return allMatch && match;
         }, true);
-        if (isValid) {
+        if (item && isValid) {
             acc.push(item);
         }
         return acc;

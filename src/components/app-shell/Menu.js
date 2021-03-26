@@ -15,9 +15,7 @@ const defaultMenus = [{
         id: 'Page',
         name: 'Page',
         children: [
-            {id: 'PageDesigner', name: 'Designer', path: 'page-designer'},
-            {id: 'PageReducers', name: 'Reducers', path: 'page-reducers'},
-            {id: 'PageListeners', name: 'Listeners', path: 'page-listeners'}
+            {id: 'PageDesigner', name: 'Designer', path: 'page-designer'}
         ]
     }, {
         id: 'Database',

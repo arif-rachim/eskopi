@@ -10,7 +10,7 @@ import Button from "components/button/Button";
 import useSlideDownStackPanel from "components/page/useSlideDownStackPanel";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
-import {isEmpty, isUndefinedOrNull} from "components/utils";
+import {isEmpty, isNullOrUndefined, stringToCamelCase, stringToPascalCase} from "components/utils";
 import {v4 as uuid} from "uuid";
 import {useConfirmMessage, useInfoMessage} from "../../components/dialog/Dialog";
 import Select from "components/input/Select";
@@ -97,10 +97,10 @@ function NameCellRenderer({$tableData, rowIndex, colIndex, field, onChange, ...p
     const $value = useObserverMapper($tableData, tableData => {
         return tableData[rowIndex][field];
     });
-    return <Input $value={$value} onChange={value => {
+    return <Input $value={$value} autoCaps={false} onChange={value => {
         onChange((oldValue) => {
             const nextValue = {...oldValue};
-            nextValue[field] = value
+            nextValue[field] = stringToCamelCase(value)
             return nextValue;
         });
     }}/>
@@ -147,10 +147,12 @@ function TableForm({data, ...props}) {
         }
     });
     return <form action="" onSubmit={handleSubmit(data => {
+        data.tableName = stringToPascalCase(data.tableName);
         doSaveTable(`/db/${SYSTEM_TABLES}`, {...data, a: 'c'});
     })}>
         <Vertical gap={2} p={2} elevation={2} width={300}>
             <Controller control={control} render={Input} name={"tableName"}
+                        autoCaps={false}
                         label={'Table Name'}
                         validator={requiredValidator('Table Name')}/>
             <Controller control={control}
@@ -197,7 +199,7 @@ function requiredValidator(fieldName) {
 function tableRequiredValidator(fieldName) {
     return function validator(value) {
 
-        if (isUndefinedOrNull(value) || value === '') {
+        if (isNullOrUndefined(value) || value === '') {
             return fieldName + ' is required';
         }
         for (const row of value) {

@@ -3,8 +3,9 @@ import IMask from 'imask';
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "components/layout/Layout";
 import useTheme from "components/useTheme";
 import {useObserverMapper, useObserverValue} from "components/useObserver";
-import {isUndefinedOrNull} from "components/utils";
+
 import styles from "components/input/Input.module.css";
+import {isNullOrUndefined} from "components/utils";
 
 export default function InputMask({
                                       name,
@@ -62,10 +63,10 @@ export default function InputMask({
     let errorMessage = useObserverValue($errorValue);
 
 
-    b = isUndefinedOrNull(b) ? 2 : b;
-    p = isUndefinedOrNull(p) ? 2 : p;
-    pT = isUndefinedOrNull(pT) ? 1 : pT;
-    pB = isUndefinedOrNull(pB) ? 1 : pB;
+    b = isNullOrUndefined(b) ? 2 : b;
+    p = isNullOrUndefined(p) ? 2 : p;
+    pT = isNullOrUndefined(pT) ? 1 : pT;
+    pB = isNullOrUndefined(pB) ? 1 : pB;
     color = errorMessage && errorMessage.length > 0 ? 'danger' : color || 'light';
     const buttonStyle = {
         background: 'none',

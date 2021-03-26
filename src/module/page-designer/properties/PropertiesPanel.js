@@ -17,6 +17,7 @@ import CollapsiblePanel from "components/panel/CollapsiblePanel";
  * @type {{common: {}, space: {layout: [string, string], name: string}}}
  */
 export default function PropertiesPanel({$layout, setLayout, $selectedController}) {
+
     const [$propertiesPanel, setPropertiesPanel] = useObserver([]);
     const {control, reset, $value} = useForm();
     useObserverListener($value, (value) => {
@@ -56,7 +57,7 @@ export default function PropertiesPanel({$layout, setLayout, $selectedController
             {(value) => {
                 return value.map((Panel, index) => {
                     return <CollapsiblePanel key={index} height={'unset'} headerTitle={Panel.title}>
-                        <Panel control={control}/>
+                        <Panel control={control} $selectedController={$selectedController}/>
                     </CollapsiblePanel>
                 });
             }}

@@ -4,8 +4,6 @@ import _ from "./module/index";
 import login from "./module/login/index";
 import login_registration from "./module/login/registration/index";
 import page_designer from "./module/page-designer/index";
-import page_listeners from "./module/page-listeners/index";
-import page_reducers from "./module/page-reducers/index";
 import page_renderer from "./module/page-renderer/index";
 import sample_checkbox from "./module/sample/checkbox/index";
 import sample_custom_controller from "./module/sample/custom-controller/index";
@@ -26,8 +24,6 @@ const routing = {
     'login': login,
     'login/registration': login_registration,
     'page-designer': page_designer,
-    'page-listeners': page_listeners,
-    'page-reducers': page_reducers,
     'page-renderer': page_renderer,
     'sample/checkbox': sample_checkbox,
     'sample/custom-controller': sample_custom_controller,

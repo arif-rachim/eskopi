@@ -6,6 +6,10 @@
     box-sizing: border-box;
 }
 
+.editor {
+    box-sizing: border-box;
+}
+
 .editor textarea:focus {
     outline: none;
 }

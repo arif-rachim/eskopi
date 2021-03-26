@@ -69,10 +69,12 @@ const flatArray = (array, result, parentKey, dataKey) => {
     array = array || [];
     return array.reduce((acc, next) => {
         const key = dataKey(next);
-        next.key_ = [...parentKey, key];
-        acc.push(next)
-        if (next.children) {
-            acc = flatArray(next.children, acc, next.key_, dataKey);
+        if (next) {
+            next.key_ = [...parentKey, key];
+            acc.push(next)
+            if (next.children) {
+                acc = flatArray(next.children, acc, next.key_, dataKey);
+            }
         }
         return acc;
     }, result);

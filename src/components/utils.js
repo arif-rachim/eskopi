@@ -1,4 +1,5 @@
 import {v4 as uuid} from "uuid";
+import voca from "voca";
 
 /**
  * Function to check if the parameter given is a function
@@ -67,6 +68,7 @@ export function debounce(func, wait = 100, immediate = false) {
     return debouncedFunction;
 }
 
+
 /**
  * Tools to handle double event within 500ms
  * @param {function(event,isDouble)} callback
@@ -83,16 +85,6 @@ export function handleDouble(callback) {
 }
 
 export const isUuid = (id) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
-
-/**
- * To check if parameter is undefined or null
- * @param b
- * @returns {boolean}
- */
-export function isUndefinedOrNull(b) {
-    return b === undefined || b === null;
-}
-
 
 /**
  * To check if parameter is empty
@@ -118,4 +110,22 @@ export function isDate(date) {
  */
 export function generateUid() {
     return uuid();
+}
+
+/**
+ * Converts the subject to camel case.
+ * @param string
+ * @returns {*}
+ */
+export function stringToCamelCase(string) {
+    return voca.camelCase(string);
+}
+
+/**
+ * Converts the subject to pascal case.
+ * @param string
+ * @returns {*}
+ */
+export function stringToPascalCase(string) {
+    return voca.capitalize(stringToCamelCase(string));
 }

@@ -79,7 +79,7 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
                   $visible={useObserverMapper($hasSelectedPage, value => !value)} vAlign={'center'} hAlign={'center'}>
             Please chose a page
         </Vertical>
-        <Vertical color={"light"} brightness={-3} p={3} flex={1} $visible={$hasSelectedPage}>
+        <Vertical color={"light"} brightness={-3} flex={1} $visible={$hasSelectedPage}>
             <form action="" onSubmit={handleSubmit(() => {
                 const data = $data.current;
                 data.pageId = $selectedPage.current.id;
@@ -92,7 +92,8 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
                           onDragLeave={handleRootDragLeave(dragHoverCountRef)}
                           onDrop={handleRootDrop(dragHoverCountRef, dropListener)} p={2}
                           onClick={() => setSelectedController(null)}
-                          data-layout={'vertical'} style={{height: 'calc(100% - 55px)'}} mB={2} overflow={"auto"}>
+                          data-layout={'vertical'} height={'100%'}
+                          m={2} overflow={"auto"}>
 
                     <ObserverValue $observers={useObserverMapper($data, data => {
                         return data.children
@@ -105,7 +106,7 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
                     }</ObserverValue>
 
                 </Vertical>
-                <Horizontal hAlign={'right'} gap={2}>
+                <Horizontal hAlign={'right'} gap={2} color={"light"} p={2} brightness={0.5}>
                     <Button>Save</Button>
                     <Button>Cancel</Button>
                 </Horizontal>

@@ -10,7 +10,7 @@ const API_SERVER = 'http://localhost:4000'
  * @param {object} data
  * @returns {Promise<object>}
  */
-const post = async (url, data, token) => {
+export const post = async (url, data, token) => {
     if (url.indexOf('/') !== 0) {
         url = '/' + url;
     }
@@ -39,7 +39,7 @@ const post = async (url, data, token) => {
  * @param {string} token
  * @returns {Promise<object>}
  */
-const get = async (url, token) => {
+export const get = async (url, token) => {
     if (url.indexOf('/') !== 0) {
         url = '/' + url;
     }

@@ -91,9 +91,9 @@ function InputCode({
     };
 
     b = isNullOrUndefined(b) ? 2 : b;
-    p = isNullOrUndefined(p) ? 2 : p;
-    pT = isNullOrUndefined(pT) ? 1 : pT;
-    pB = isNullOrUndefined(pB) ? 1 : pB;
+    p = isNullOrUndefined(p) ? 0 : p;
+    pT = isNullOrUndefined(pT) ? 0 : pT;
+    pB = isNullOrUndefined(pB) ? 0 : pB;
     color = errorMessage && errorMessage.length > 0 ? 'danger' : color || 'light';
 
     const paddingMarginStyle = parseStyle({p, pL, pT, pR, pB, m, mL, mT, mR, mB}, theme);

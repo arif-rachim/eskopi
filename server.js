@@ -13,12 +13,14 @@ const PORT = 4000;
 ----------- SETTING UP THE EXPRESS SERVER --------
  */
 app.use(morgan("dev"));
+app.set('etag', false);
 dotenv.config();
 
 const cors = (req, res, next) => {
     res.header("Access-Control-Allow-Origin", req.headers.origin);
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     res.header("Access-Control-Allow-Credentials", true);
+    res.header("Cache-Control", "no-store");
     next();
 }
 

@@ -134,7 +134,7 @@ function PopupMenu({parentRef, closePanel, itemRenderer, dataKey, $data, dataToL
         closePanel(false);
     });
 
-    return <Vertical domRef={domRef} pL={0.5} pR={0.5}>
+    return <Vertical domRef={domRef} pL={0.5} pR={0.5} elevation={1}>
         <List itemRenderer={itemRenderer} dataKey={dataKey} $data={$data} $value={$value}
               onChange={closePanel}
               dataToLabel={dataToLabel}

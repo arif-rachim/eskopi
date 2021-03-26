@@ -66,7 +66,7 @@ function Input({
                    b, bL, bR, bT, bB,
                    r, rTL, rTR, rBL, rBR,
                    onChange, onBlur,
-                   autoCaps = true,
+                   autoCaps = false,
                    $value,
                    $errors,
                    ...props
