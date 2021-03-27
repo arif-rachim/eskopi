@@ -22,7 +22,7 @@ export default function PageDesigner({setTitle}) {
 
         <Vertical height={'100%'}>
             <Horizontal height={'100%'}>
-                <Vertical height={'100%'} width={200} color={"light"} bR={4}>
+                <Vertical height={'100%'} width={200} color={"light"} bR={4} overflow={'auto'}>
                     <PageTreePanel $selectedPage={$selectedPage} setSelectedPage={setSelectedPage}/>
                     <ControlListPanel/>
                 </Vertical>
@@ -34,22 +34,19 @@ export default function PageDesigner({setTitle}) {
                                    $selectedController={$selectedController}
                     />
                 </Vertical>
-                <Horizontal>
-                    <Vertical width={265} color={"light"} brightness={0.5}>
-                        <PropertiesPanel
-                            $layout={$data}
-                            setLayout={setData}
-                            $selectedController={$selectedController}
-                        />
+                <Vertical width={265} color={"light"} bL={4} brightness={0.5}>
+                    <PropertiesPanel
+                        $layout={$data}
+                        setLayout={setData}
+                        $selectedController={$selectedController}
+                    />
 
-                        <OutlinePanel $data={$data}
-                                      setData={setData}
-                                      $selectedController={$selectedController}
-                                      setSelectedController={setSelectedController}
-                        />
-                    </Vertical>
-                </Horizontal>
-
+                    <OutlinePanel $data={$data}
+                                  setData={setData}
+                                  $selectedController={$selectedController}
+                                  setSelectedController={setSelectedController}
+                    />
+                </Vertical>
             </Horizontal>
         </Vertical>
     </DropListenerContext.Provider>

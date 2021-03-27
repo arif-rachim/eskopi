@@ -5,8 +5,10 @@
 
 .horizontal {
     flex-direction: row;
+    flex-shrink: 0;
 }
 
 .vertical {
     flex-direction: column;
+    flex-shrink: 0;
 }

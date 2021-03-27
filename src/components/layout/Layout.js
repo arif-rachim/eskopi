@@ -277,6 +277,7 @@ function Layout({
     const elevationStyle = elevation >= 1 && elevation <= 5 ? {boxShadow: Elevation[elevation - 1]} : {};
 
     const internalStyle = {};
+
     if (background) {
         internalStyle.background = background;
     }

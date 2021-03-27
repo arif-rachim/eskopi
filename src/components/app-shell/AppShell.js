@@ -19,7 +19,7 @@ export default function AppShell({children}) {
 }
 
 function Content({children, $showMenu, setShowMenu, menuButtonRef}) {
-    return <Vertical height={'100%'}>
+    return <Vertical height={'calc(100% - 49px)'}>
         {children}
         <Menu $showMenu={$showMenu} setShowMenu={setShowMenu} menuButtonRef={menuButtonRef}/>
     </Vertical>
