@@ -6,9 +6,11 @@
 .horizontal {
     flex-direction: row;
     flex-shrink: 0;
+    position: relative;
 }
 
 .vertical {
     flex-direction: column;
     flex-shrink: 0;
+    position: relative;
 }

@@ -48,7 +48,7 @@ export default function LoginScreen() {
     });
 
     const background = useGradient(-1).stop(0, 'light', 0, 1).stop(1, 'light', -1, 1).toString();
-    return <Vertical vAlign={'center'} hAlign={'center'} height={'100%'} background={background}>
+    return <Vertical vAlign={'center'} hAlign={'center'}  height={'100%'} background={background} style={{position:'fixed',width:'100%'}}>
         <form action="" onSubmit={handleSubmit(onSubmit(setSignInResource))}>
             <Vertical gap={2} width={200} b={1} p={4} r={5} elevation={1}>
                 <Controller control={control} render={Input} name={"email"} label={'Email'}

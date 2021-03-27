@@ -87,7 +87,7 @@ export default function Pages({pages, id, $activeIndex, index, setBookTitles}) {
                     </Horizontal>
                 </form>
             </Horizontal>
-            <Vertical height={'calc(100% - 30px)'}>
+            <Vertical height={'calc(100% - 33px)'}>
                 <ObserverValue $observers={$pagesToRender}>
                     {(value) => {
                         return <RenderPages value={value} $pageActiveIndex={$pageActiveIndex}/>
