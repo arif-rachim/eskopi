@@ -68,7 +68,7 @@ export default function Select({
                                    b, bL, bR, bT, bB,
                                    r, rTL, rTR, rBL, rBR,
                                    onChange, onBlur,
-                                   autoCaps = true,
+                                   autoCaps,
                                    $value,
                                    $errors,
                                    $data,

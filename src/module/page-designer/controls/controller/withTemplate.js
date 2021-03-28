@@ -21,11 +21,11 @@ export default function withTemplate(Component) {
             setFocused(selectedController.id === id);
         });
         const classNames = [];
-        if(isFocused){
+        if (isFocused) {
             classNames.push(style.onFocus);
-        }else if(isHovered){
+        } else if (isHovered) {
             classNames.push(style.onHover);
-        }else{
+        } else {
             classNames.push(style.onEmpty);
         }
         return <Component data={data}
