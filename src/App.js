@@ -53,6 +53,8 @@ function App() {
     })
     const [$activeTab, setActiveTab] = useObserver(0);
     const [$bookTitles, setBookTitles] = useObserver({});
+
+
     useObserverListener($books, books => {
         setBookTitles(oldTitles => {
             const booksIds = books.map(book => book.id);
@@ -71,8 +73,6 @@ function App() {
             return nextTitles;
         })
     });
-
-
     return <AuthCheck fallback={<LoginScreen/>}>
         <Vertical height={'100%'}>
             <TitlesContext.Provider value={setBookTitles}>

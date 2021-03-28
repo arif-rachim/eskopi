@@ -11,7 +11,7 @@ export const DropListenerContext = createContext(null);
 export default function PageDesigner({setTitle}) {
     useEffect(() => {
         if (setTitle) {
-            setTitle('Designer')
+            setTitle('Designer');
         }
     }, [setTitle]);
     const [$selectedPage, setSelectedPage] = useObserver();

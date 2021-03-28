@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useLayoutEffect, useMemo, useRef, useState} from "react";
 import {debounce, isFunction, isNullOrUndefined} from "components/utils";
 
 /**
@@ -94,7 +94,7 @@ export function useObserverValue(observers, mapper, debounceTimeout = 0) {
     const [internalState, setInternalState] = useState(() => observerIsUndefined ? observers : observers.map($o => $o.current));
     // eslint-disable-next-line
     const setState = useCallback(debounce(setInternalState, debounceTimeout), []);
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (observers === undefined) {
             return;
         }
@@ -145,8 +145,9 @@ export function useObserverListener(observers, listener = undefined) {
     }
     const listenerRef = useRef(listener);
     listenerRef.current = listener;
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (observers === undefined) {
+            //console.log('Oppps we got undefined observers, this might cause issue in future');
             return;
         }
         const listener = (index) => (newValue) => {
@@ -158,6 +159,7 @@ export function useObserverListener(observers, listener = undefined) {
         };
         const removeListeners = observers.map(($o, index) => {
             if (isNullOrUndefined($o) || !isFunction($o.addListener)) {
+                console.warn('We have undefined observer this might cause issue in future');
                 return () => {
                 };
             }

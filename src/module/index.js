@@ -1,8 +1,7 @@
 import PageDesigner from "module/page-designer";
 
-function Home() {
-    return <PageDesigner/>
+function Home({setTitle}) {
+    return <PageDesigner setTitle={setTitle}/>
 }
 
-Home.title = 'Home';
 export default Home;
