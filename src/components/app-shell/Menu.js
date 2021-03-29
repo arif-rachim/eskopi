@@ -1,4 +1,4 @@
-import useObserver, {useObserverListener, useObserverMapper, useObserverValue} from "components/useObserver";
+import useObserver, {useObserverMapper, useObserverValue} from "components/useObserver";
 import useClickOutside from "components/useClickOutside";
 import useForm, {Controller} from "components/useForm";
 import {Vertical} from "components/layout/Layout";
@@ -7,6 +7,7 @@ import {useRef} from "react";
 import useResource, {useResourceListener} from "components/useResource";
 import {SYSTEM_PAGES} from "../SystemTableName";
 import Tree from "../tree/Tree";
+import useNavigation from "components/useNavigation";
 
 const defaultMenus = [{
     id: 'Admin',
@@ -45,18 +46,18 @@ export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
     });
 
     const [$selectedMenu, setSelectedMenu] = useObserver();
-
-    useObserverListener($selectedMenu, (newValue) => {
-        if (newValue.children && newValue.children.length > 0) {
+    const navigateTo = useNavigation();
+    const onMenuClicked = (selectedMenu) => {
+        if (selectedMenu.children && selectedMenu.children.length > 0) {
             return;
         }
-        if (newValue.path) {
-            window.location.hash = '#' + newValue.path;
+        if (selectedMenu.path) {
+            navigateTo('#' + selectedMenu.path);
         } else {
-            window.location.hash = `#page-renderer/${newValue.id}`;
+            navigateTo(`#page-renderer/${selectedMenu.id}`);
         }
         setShowMenu(false);
-    });
+    }
 
     return <Vertical domRef={domRef}
                      top={0} height={'100%'} brightness={0.5}
@@ -70,19 +71,11 @@ export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
                         placeholder={'Search'}/>
         </Vertical>
 
-        {/*{Object.keys(menus).map(menu => {*/}
-        {/*    return <Vertical key={menu} color={"light"} cursor={"pointer"}*/}
-        {/*                     brightness={-0.2} brightnessHover={-0.6}*/}
-        {/*                     brightnessMouseDown={-0.9}*/}
-        {/*                     bB={1} p={1} onClick={() => {*/}
-        {/*        window.location.hash = `#${menus[menu].path}`;*/}
-        {/*        setShowMenu(false);*/}
-        {/*    }}>*/}
-        {/*        {menu}*/}
-        {/*    </Vertical>*/}
-        {/*})}*/}
         <Tree $data={$defaultMenus} $value={$selectedMenu}
-              onChange={(value) => setSelectedMenu(value)} rowProps={{
+              onChange={(value) => {
+                  onMenuClicked(value);
+                  setSelectedMenu(value);
+              }} rowProps={{
             color: "light",
             cursor: "pointer",
             brightness: -0.2,
@@ -93,7 +86,10 @@ export default function Menu({$showMenu, setShowMenu, menuButtonRef}) {
         }}/>
         <Tree $data={useObserverMapper($menuTree, tree => tree?.children)}
               $value={$selectedMenu}
-              onChange={(value) => setSelectedMenu(value)}
+              onChange={(value) => {
+                  onMenuClicked(value);
+                  setSelectedMenu(value);
+              }}
               rowProps={{
                   color: "light",
                   cursor: "pointer",

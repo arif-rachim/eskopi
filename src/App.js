@@ -1,7 +1,6 @@
 import {ThemeContextProvider} from "components/useTheme";
 import {LayerContextProvider} from "components/useLayers";
-import useRouter, {RouterProvider} from "./components/useRouter";
-import {createContext, Suspense, useCallback, useState} from "react";
+import {createContext, Suspense, useCallback, useContext, useEffect, useState} from "react";
 import LoginScreen from "module/login";
 import {AuthCheck, UserProvider} from "components/authentication/useUser";
 import ErrorBoundary from "components/error-boundary/ErrorBoundary"
@@ -15,6 +14,7 @@ import useObserver, {
     useObserverMapper,
     useObserverValue
 } from "components/useObserver";
+import {ElementToMountContext, getElementToMount, NavigationContextProvider} from "components/useNavigation";
 
 function handleOnChange(setActiveTab) {
     return (index) => setActiveTab(index);
@@ -41,19 +41,26 @@ function handleOnClose(setBooks, setActiveTab) {
 const TitlesContext = createContext([]);
 
 function App() {
-    const $element = useRouter();
-    const [$books, setBooks] = useObserver([{
-        pages: [$element.current],
-        id: uuid()
-    }]);
-    useObserverListener($element, (NewElement) => {
-        setBooks(pages => {
-            return [...pages, {pages: [NewElement], id: uuid()}];
+
+    const addElementToMountListener = useContext(ElementToMountContext);
+    const [$books, setBooks] = useObserver(() => {
+        const hash = window.location.hash;
+        if (hash && hash.length > 1) {
+            const NewElement = getElementToMount(hash);
+            return [{pages: [NewElement], id: uuid()}]
+        }
+        return []
+    });
+    useEffect(() => {
+        return addElementToMountListener((NewElement) => {
+            setBooks(pages => {
+                return [...pages, {pages: [NewElement], id: uuid()}];
+            })
         })
-    })
+    }, [addElementToMountListener, setBooks]);
+
     const [$activeTab, setActiveTab] = useObserver(0);
     const [$bookTitles, setBookTitles] = useObserver({});
-
 
     useObserverListener($books, books => {
         setBookTitles(oldTitles => {
@@ -142,7 +149,7 @@ function TabMenu({$data, $value, onChange, onClose}) {
 export default function Provider() {
     return (<UserProvider>
         <ThemeContextProvider>
-            <RouterProvider>
+            <NavigationContextProvider>
                 <LayerContextProvider>
                     <ErrorBoundary>
                         <AppShell>
@@ -154,7 +161,7 @@ export default function Provider() {
                         </AppShell>
                     </ErrorBoundary>
                 </LayerContextProvider>
-            </RouterProvider>
+            </NavigationContextProvider>
         </ThemeContextProvider>
     </UserProvider>)
 };

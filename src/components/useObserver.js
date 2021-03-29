@@ -29,7 +29,7 @@ export default function useObserver(defaultValue) {
          * @param {function(value)} callbackOrValue
          */
         const setValue = (callbackOrValue) => {
-            const oldVal = defaultValueRef.current;
+            const oldVal = isFunction(defaultValueRef.current) ? defaultValueRef.current() : defaultValueRef.current;
             let newVal = callbackOrValue;
             if (isFunction(callbackOrValue)) {
                 newVal = callbackOrValue.apply(this, [oldVal]);

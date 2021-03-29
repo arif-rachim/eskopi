@@ -5,11 +5,11 @@ import useGradient from "components/useGradient";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import Button from "components/button/Button";
-import {findMostMatchingComponent} from "../useRouter";
 import routing from "../../routing";
 import {PageDimensionProvider} from "components/page/usePageDimension";
 import {PageLayerContextProvider} from "components/page/usePageLayers";
 import {SlideDownStackPanelContextProvider} from "components/page/useSlideDownStackPanel";
+import {findMostMatchingComponent} from "components/useNavigation";
 
 function Page({Element, index, $activeIndex}) {
     const [$visible, setVisible] = useObserver($activeIndex.current === index);

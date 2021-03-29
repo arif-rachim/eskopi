@@ -1,13 +1,37 @@
-import {createContext, useContext, useEffect} from "react";
-import routing from "../routing";
-import {Horizontal, Vertical} from "./layout/Layout";
-import useObserver from "./useObserver";
+import React, {useCallback, useContext, useRef} from "react";
+import routing from "routing";
+import {Horizontal, Vertical} from "components/layout/Layout";
 
-const RoutingContext = createContext({});
+export const NavigationContext = React.createContext(() => {
+});
+export const ElementToMountContext = React.createContext({});
 
-export default function useRouter() {
-    return useContext(RoutingContext);
+export default function useNavigation() {
+    return useContext(NavigationContext);
 }
+
+export function NavigationContextProvider({children}) {
+    const navigationListenersRef = useRef([]);
+
+    const navigateTo = useCallback((hash) => {
+        const elementToMount = getElementToMount(hash);
+        navigationListenersRef.current.forEach(callback => callback.call(null, elementToMount));
+    }, []);
+
+    const addListener = useCallback((listener) => {
+        navigationListenersRef.current.push(listener);
+        return function removeListener() {
+            navigationListenersRef.current.splice(navigationListenersRef.current.indexOf(listener), 1);
+        }
+    }, []);
+
+    return <NavigationContext.Provider value={navigateTo}>
+        <ElementToMountContext.Provider value={addListener}>
+            {children}
+        </ElementToMountContext.Provider>
+    </NavigationContext.Provider>
+}
+
 
 export function findMostMatchingComponent(pathArray, routing) {
     const keys = Object.keys(routing);
@@ -24,8 +48,7 @@ export function findMostMatchingComponent(pathArray, routing) {
 
 }
 
-function getElementToMount() {
-    const hash = window.location.hash;
+export function getElementToMount(hash) {
     if (hash && hash.length > 0) {
         const path = hash.substr(1, hash.length - 1);
         const pathArray = path.split('/');
@@ -36,22 +59,6 @@ function getElementToMount() {
         return {Element: routing[''], params: {}};
     }
     return {Element: EmptyElement, params: {}};
-}
-
-export function RouterProvider({children}) {
-    const [$elementToMount, setElementToMount] = useObserver(getElementToMount());
-
-    useEffect(() => {
-        const handleHashChange = () => setElementToMount(getElementToMount());
-        window.addEventListener("hashchange", handleHashChange);
-        return () => {
-            window.removeEventListener("hashchange", handleHashChange);
-        }
-    }, [setElementToMount]);
-
-    return <RoutingContext.Provider value={$elementToMount}>
-        {children}
-    </RoutingContext.Provider>;
 }
 
 function InvalidRoute({route}) {
