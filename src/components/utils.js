@@ -131,7 +131,7 @@ export function stringToPascalCase(string) {
 }
 
 export function sanitizeProps(props) {
-    const propsToRemove = ['$selectedController', 'setSelectedController', 'dataResource', 'handleSubmit'];
+    const propsToRemove = ['$selectedController', 'setSelectedController', 'dataResource', 'handleSubmit', 'handleLoad'];
     return Object.keys(props).filter(p => propsToRemove.indexOf(p) < 0).reduce((acc, key) => {
         acc[key] = props[key];
         return acc;

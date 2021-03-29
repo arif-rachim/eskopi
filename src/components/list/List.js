@@ -127,6 +127,9 @@ export default function List({
         <ObserverValue $observers={$data}>
             {(data) => {
                 data = data || [];
+                if (!Array.isArray(data)) {
+                    return false;
+                }
                 return data.map((data, index) => {
                     return <Renderer key={dataKey.apply(data, [data])}
                                      data={data}

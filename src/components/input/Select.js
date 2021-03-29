@@ -77,7 +77,9 @@ export default function Select({
                                    dataToLabel = defaultDataToLabel,
                                    ...props
                                }) {
-
+    useObserverListener($data, data => {
+        console.log('We got new Data', data);
+    })
     let domRef = useRef();
     domRef = inputRef || domRef;
     const [$showPopup, setShowPopup] = useObserver(false);

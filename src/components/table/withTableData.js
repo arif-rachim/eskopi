@@ -4,7 +4,7 @@ import {useEffect} from "react";
 
 export default function withTableData(Component) {
     return function WithData(props) {
-        let tableId = props?.data?.resourceTable?.id;
+        let tableId = props?.data?.dataResource?.resource?.id_;
         tableId = tableId || '';
         const url = `/db/${tableId}`;
         const [$onResourceLoad, loadResource] = useResource({url});

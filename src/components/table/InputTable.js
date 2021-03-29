@@ -1,6 +1,7 @@
 import {ObserverValue} from "components/useObserver";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import InputList from "components/list/InputList";
+import {isNullOrUndefined} from "components/utils";
 
 export default function InputTable({dataKey, name, $columns, $errors, domRef, $value, onChange, ...props}) {
 
@@ -13,7 +14,7 @@ export default function InputTable({dataKey, name, $columns, $errors, domRef, $v
                     }
                     return Object.keys(columns).map(col => {
                         const column = columns[col];
-                        const title = column.title || col;
+                        const title = !isNullOrUndefined(column.title) ? column.title : col;
                         return <Horizontal key={col} width={columns[col].width} p={1} bL={2}
                                            style={{fontWeight: 'bold', minWidth: 55}}>{title}</Horizontal>
                     });
