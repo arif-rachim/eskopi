@@ -3,6 +3,7 @@ import styles from "./Button.module.css";
 import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
 import {useObserverListener, useObserverValue} from "components/useObserver";
+import {sanitizeProps} from "components/utils";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
@@ -141,5 +142,5 @@ export default function Button({
                    onClick={onClick}
                    onMouseOver={onMouseOver}
                    style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...internalStyle, ...style}}
-                   {...props} />
+                   {...sanitizeProps(props)} />
 }

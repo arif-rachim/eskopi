@@ -129,3 +129,11 @@ export function stringToCamelCase(string) {
 export function stringToPascalCase(string) {
     return voca.capitalize(stringToCamelCase(string));
 }
+
+export function sanitizeProps(props) {
+    const propsToRemove = ['$selectedController', 'setSelectedController', 'dataResource', 'handleSubmit'];
+    return Object.keys(props).filter(p => propsToRemove.indexOf(p) < 0).reduce((acc, key) => {
+        acc[key] = props[key];
+        return acc;
+    }, {})
+}

@@ -3,6 +3,7 @@ import tinycolor from "tinycolor2";
 import React, {cloneElement, useState} from "react";
 import useTheme from "../useTheme";
 import {useObserverListener} from "components/useObserver";
+import {sanitizeProps} from "components/utils";
 
 
 const STYLE_MAPPING = {
@@ -332,7 +333,7 @@ function Layout({
                         ...elevationStyle,
                         ...internalStyle,
                         ...style
-                    }} {...props}
+                    }} {...sanitizeProps(props)}
                     onMouseEnter={handleMouse(hasMouseHover, setMouseOver, true, props.onMouseEnter)}
                     onMouseLeave={handleMouse(hasMouseHover, setMouseOver, false, props.onMouseLeave)}
                     onMouseDown={handleMouse(hasMouseDown, setMouseDown, true, props.onMouseDown)}

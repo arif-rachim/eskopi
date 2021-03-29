@@ -135,6 +135,7 @@ function InputCode({
         padding={10}
         highlight={code => highlight(code, languages.js)}
         style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...defaultStyle, ...style}}
+
         {...props}
     />
 

@@ -3,7 +3,7 @@ import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
 import React, {useMemo, useRef, useState} from "react";
 import {useObserverListener, useObserverMapper, useObserverValue} from "components/useObserver";
-import {isNullOrUndefined} from "components/utils";
+import {isNullOrUndefined, sanitizeProps} from "components/utils";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
@@ -122,6 +122,7 @@ function Input({
         nameValue = nameValue === undefined ? '' : nameValue;
         setLocalValue(nameValue);
     });
+
     return <input ref={inputRef} type={type} name={name}
                   className={[...className, styles.button].join(' ')}
                   readOnly={isDisabled}
@@ -132,7 +133,7 @@ function Input({
                   onFocus={(event) => {
                       event.currentTarget.setSelectionRange(0, event.currentTarget.value.length);
                   }}
-                  {...props}/>
+                  {...sanitizeProps(props)}/>
 }
 
 export function mapToNameFactory(name, converter = textConverter) {
