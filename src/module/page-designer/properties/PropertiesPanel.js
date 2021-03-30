@@ -37,6 +37,7 @@ export default function PropertiesPanel({$layout, setLayout, $selectedController
             }
             nodeToUpdate = nodeToUpdate?.children?.find(c => c.id === selectedController.id);
             Object.keys(value).forEach(key => {
+
                 nodeToUpdate[key] = value[key];
             });
             return newLayout;
@@ -52,7 +53,7 @@ export default function PropertiesPanel({$layout, setLayout, $selectedController
     });
     // ok lets do something here /// lets render the properties over here !
 
-    return <Panel headerTitle={'Properties'}>
+    return <Panel headerTitle={'Properties'} height={'100%'}>
         <ObserverValue $observers={$propertiesPanel}>
             {(value) => {
                 return value.map((Panel, index) => {

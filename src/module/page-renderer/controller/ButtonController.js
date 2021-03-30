@@ -9,6 +9,6 @@ export default function ButtonController({
                                              ...controllerProps
                                          }) {
     return <Vertical p={2} pT={1} pB={1} {...containerProps}>
-        <Button color={"primary"} style={style} {...controllerProps}>Button</Button>
+        <Button color={"primary"} style={style} {...controllerProps}>{data.label || 'Button'}</Button>
     </Vertical>
 }

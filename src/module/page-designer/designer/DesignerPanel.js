@@ -48,7 +48,7 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
     const dropListener = useContext(DropListenerContext);
     usePlaceHolderListener("drop", handlePlaceHolderDrop(rootRef, setData));
     const dragHoverCountRef = useRef(0);
-    const {control, handleSubmit, $value} = useForm();
+    const {control, handleSubmit, $value, reset} = useForm();
 
     const [$onPageDataSave, doSavePage] = useResource();
     const [$onPageDetailFetched, doLoadDetail] = useResource();
@@ -107,8 +107,10 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
 
                 </Vertical>
                 <Horizontal hAlign={'right'} gap={2} color={"light"} p={2} brightness={0.5}>
-                    <Button>Save</Button>
-                    <Button>Cancel</Button>
+                    <Button type={'submit'}>Save</Button>
+                    <Button type={"button"} onClick={() => {
+                        reset()
+                    }}>Cancel</Button>
                 </Horizontal>
             </form>
         </Vertical>
