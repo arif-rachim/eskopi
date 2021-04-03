@@ -73,7 +73,7 @@ function TableSnippet({$data, $selectedTable, setSelectedTable, setValue}) {
     const $noSelectedTable = useObserverMapper($selectedTable, table => isNullOrUndefined(table));
     return <Horizontal gap={2} hAlign={'right'}>
         <Horizontal pR={2} flex={'1 0 auto'} gap={2}>
-            <Horizontal vAlign={'center'} style={{fontWeight: 'bold'}}>Table</Horizontal>
+            <Horizontal vAlign={'center'} style={{fontWeight: 'bold', flexBasis: 70}}>Table</Horizontal>
             <Select $data={$data} dataToLabel={data => data?.tableName}
                     $value={$selectedTable}
                     autoCaps={false}
@@ -157,9 +157,10 @@ function CodeEditor({title, $code, closePanel, $selectedController}) {
     return <Vertical width={800} p={4} gap={2}>
         <Horizontal style={{fontSize: 18}} hAlign={'center'}>{title}</Horizontal>
         <Panel headerTitle={'Add Snippet'}>
-            <Vertical p={2}>
+            <Vertical p={2} gap={2}>
                 <TableSnippet $data={$data} $selectedTable={$selectedTable} setSelectedTable={setSelectedTable}
                               setValue={setValue}/>
+                <ComponentSnippet/>
             </Vertical>
         </Panel>
 
@@ -176,4 +177,16 @@ function CodeEditor({title, $code, closePanel, $selectedController}) {
             <Button onClick={() => closePanel(false)}>Close</Button>
         </Horizontal>
     </Vertical>
+}
+
+function ComponentSnippet() {
+    return <Horizontal gap={2} hAlign={'right'}>
+        <Horizontal pR={2} flex={'1 0 auto'} gap={2}>
+            <Horizontal vAlign={'center'} style={{fontWeight: 'bold', flexBasis: 70}}>Component</Horizontal>
+            <Select dataToLabel={data => data?.tableName}
+                    autoCaps={false}
+                    style={{flex: '1 0 auto'}}
+            />
+        </Horizontal>
+    </Horizontal>
 }
