@@ -1,15 +1,16 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import Button from "components/button/Button";
 import InputCode from "components/input/InputCode";
-import useObserver, {useObserverMapper, useObserverValue} from "components/useObserver";
+import useObserver, {ObserverValue, useObserverMapper, useObserverValue} from "components/useObserver";
 import useSlideDownStackPanel from "components/page/useSlideDownStackPanel";
 import Select from "components/input/Select";
 import useResource, {useResourceListener} from "components/useResource";
 import {SYSTEM_TABLES} from "components/SystemTableName";
-import {isFunction, isNullOrUndefined, stringToCamelCase} from "components/utils";
+import {isEmpty, isFunction, isNullOrUndefined, stringToCamelCase} from "components/utils";
 import Panel from "components/panel/Panel";
 import {Controller} from "components/useForm";
 import {mapToNameFactory} from "components/input/Input";
+import {useRegisteredControlsObserver} from "components/page/useControlRegistration";
 
 function FormPanel({control, $selectedController}) {
 
@@ -71,9 +72,8 @@ function getFormControllerNames(children) {
 
 function TableSnippet({$data, $selectedTable, setSelectedTable, setValue}) {
     const $noSelectedTable = useObserverMapper($selectedTable, table => isNullOrUndefined(table));
-    return <Horizontal gap={2} hAlign={'right'}>
+    return <Horizontal gap={2} hAlign={'right'} p={2}>
         <Horizontal pR={2} flex={'1 0 auto'} gap={2}>
-            <Horizontal vAlign={'center'} style={{fontWeight: 'bold', flexBasis: 70}}>Table</Horizontal>
             <Select $data={$data} dataToLabel={data => data?.tableName}
                     $value={$selectedTable}
                     autoCaps={false}
@@ -95,7 +95,7 @@ const save${$selectedTable?.current?.tableName}Result = await actions.doSave${$s
     ${JSON.stringify(fields)});`;
                     return oldValue + code;
                 })
-            }}>Save Snippet</Button>
+            }}>Save</Button>
             <Button $disabled={$noSelectedTable} onClick={() => {
                 setValue(oldValue => {
                     if (isNullOrUndefined($selectedTable?.current?.tableName)) {
@@ -106,7 +106,7 @@ const save${$selectedTable?.current?.tableName}Result = await actions.doSave${$s
 const delete${$selectedTable?.current?.tableName}Result = await actions.doDelete${$selectedTable?.current?.tableName}(id_="");`;
                     return oldValue + code;
                 })
-            }}>Delete Snippet</Button>
+            }}>Delete</Button>
             <Button $disabled={$noSelectedTable} onClick={() => {
                 setValue(oldValue => {
                     if (isNullOrUndefined($selectedTable?.current?.fields)) {
@@ -121,7 +121,7 @@ const delete${$selectedTable?.current?.tableName}Result = await actions.doDelete
 const read${$selectedTable?.current?.tableName}Result = await actions.doRead${$selectedTable?.current?.tableName}(${JSON.stringify(fields)});`;
                     return oldValue + code;
                 })
-            }}>Read Snippet</Button>
+            }}>Read</Button>
         </Horizontal>
         <Horizontal pL={4} bL={2}>
             <Button onClick={() => {
@@ -131,7 +131,7 @@ const read${$selectedTable?.current?.tableName}Result = await actions.doRead${$s
 actions.resetForm()`;
                     return oldValue + code;
                 })
-            }}>Reset Form</Button>
+            }}>Reset</Button>
         </Horizontal>
     </Horizontal>;
 }
@@ -156,12 +156,12 @@ function CodeEditor({title, $code, closePanel, $selectedController}) {
 
     return <Vertical width={800} p={4} gap={2}>
         <Horizontal style={{fontSize: 18}} hAlign={'center'}>{title}</Horizontal>
-        <Panel headerTitle={'Add Snippet'}>
-            <Vertical p={2} gap={2}>
-                <TableSnippet $data={$data} $selectedTable={$selectedTable} setSelectedTable={setSelectedTable}
-                              setValue={setValue}/>
-                <ComponentSnippet/>
-            </Vertical>
+        <Panel headerTitle={'Resource'}>
+            <TableSnippet $data={$data} $selectedTable={$selectedTable} setSelectedTable={setSelectedTable}
+                          setValue={setValue}/>
+        </Panel>
+        <Panel headerTitle={'Component & Actions'}>
+            <ComponentSnippet setValue={setValue}/>
         </Panel>
 
         <Vertical mT={2} style={{
@@ -179,14 +179,55 @@ function CodeEditor({title, $code, closePanel, $selectedController}) {
     </Vertical>
 }
 
-function ComponentSnippet() {
-    return <Horizontal gap={2} hAlign={'right'}>
-        <Horizontal pR={2} flex={'1 0 auto'} gap={2}>
-            <Horizontal vAlign={'center'} style={{fontWeight: 'bold', flexBasis: 70}}>Component</Horizontal>
-            <Select dataToLabel={data => data?.tableName}
+function ComponentSnippet({setValue}) {
+    const $controls = useRegisteredControlsObserver();
+    const [$selectedControl, setSelectedControl] = useObserver();
+    return <Vertical gap={2} p={2}>
+        <Horizontal flex={'1 0 auto'} gap={2}>
+            <Select dataToLabel={data => {
+                if (data === undefined) {
+                    return '';
+                }
+                if (isEmpty($controls.current[data].name)) {
+                    return data
+                }
+                return $controls.current[data].name;
+            }}
                     autoCaps={false}
+                    $data={useObserverMapper($controls, controls => Object.keys(controls))}
                     style={{flex: '1 0 auto'}}
+                    $value={$selectedControl}
+                    onChange={setSelectedControl}
             />
         </Horizontal>
-    </Horizontal>
+        <Horizontal>
+            <ObserverValue $observers={$selectedControl}>
+                {(controlId) => {
+                    if (isNullOrUndefined(controlId)) {
+                        return false;
+                    }
+                    const control = $controls.current[controlId];
+                    const actions = control.actions.reduce((acc, action) => ({...acc, ...action.current}), {});
+                    return Object.keys(actions).map(action => {
+                        return <Button key={action} onClick={() => {
+                            const propType = actions[action].propTypes;
+                            if (isNullOrUndefined(propType)) {
+                                throw new Error('propType is required for ' + action);
+                            }
+                            let parameterString = Object.keys(propType).join(',');
+                            if (parameterString.length > 0) {
+                                parameterString = `{${parameterString}`;
+                            }
+                            setValue(oldValue => {
+                                const code = `
+actions.${$controls.current[controlId].name}.${action}(${parameterString});
+`;
+                                return oldValue + code;
+                            })
+                        }}>{action}</Button>
+                    })
+                }}
+            </ObserverValue>
+        </Horizontal>
+    </Vertical>
 }

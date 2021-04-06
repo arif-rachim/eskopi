@@ -10,9 +10,11 @@ function NameAndIdPanel({control}) {
                     autoCaps={false}
         />
         <Horizontal gap={5}>
+
             <Controller label={'Name'} horizontalLabelPositionWidth={35}
                         render={Input} name={'name'} flex={'1 0 auto'}
                         control={control}
+                        casing={"camelCase"}
                         containerStyle={{width: '49%'}}
                         autoCaps={false}
             />

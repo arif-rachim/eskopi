@@ -1,4 +1,4 @@
-import {useObserverListener} from "components/useObserver";
+import useObserver, {useObserverListener} from "components/useObserver";
 import {isNullOrUndefined} from "components/utils";
 import {handleDragOverControlComponent} from "module/page-designer/designer/handleDragOverControlComponent";
 import {useState} from "react";
@@ -11,8 +11,8 @@ export default function withTemplate(Component) {
                                             ...controllerProps
                                         }) {
         const {id} = data;
-        const [isHovered, setHovered] = useState(false);
-        const [isFocused, setFocused] = useState(false);
+        const [$isHovered, setHovered] = useObserver(false);
+        const [$isFocused, setFocused] = useObserver(false);
         const {$selectedController, setSelectedController} = controllerProps;
         useObserverListener($selectedController, selectedController => {
             if (isNullOrUndefined(selectedController)) {
@@ -20,14 +20,24 @@ export default function withTemplate(Component) {
             }
             setFocused(selectedController.id === id);
         });
-        const classNames = [];
-        if (isFocused) {
-            classNames.push(style.onFocus);
-        } else if (isHovered) {
-            classNames.push(style.onHover);
-        } else {
-            classNames.push(style.onEmpty);
-        }
+        const [classNames, setClassNames] = useState([]);
+        useObserverListener([$isFocused, $isHovered], ([isFocused, isHovered]) => {
+            const clazzName = [];
+            if (isFocused) {
+                clazzName.push(style.onFocus);
+            } else if (isHovered) {
+                clazzName.push(style.onHover);
+            } else {
+                clazzName.push(style.onEmpty);
+            }
+            setClassNames(oldClassName => {
+                if (JSON.stringify(oldClassName) !== JSON.stringify(clazzName)) {
+                    return clazzName;
+                }
+                return oldClassName;
+            })
+        });
+
         return <Component data={data}
                           control={control}
                           containerProps={{

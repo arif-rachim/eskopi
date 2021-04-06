@@ -21,7 +21,6 @@ export default function PageDesigner({setTitle}) {
     const [$selectedController, setSelectedController] = useObserver();
     const dropListener = useRef();
     return <DropListenerContext.Provider value={dropListener}>
-
         <Vertical height={'100%'}>
             <Horizontal height={'100%'}>
                 <Vertical height={'100%'} width={200} color={"light"} bR={4} overflow={'auto'}>

@@ -3,7 +3,13 @@ import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
 import React, {useMemo, useRef, useState} from "react";
 import {useObserverListener, useObserverMapper, useObserverValue} from "components/useObserver";
-import {isNullOrUndefined, sanitizeProps} from "components/utils";
+import {
+    isNullOrUndefined,
+    sanitizeProps,
+    stringToCamelCase,
+    stringToKebabCase,
+    stringToPascalCase
+} from "components/utils";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
@@ -49,6 +55,7 @@ function isUndefinedOrNull(b) {
  * @param {{current:*}} $value,
  * @param {{current:*}} $errors
  *
+ * @param {'normal'|'camelCase'|'PascalCase'|'kebab-case'|'UPPERCASE'|'lowercase'} casing
  * @param props
  * @returns {JSX.Element}
  * @constructor
@@ -66,9 +73,9 @@ function Input({
                    b, bL, bR, bT, bB,
                    r, rTL, rTR, rBL, rBR,
                    onChange, onBlur,
-                   autoCaps = false,
                    $value,
                    $errors,
+                   casing = 'normal',
                    ...props
                }) {
     const [theme] = useTheme();
@@ -88,7 +95,6 @@ function Input({
         borderRadius: 0,
         outline: 'none'
     };
-    autoCaps = type === 'password' ? false : autoCaps;
     b = isUndefinedOrNull(b) ? 2 : b;
     p = isUndefinedOrNull(p) ? 2 : p;
     pT = isUndefinedOrNull(pT) ? 1 : pT;
@@ -100,20 +106,37 @@ function Input({
     const radiusStyle = parseRadius({r, rTL, rTR, rBL, rBR}, theme);
     const colorStyle = parseColorStyle({color, brightness: isDisabled ? -0.1 : 0.71, alpha: 1}, theme);
     const defaultStyle = {minWidth: 0};
-    if (autoCaps) {
+    if (casing === 'UPPERCASE') {
         defaultStyle.textTransform = 'uppercase'
     }
     const handleOnChange = useMemo(() => {
         return (data) => {
             propsRef.current.userPerformChange = true;
-            setLocalValue(data.target.value);
+            let val = data.target.value;
+            const textCasing = casing.toUpperCase();
+
+            if (textCasing === 'UPPERCASE') {
+                val = val.toUpperCase();
+            }
+            if (textCasing === 'LOWERCASE') {
+                val = val.toLowerCase();
+            }
+            if (textCasing === 'CAMELCASE') {
+                val = stringToCamelCase(val);
+            }
+            if (textCasing === 'KEBAB-CASE') {
+                val = stringToKebabCase(val)
+            }
+            if (textCasing === 'PASCALCASE') {
+                val = stringToPascalCase(val)
+            }
+            setLocalValue(val);
             if (propsRef.current.onChange) {
-                const val = autoCaps ? data.target.value.toUpperCase() : data.target.value;
                 propsRef.current.onChange(val);
             }
             propsRef.current.userPerformChange = false;
         }
-    }, [autoCaps]);
+    }, [casing]);
 
     useObserverListener($nameValue, nameValue => {
         if (propsRef.current.userPerformChange) {

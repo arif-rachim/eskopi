@@ -10,6 +10,7 @@ import {PageDimensionProvider} from "components/page/usePageDimension";
 import {PageLayerContextProvider} from "components/page/usePageLayers";
 import {SlideDownStackPanelContextProvider} from "components/page/useSlideDownStackPanel";
 import {findMostMatchingComponent} from "components/useNavigation";
+import {ControlRegistrationContextProvider} from "components/page/useControlRegistration";
 
 function Page({Element, index, $activeIndex}) {
     const [$visible, setVisible] = useObserver($activeIndex.current === index);
@@ -19,9 +20,11 @@ function Page({Element, index, $activeIndex}) {
     return <Vertical domRef={pageRef} $visible={$visible} height={'100%'}>
         <PageDimensionProvider pageRef={pageRef}>
             <SlideDownStackPanelContextProvider>
-                <PageLayerContextProvider>
-                    <Element.Element params={Element.params} path={Element.key} setTitle={setTitle}/>
-                </PageLayerContextProvider>
+                <ControlRegistrationContextProvider>
+                    <PageLayerContextProvider>
+                        <Element.Element params={Element.params} path={Element.key} setTitle={setTitle}/>
+                    </PageLayerContextProvider>
+                </ControlRegistrationContextProvider>
             </SlideDownStackPanelContextProvider>
         </PageDimensionProvider>
     </Vertical>

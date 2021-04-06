@@ -113,7 +113,7 @@ export function generateUid() {
 }
 
 /**
- * Converts the subject to camel case.
+ * Converts the subject to camelCase.
  * @param string
  * @returns {*}
  */
@@ -122,12 +122,21 @@ export function stringToCamelCase(string) {
 }
 
 /**
- * Converts the subject to pascal case.
+ * Converts the subject to PascalCase.
  * @param string
  * @returns {*}
  */
 export function stringToPascalCase(string) {
     return voca.capitalize(stringToCamelCase(string));
+}
+
+/**
+ * Converts string to kebab-case
+ * @param string
+ * @returns {*}
+ */
+export function stringToKebabCase(string) {
+    return voca.slugify(string);
 }
 
 export function sanitizeProps(props) {
