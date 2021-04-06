@@ -67,7 +67,6 @@ function Input({
                    b, bL, bR, bT, bB,
                    r, rTL, rTR, rBL, rBR,
                    onChange, onBlur,
-                   autoCaps = true,
                    $value,
                    $errors,
                    rows = 3,
@@ -86,7 +85,7 @@ function Input({
         borderRadius: 0,
         outline: 'none'
     };
-    autoCaps = type === 'password' ? false : autoCaps;
+
     b = isUndefinedOrNull(b) ? 2 : b;
 
     p = isUndefinedOrNull(p) ? 2 : p;
@@ -107,7 +106,7 @@ function Input({
                              e.preventDefault();
                              return;
                          }
-                         if (autoCaps && !e.ctrlKey && !e.shiftKey && replacedAutoCapsKey.indexOf(e.key) >= 0) {
+                         if (!e.ctrlKey && !e.shiftKey && replacedAutoCapsKey.indexOf(e.key) >= 0) {
                              e.preventDefault();
                              const position = e.target.selectionStart;
 
@@ -120,7 +119,7 @@ function Input({
                              const event = new Event('input', {bubbles: true});
                              e.target.dispatchEvent(event);
                          }
-                     }, [autoCaps, isDisabled])}
+                     }, [isDisabled])}
                      style={{...buttonStyle, ...paddingMarginStyle, ...borderStyle, ...radiusStyle, ...colorStyle, ...style}}
                      onChange={(e) => onChange(e.target.value)}
                      onBlur={onBlur}

@@ -165,7 +165,7 @@ function FilterCellRenderer({$tableData, rowIndex, colIndex, field, onChange, $c
             return nextValue;
         });
     });
-    return <Input $value={$value} autoCaps={false} onChange={value => {
+    return <Input $value={$value} onChange={value => {
         onChange((oldValue) => {
             const nextValue = {...oldValue};
             nextValue[field] = stringToCamelCase(value)

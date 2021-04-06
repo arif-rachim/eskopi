@@ -13,7 +13,6 @@ import CollapsiblePanel from "components/panel/CollapsiblePanel";
  * @param {string} color
  * @param {Object} style
  * @param {string} type
- * @param {boolean} autoCaps - indicate to enable autoCaps
  * @type {{common: {}, space: {layout: [string, string], name: string}}}
  */
 export default function PropertiesPanel({$layout, setLayout, $selectedController}) {

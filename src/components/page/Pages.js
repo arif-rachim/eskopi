@@ -84,8 +84,7 @@ export default function Pages({pages, id, $activeIndex, index, setBookTitles}) {
                     <Horizontal style={{flex: '1 0 auto'}} vAlign={'center'} gap={1} p={1}>
                         <Horizontal>Address</Horizontal>
                         <Controller name={'address'} render={Input} control={control}
-                                    containerStyle={{flex: '1 0 auto'}}
-                                    autoCaps={false}/>
+                                    containerStyle={{flex: '1 0 auto'}}/>
                         <Button>Go</Button>
                     </Horizontal>
                 </form>

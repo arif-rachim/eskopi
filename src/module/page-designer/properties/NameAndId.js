@@ -7,7 +7,6 @@ function NameAndIdPanel({control}) {
         <Controller label={'Label'} horizontalLabelPositionWidth={35}
                     render={Input} name={'label'} flex={'1 0 auto'}
                     control={control}
-                    autoCaps={false}
         />
         <Horizontal gap={5}>
 
@@ -16,12 +15,10 @@ function NameAndIdPanel({control}) {
                         control={control}
                         casing={"camelCase"}
                         containerStyle={{width: '49%'}}
-                        autoCaps={false}
             />
             <Controller label={'Key'} horizontalLabelPositionWidth={35} render={Input} name={'key'}
                         flex={'1 0 auto'} control={control}
                         containerStyle={{width: '49%'}}
-                        autoCaps={false}
             />
         </Horizontal>
     </Vertical>

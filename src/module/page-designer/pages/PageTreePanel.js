@@ -114,7 +114,7 @@ function PageDetail({closePanel}) {
         })}>
             <Vertical gap={10}>
                 <Controller render={Input} label={'Page Name'} name={'name'} control={control}
-                            validator={requiredValidator('Name is mandatory')} autoFocus={true} autoCaps={false}/>
+                            validator={requiredValidator('Name is mandatory')} autoFocus={true}/>
                 <Horizontal gap={5}>
                     <Button color={"primary"} type={'submit'} flex={1}>Save</Button>
                     <Button type={'button'} onClick={async () => {

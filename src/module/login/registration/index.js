@@ -56,7 +56,7 @@ export default function RegistrationScreen({onClose}) {
                 <Controller control={control} render={Input} name={"name"} label={'Name'}
                             validator={requiredValidator('Name required')} $disabled={$isPending}/>
                 <Controller control={control} render={Input} name={"email"} label={'Email'}
-                            validator={requiredValidator('Email Required')} autoCaps={false}/>
+                            validator={requiredValidator('Email Required')}/>
 
                 <Horizontal gap={5} overflow={'visible'}>
                     <Controller control={control} render={Input} name={"password"} type={"password"}

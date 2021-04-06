@@ -39,7 +39,6 @@ import {isNullOrUndefined} from "components/utils";
  * @param {number} rTR - radius top right
  * @param {number} rBL - radius bottom left
  * @param {number} rBR - radius bottom right
- * @param {boolean} autoCaps - indicate to enable autoCaps
  * @param {string} errorMessage - indicate there is error
  *
  * @param {function(value)} onChange,
@@ -68,7 +67,6 @@ export default function Select({
                                    b, bL, bR, bT, bB,
                                    r, rTL, rTR, rBL, rBR,
                                    onChange, onBlur,
-                                   autoCaps,
                                    $value,
                                    $errors,
                                    $data,
@@ -119,7 +117,6 @@ export default function Select({
                   b={b} bL={bL} bR={bR} bT={bT} bB={bB}
                   r={r} rTL={rTL} rTR={rTR} rBL={rBL} rBR={rBR}
                   onChange={onChange} onBlur={onBlur}
-                  autoCaps={autoCaps}
                   $value={$nameValue}
                   $errors={$nameErrors}
                   onFocus={() => setShowPopup(true)}

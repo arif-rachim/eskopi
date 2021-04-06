@@ -83,7 +83,7 @@ export const ControlPropertiesCatalog = {
     [Controls.TIME_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
     [Controls.NUMBER_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
     [Controls.BUTTON]: [NameAndIdPanel, WidthAndHeightPanel],
-    [Controls.TABLE_INPUT]: [NameAndIdPanel, DataPanel]
+    [Controls.TABLE_INPUT]: [NameAndIdPanel, DataPanel, WidthAndHeightPanel]
 }
 
 export const Icons = {

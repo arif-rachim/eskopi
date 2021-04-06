@@ -76,7 +76,6 @@ function TableSnippet({$data, $selectedTable, setSelectedTable, setValue}) {
         <Horizontal pR={2} flex={'1 0 auto'} gap={2}>
             <Select $data={$data} dataToLabel={data => data?.tableName}
                     $value={$selectedTable}
-                    autoCaps={false}
                     style={{flex: '1 0 auto'}}
                     onChange={setSelectedTable}
             />
@@ -193,7 +192,6 @@ function ComponentSnippet({setValue}) {
                 }
                 return $controls.current[data].name;
             }}
-                    autoCaps={false}
                     $data={useObserverMapper($controls, controls => Object.keys(controls))}
                     style={{flex: '1 0 auto'}}
                     $value={$selectedControl}

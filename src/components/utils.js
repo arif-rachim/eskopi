@@ -139,8 +139,9 @@ export function stringToKebabCase(string) {
     return voca.slugify(string);
 }
 
+
 export function sanitizeProps(props) {
-    const propsToRemove = ['$selectedController', 'setSelectedController', 'dataResource', 'handleSubmit', 'handleLoad'];
+    const propsToRemove = ['$selectedController', 'setSelectedController', 'dataResource', 'handleSubmit', 'handleLoad', 'vAlign', 'hAlign'];
     return Object.keys(props).filter(p => propsToRemove.indexOf(p) < 0).reduce((acc, key) => {
         acc[key] = props[key];
         return acc;

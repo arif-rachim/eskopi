@@ -97,7 +97,7 @@ function NameCellRenderer({$tableData, rowIndex, colIndex, field, onChange, ...p
     const $value = useObserverMapper($tableData, tableData => {
         return tableData[rowIndex][field];
     });
-    return <Input $value={$value} autoCaps={false} onChange={value => {
+    return <Input $value={$value} onChange={value => {
         onChange((oldValue) => {
             const nextValue = {...oldValue};
             nextValue[field] = stringToCamelCase(value)
@@ -152,7 +152,6 @@ function TableForm({data, ...props}) {
     })}>
         <Vertical gap={2} p={2} elevation={2} width={300}>
             <Controller control={control} render={Input} name={"tableName"}
-                        autoCaps={false}
                         label={'Table Name'}
                         validator={requiredValidator('Table Name')}/>
             <Controller control={control}

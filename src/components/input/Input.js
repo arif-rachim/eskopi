@@ -47,7 +47,6 @@ function isUndefinedOrNull(b) {
  * @param {number} rTR - radius top right
  * @param {number} rBL - radius bottom left
  * @param {number} rBR - radius bottom right
- * @param {boolean} autoCaps - indicate to enable autoCaps
  * @param {string} errorMessage - indicate there is error
  *
  * @param {function(value)} onChange,

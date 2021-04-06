@@ -33,14 +33,13 @@ function DatabaseCrud() {
                             <Vertical gap={2}>
                                 <Controller control={detailForm.control}
                                             name={'fieldName'} label={'Field Name'}
-                                            render={Input} autoCaps={false}
+                                            render={Input}
                                 />
                                 <Controller control={detailForm.control}
                                             name={'fieldType'} label={'Field Type'}
                                             render={Select}
                                             $data={$selectDataProvider}
                                             dataKey={data => data}
-                                            autoCaps={false}
                                 />
                                 <Horizontal hAlign={'right'}>
                                     <Button type={'submit'}>Save</Button>

@@ -1,6 +1,8 @@
-import {useCallback, useLayoutEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useLayoutEffect, useMemo, useRef} from "react";
 import {debounce, isFunction, isNullOrUndefined} from "components/utils";
+import useSafeState from "components/useSafeState";
 
+const useState = useSafeState;
 /**
  * Utilities to check if an object is an observer.
  * @param {any} observer
