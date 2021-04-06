@@ -30,6 +30,7 @@ export const post = async (url, data, token) => {
         body: JSON.stringify(data), // body data type must match "Content-Type" header
 
     });
+
     return response.json(); // parses JSON response into native JavaScript objects
 }
 
