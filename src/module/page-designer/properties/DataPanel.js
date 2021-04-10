@@ -110,13 +110,12 @@ function DataResourcePanel({closePanel, $formValue}) {
                             oldField = oldField || [];
                             return [...oldField, {id: uuid(), name: '', type: '', condition: ''}]
                         })
-                    }}>Add Field</Button>
+                    }}>Add Filter</Button>
                 </Horizontal>
                 <Controller render={InputTable}
                             name={'filter'}
                             control={control}
                             $columns={$columns}
-                            validator={requireValidator('Filter')}
                 />
                 <Horizontal hAlign={'right'} gap={2} pT={2}>
                     <Button type={'button'} onClick={async () => {
@@ -128,7 +127,7 @@ function DataResourcePanel({closePanel, $formValue}) {
                     <Horizontal flex={'1 0 auto'}/>
                     <Button color={"primary"} type={'submit'}>Save</Button>
                     <Button type={'button'} onClick={(event) => {
-                        closePanel();
+                        closePanel(false);
                     }}>Close</Button>
                 </Horizontal>
             </Vertical>

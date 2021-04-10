@@ -8,6 +8,8 @@ import {DropListenerContext} from "module/page-designer/index";
 import getOutlinePlaceHolder, {useOutlinePlaceHolderListener} from "module/page-designer/outline/getOutlinePlaceHolder";
 import handleOutlinePlaceHolderDrop from "module/page-designer/outline/handleOutlinePlaceHolderDrop";
 import {getPlaceHolder} from "module/page-designer/designer/getPlaceHolder";
+import Button from "components/button/Button";
+import {useConfirmMessage} from "components/dialog/Dialog";
 
 function handlePlaceHolderDragOver(event) {
     event.preventDefault();
@@ -87,13 +89,32 @@ function handleDragOver() {
 function OutlineItemRenderer(props) {
     const [isDragging, setIsDragging] = useState();
     const dropListener = useContext(DropListenerContext);
-    return <Horizontal opacity={isDragging ? 0.5 : 1}>
+    const selected = props.selected;
+    const showConfirmation = useConfirmMessage();
+    return <Horizontal opacity={isDragging ? 0.5 : 1} flex={'1 0 auto'}>
         <Vertical vAlign={'center'} pT={0.5} flex={1}
                   draggable={true}
                   onDragStart={handleDragStart(setIsDragging, props.data, dropListener)}
                   onDragEnd={handleDragEnd(setIsDragging)}>
             {ControlsNaming[props.data.type]}
         </Vertical>
+        {selected &&
+        <Button style={{fontSize: 10}} onClick={async () => {
+            const status = await showConfirmation('Are you sure you want to delete this element ?');
+            if (status === 'YES') {
+                props.setData(oldData => {
+                    const newData = JSON.parse(JSON.stringify(oldData));
+                    let removedData = newData;
+                    debugger;
+                    for (const parentId of props.data.parentIds) {
+                        removedData = removedData.children.find(c => c.id === parentId);
+                    }
+                    removedData.children = removedData.children.filter(c => c.id !== props.data.id);
+                    return newData;
+                })
+            }
+        }}>❌</Button>
+        }
     </Horizontal>
 
 }
