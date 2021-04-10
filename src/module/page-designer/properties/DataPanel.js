@@ -1,87 +1,80 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "components/useForm";
 import Select from "components/input/Select";
-import useObserver, {ObserverValue, useObserverListener, useObserverMapper} from "components/useObserver";
+import useObserver, {useObserverListener, useObserverMapper} from "components/useObserver";
 import useResource, {useResourceListener} from "components/useResource";
 import Button from "../../../components/button/Button";
-import useSlideDownPanel from "../../../components/page/useSlideDownPanel";
 import {SYSTEM_TABLES} from "../../../components/SystemTableName";
 import InputTable from "../../../components/table/InputTable";
-import Input, {mapToNameFactory} from "../../../components/input/Input";
-import {isNullOrUndefined, stringToCamelCase} from "../../../components/utils";
 import {v4 as uuid} from "uuid";
 import requireValidator from "components/validators/requireValidator";
 import {useConfirmMessage} from "components/dialog/Dialog";
+import InputWithSlideDownDetail from "components/input/InputWithSlideDownDetail";
+import SelectCellRenderer from "module/page-designer/properties/renderer/SelectCellRenderer";
+import InputCellRenderer from "module/page-designer/properties/renderer/InputCellRenderer";
+import DeleteCellRenderer from "module/page-designer/properties/renderer/DeleteCellRenderer";
 
 function DataPanel({control}) {
-
     return <Vertical p={2} gap={2}>
         <Controller name={'dataResource'}
                     control={control}
-                    render={DataResourceRenderer}
+                    render={InputWithSlideDownDetail}
+                    title={'Data Resource'}
+                    detailPanel={DetailPanel}
         />
     </Vertical>
 }
 
-function DataResourceRenderer({$value, name, onChange}) {
 
-    const $formValue = useObserverMapper($value, mapToNameFactory(name));
-    const showPanel = useSlideDownPanel();
-    return <Horizontal vAlign={'center'}>
-        <Horizontal flex={'1 0 auto'}>Data Resource</Horizontal>
-        <ObserverValue $observers={$formValue}>
-            {(formValue) => {
-                const hasValue = !isNullOrUndefined(formValue);
-                return <Button color={hasValue ? "secondary" : "light"} onClick={async () => {
-                    const result = await showPanel(DataResourcePanel, {$formValue});
-                    if (result === 'REMOVE') {
-                        onChange(undefined);
-                        return;
-                    }
-                    if (result === false) {
-                        return;
-                    }
-                    onChange(result);
-                }}>Update</Button>
-            }}
-        </ObserverValue>
-
-    </Horizontal>
-}
-
-function DataResourcePanel({closePanel, $formValue}) {
-
+function DetailPanel({closePanel, $formValue}) {
     const [$data, setData] = useObserver();
     const [$onLoadTableNames] = useResource({url: `/db/${SYSTEM_TABLES}`});
     const {control, $value, handleSubmit, reset} = useForm($formValue?.current);
+
     useObserverListener($formValue, formValue => {
         reset(formValue);
     });
-
     useResourceListener($onLoadTableNames, (status, result) => {
         if (status === 'success') {
             setData(result);
         }
     });
-    const $selectedTable = useObserverMapper($value, value => value?.resource);
+    const $columnData = useObserverMapper($value, value => value?.resource?.fields);
     const [$columns] = useObserver({
         field: {
             title: 'Column',
             width: '30%',
-            $selectedTable,
-            renderer: FieldCellRenderer
+            $data: $columnData,
+            dataToLabel: data => data?.name,
+            renderer: SelectCellRenderer
         },
         type: {
             title: 'Filter',
             width: '30%',
-            $selectedTable,
-            renderer: FilterCellRenderer
+            $data: $columnData,
+            renderer: InputCellRenderer
         },
         condition: {
             title: 'Condition',
             width: '30%',
-            renderer: ConditionCellRenderer
+            dataToLabel: data => data?.label,
+            $data: useObserver([
+                {id: 'IsEqualTo', label: 'Is equal to'},
+                {id: 'IsNotEqualTo', label: 'Is not equal to'},
+                {id: 'StartsWith', label: 'Starts with'},
+                {id: 'Contains', label: 'Contains'},
+                {id: 'DoesNotContain', label: 'Does not contain'},
+                {id: 'EndsWith', label: 'Ends with'},
+                {id: 'IsNull', label: 'Is null'}
+            ])[0],
+            renderer: SelectCellRenderer
         },
+
+        // condition: {
+        //     title: 'Condition',
+        //     width: '30%',
+        //     renderer: ConditionCellRenderer
+        // },
         deleteColumn: {
             title: '',
             width: '10%',
@@ -135,70 +128,6 @@ function DataResourcePanel({closePanel, $formValue}) {
     </Vertical>
 }
 
-function DeleteCellRenderer({$tableData, rowIndex, colIndex, field, onChange, $columns, ...props}) {
-    return <Button type={'button'} onClick={() => {
-
-        const changeFilter = $columns.current[field].onChange;
-        changeFilter(oldField => {
-            const newField = [...oldField];
-            newField.splice(rowIndex, 1);
-            return newField;
-        })
-    }}>❌</Button>
-}
-
-function FilterCellRenderer({$tableData, rowIndex, colIndex, field, onChange, $columns, ...props}) {
-    const $value = useObserverMapper($tableData, tableData => {
-        if (tableData && tableData[rowIndex] && tableData[rowIndex][field]) {
-            return tableData[rowIndex][field];
-        }
-        return undefined;
-    });
-
-    const $selectedTable = $columns.current[field].$selectedTable;
-    useObserverListener($selectedTable, newTable => {
-        console.log('We got new Table', newTable);
-        onChange((oldValue) => {
-            const nextValue = {...oldValue};
-            nextValue[field] = '';
-            return nextValue;
-        });
-    });
-    return <Input $value={$value} onChange={value => {
-        onChange((oldValue) => {
-            const nextValue = {...oldValue};
-            nextValue[field] = stringToCamelCase(value)
-            return nextValue;
-        });
-    }}/>
-}
-
-function FieldCellRenderer({$tableData, rowIndex, colIndex, field, onChange, $columns, ...props}) {
-    const $selectedTable = $columns.current[field].$selectedTable;
-    const $value = useObserverMapper($tableData, tableData => {
-        if (tableData && tableData[rowIndex] && tableData[rowIndex][field]) {
-            return tableData[rowIndex][field];
-        }
-        return undefined;
-    });
-    const [$data, setData] = useObserver($selectedTable?.current?.fields);
-    useObserverListener($selectedTable, newTable => {
-        console.log('Dang ! got new Table', newTable);
-        onChange((oldValue) => {
-            const nextValue = {...oldValue};
-            nextValue[field] = null;
-            return nextValue;
-        });
-        setData(newTable?.fields);
-    });
-    return <Select $value={$value} onChange={value => {
-        onChange((oldValue) => {
-            const nextValue = {...oldValue};
-            nextValue[field] = value;
-            return nextValue;
-        });
-    }} $data={$data} dataToLabel={data => data?.name}/>
-}
 
 function ConditionCellRenderer({$tableData, rowIndex, colIndex, field, onChange, ...props}) {
     const $value = useObserverMapper($tableData, tableData => {

@@ -4,7 +4,7 @@ import Select from "../../../components/input/Select";
 import useObserver from "../../../components/useObserver";
 import Input from "../../../components/input/Input";
 
-function AlignmentAndGap({control}) {
+function AlignmentAndGapPanel({control}) {
     const [$verticalData] = useObserver(['top', 'bottom', 'center']);
     const [$horizontalData] = useObserver(['left', 'center', 'right']);
     const [$layoutData] = useObserver(['horizontal', 'vertical']);
@@ -39,5 +39,5 @@ function AlignmentAndGap({control}) {
     </Vertical>
 }
 
-AlignmentAndGap.title = 'Alignment and Gap';
-export default AlignmentAndGap;
+AlignmentAndGapPanel.title = 'Alignment and Gap';
+export default AlignmentAndGapPanel;

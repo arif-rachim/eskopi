@@ -1,5 +1,5 @@
 import BorderMarginPaddingPanel from "../properties/BorderMarginPaddingPanel";
-import AlignmentAndGap from "../properties/AlignmentAndGap";
+import AlignmentAndGapPanel from "module/page-designer/properties/AlignmentAndGapPanel";
 import WidthAndHeightPanel from "../properties/WidthAndHeightPanel";
 import ColorBrightnessOpacity from "../properties/ColorBrightnessOpacity";
 
@@ -21,6 +21,7 @@ import GroupTemplate from "module/page-designer/controls/controller/GroupTemplat
 import FormTemplate from "module/page-designer/controls/controller/FormTemplate";
 import FormController from "module/page-renderer/controller/FormController";
 import FormPanel from "module/page-designer/properties/FormPanel";
+import ColumnsPanel from "module/page-designer/properties/ColumnsPanel";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
@@ -75,15 +76,15 @@ export const ControlForPageDesigner = {
 }
 
 export const ControlPropertiesCatalog = {
-    [Controls.FORM]: [FormPanel, BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity],
-    [Controls.GROUP]: [BorderMarginPaddingPanel, AlignmentAndGap, WidthAndHeightPanel, ColorBrightnessOpacity],
+    [Controls.FORM]: [FormPanel, BorderMarginPaddingPanel, AlignmentAndGapPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
+    [Controls.GROUP]: [BorderMarginPaddingPanel, AlignmentAndGapPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.TEXT_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.TEXT_AREA]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.DATE_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
     [Controls.TIME_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
     [Controls.NUMBER_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
     [Controls.BUTTON]: [NameAndIdPanel, WidthAndHeightPanel],
-    [Controls.TABLE_INPUT]: [NameAndIdPanel, DataPanel, WidthAndHeightPanel]
+    [Controls.TABLE_INPUT]: [NameAndIdPanel, DataPanel, ColumnsPanel, WidthAndHeightPanel]
 }
 
 export const Icons = {
