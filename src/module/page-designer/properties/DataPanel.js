@@ -51,7 +51,6 @@ function DetailPanel({closePanel, $formValue}) {
         type: {
             title: 'Filter',
             width: '30%',
-            $data: $columnData,
             renderer: InputCellRenderer
         },
         condition: {
@@ -69,12 +68,6 @@ function DetailPanel({closePanel, $formValue}) {
             ])[0],
             renderer: SelectCellRenderer
         },
-
-        // condition: {
-        //     title: 'Condition',
-        //     width: '30%',
-        //     renderer: ConditionCellRenderer
-        // },
         deleteColumn: {
             title: '',
             width: '10%',
@@ -128,31 +121,6 @@ function DetailPanel({closePanel, $formValue}) {
     </Vertical>
 }
 
-
-function ConditionCellRenderer({$tableData, rowIndex, colIndex, field, onChange, ...props}) {
-    const $value = useObserverMapper($tableData, tableData => {
-        if (tableData && tableData[rowIndex] && tableData[rowIndex][field]) {
-            return tableData[rowIndex][field];
-        }
-        return undefined;
-    });
-    const [$data] = useObserver([
-        {id: 'IsEqualTo', label: 'Is equal to'},
-        {id: 'IsNotEqualTo', label: 'Is not equal to'},
-        {id: 'StartsWith', label: 'Starts with'},
-        {id: 'Contains', label: 'Contains'},
-        {id: 'DoesNotContain', label: 'Does not contain'},
-        {id: 'EndsWith', label: 'Ends with'},
-        {id: 'IsNull', label: 'Is null'}
-    ]);
-    return <Select $value={$value} style={{width: '100%'}} onChange={value => {
-        onChange((oldValue) => {
-            const nextValue = {...oldValue};
-            nextValue[field] = value;
-            return nextValue;
-        });
-    }} $data={$data} dataToLabel={data => data?.label}/>
-}
 
 DataPanel.title = 'Data Resource'
 export default DataPanel;

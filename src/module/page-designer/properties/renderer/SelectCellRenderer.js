@@ -10,7 +10,7 @@ export default function SelectCellRenderer({
                                                $columns,
                                                ...props
                                            }) {
-    const $selectedTable = $columns.current[field].$data;
+    const $data = $columns.current[field].$data;
     const dataToLabel = $columns.current[field].dataToLabel;
     const $value = useObserverMapper($tableData, tableData => {
         if (tableData && tableData[rowIndex] && tableData[rowIndex][field]) {
@@ -18,14 +18,14 @@ export default function SelectCellRenderer({
         }
         return undefined;
     });
-    const [$data, setData] = useObserver($selectedTable?.current);
-    useObserverListener($selectedTable, newTable => {
+    const [$localData, setLocalData] = useObserver($data?.current);
+    useObserverListener($data, newTable => {
         onChange((oldValue) => {
             const nextValue = {...oldValue};
             nextValue[field] = null;
             return nextValue;
         });
-        setData(newTable);
+        setLocalData(newTable);
     });
     return <Select $value={$value} onChange={value => {
         onChange((oldValue) => {
@@ -33,5 +33,5 @@ export default function SelectCellRenderer({
             nextValue[field] = value;
             return nextValue;
         });
-    }} $data={$data} dataToLabel={dataToLabel}/>
+    }} $data={$localData} dataToLabel={dataToLabel}/>
 }

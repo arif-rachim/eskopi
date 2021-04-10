@@ -1,18 +1,36 @@
 import useObserver, {useObserverListener} from "components/useObserver";
-
+import {useEffect} from "react";
 
 export default function withAutoPopulateColumn(Component) {
-    return function WithAutoPopulateColumn({$data, ...props}) {
-        const [$columns, setColumns] = useObserver(constructColumns($data?.current));
-        useObserverListener($data, data => {
-            setColumns(constructColumns(data));
+    return function WithAutoPopulateColumn({$data,...props}) {
+        const columns = props?.data?.columns?.columns;
+        const [$columns, setColumns] = useObserver(() => {
+            return constructColumns($data?.current,columns);
         });
+
+        useObserverListener($data, data => {
+            setColumns(constructColumns(data,columns));
+        });
+        useEffect(() => {
+            setColumns(constructColumns($data.current,columns));
+        },[columns])
         return <Component $columns={$columns} $data={$data} {...props}/>
     }
 }
 
 
-function constructColumns(rows) {
+function constructColumns(rows,columns) {
+    if(columns){
+        const percentage = Math.round(100 / columns.length);
+        return columns.reduce((acc,column) => {
+            acc[column.column.name] = {
+                title : column.name,
+                width : `${percentage}%`
+            }
+            return acc;
+        },{});
+    }
+
     rows = rows || [];
     if (!Array.isArray(rows)) {
         return {};
