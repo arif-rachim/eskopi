@@ -134,7 +134,7 @@ export default function useResource({url, data, timeoutMs = 100} = {timeoutMs: 1
             clearTimeout(propsRef.current.timer);
             propsRef.current.timer = null;
         }
-        setResourceObserver(propsRef.current.suspenseObject);
+        setResourceObserver({...propsRef.current.suspenseObject});
     });
 
     const setResource = useCallback((urlPath, data) => {
@@ -146,7 +146,7 @@ export default function useResource({url, data, timeoutMs = 100} = {timeoutMs: 1
         }
         propsRef.current.timer = setTimeout(() => {
             propsRef.current.timer = null;
-            setResourceObserver(propsRef.current.suspenseObject);
+            setResourceObserver({...propsRef.current.suspenseObject});
         }, timeoutMs);
     }, [setIsPending, setResourceObserver, timeoutMs, token, url]);
     return [

@@ -25,13 +25,13 @@ export default function useObserver(defaultValue) {
     const defaultValueRef = useRef(defaultValue);
     return useMemo(() => {
         let listeners = [];
-        const current = isFunction(defaultValueRef.current) ? defaultValueRef.current.call() : defaultValueRef.current;
-        const $value = {current}
+        defaultValueRef.current = isFunction(defaultValueRef.current) ? defaultValueRef.current.call() : defaultValueRef.current;
+        const $value = {current: defaultValueRef.current}
         /**
          * @param {function(value)} callbackOrValue
          */
         const setValue = (callbackOrValue) => {
-            const oldVal = isFunction(defaultValueRef.current) ? defaultValueRef.current() : defaultValueRef.current;
+            const oldVal = defaultValueRef.current;
             let newVal = callbackOrValue;
             if (isFunction(callbackOrValue)) {
                 newVal = callbackOrValue.apply(this, [oldVal]);
