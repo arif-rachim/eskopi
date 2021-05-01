@@ -20,7 +20,7 @@ import GroupController from "module/page-renderer/controller/GroupController";
 import GroupTemplate from "module/page-designer/controls/controller/GroupTemplate";
 import FormTemplate from "module/page-designer/controls/controller/FormTemplate";
 import FormController from "module/page-renderer/controller/FormController";
-import FormPanel from "module/page-designer/properties/FormPanel";
+import {eventPanelFactory} from "module/page-designer/properties/EventPanel";
 import ColumnsPanel from "module/page-designer/properties/ColumnsPanel";
 
 export const Controls = {
@@ -75,8 +75,19 @@ export const ControlForPageDesigner = {
     [Controls.TABLE_INPUT]: withTemplate(ControlForPageRenderer[Controls.TABLE_INPUT])
 }
 
+const FORM_EVENT_CONFIG = {
+    title : 'Form Event',
+    events : [{
+        name : 'handleSubmit',
+        title : 'On Submit'
+    },{
+        name : 'handleLoad',
+        title : 'On Load'
+    }]
+}
+
 export const ControlPropertiesCatalog = {
-    [Controls.FORM]: [FormPanel, BorderMarginPaddingPanel, AlignmentAndGapPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
+    [Controls.FORM]: [eventPanelFactory(FORM_EVENT_CONFIG), BorderMarginPaddingPanel, AlignmentAndGapPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.GROUP]: [BorderMarginPaddingPanel, AlignmentAndGapPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.TEXT_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
     [Controls.TEXT_AREA]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],

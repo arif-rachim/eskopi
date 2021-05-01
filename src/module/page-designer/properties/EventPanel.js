@@ -12,27 +12,33 @@ import {Controller} from "components/useForm";
 import {mapToNameFactory} from "components/input/Input";
 import {useRegisteredControlsObserver} from "components/page/useControlRegistration";
 
-function FormPanel({control, $selectedController}) {
+const DEFAULT_EVENTS = [{
+    name : 'handleSubmit',
+    title : 'On Submit'
+},{
+    name : 'handleLoad',
+    title : 'On Load'
+}];
 
-    return <Vertical p={2} gap={2}>
-        <Controller
-            control={control}
-            name={'handleSubmit'}
-            $selectedController={$selectedController}
-            title={'On Submit'}
-            render={EventListenerInput}
-        />
-
-        <Controller
-            control={control}
-            name={'handleLoad'}
-            title={'On Load'}
-            $selectedController={$selectedController}
-            render={EventListenerInput}
-        />
-
-    </Vertical>
+export function eventPanelFactory({title='Event Panel',events=DEFAULT_EVENTS}){
+    function EventPanel({control, $selectedController}) {
+        return <Vertical p={2} gap={2}>
+            {events.map(event => {
+                return <Controller
+                    control={control}
+                    name={event.name}
+                    $selectedController={$selectedController}
+                    title={event.title}
+                    render={EventListenerInput}
+                />
+            })}
+        </Vertical>
+    }
+    EventPanel.title = title;
+    return EventPanel;
 }
+
+
 
 function EventListenerInput({$value, onChange, name, $errors, $selectedController, title}) {
     const $nameValue = useObserverMapper($value, mapToNameFactory(name));
@@ -53,9 +59,6 @@ function EventListenerInput({$value, onChange, name, $errors, $selectedControlle
         }}>Listener</Button>
     </Horizontal>
 }
-
-FormPanel.title = 'Form Event'
-export default FormPanel;
 
 function getFormControllerNames(children) {
     let result = [];
