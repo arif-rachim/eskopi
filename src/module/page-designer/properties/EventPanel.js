@@ -25,6 +25,7 @@ export function eventPanelFactory({title='Event Panel',events=DEFAULT_EVENTS}){
         return <Vertical p={2} gap={2}>
             {events.map(event => {
                 return <Controller
+                    key={event.name}
                     control={control}
                     name={event.name}
                     $selectedController={$selectedController}
