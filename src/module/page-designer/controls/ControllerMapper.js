@@ -23,6 +23,8 @@ import FormController from "module/page-renderer/controller/FormController";
 import {eventPanelFactory} from "module/page-designer/properties/EventPanel";
 import ColumnsPanel from "module/page-designer/properties/ColumnsPanel";
 import CheckboxController from "../../page-renderer/controller/CheckboxController";
+import PageController from "module/page-renderer/controller/PageController";
+import PageSelectorPanel from "module/page-designer/properties/PageSelectorPanel";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
@@ -35,7 +37,8 @@ export const Controls = {
     DATE_INPUT: 'dateInput',
     TIME_INPUT: 'timeInput',
     TABLE_INPUT: 'tableInput',
-    CHECKBOX : 'checkboxInput'
+    CHECKBOX: 'checkboxInput',
+    PAGE: 'page'
 };
 
 export const ControlsNaming = {
@@ -49,7 +52,8 @@ export const ControlsNaming = {
     [Controls.NUMBER_INPUT]: 'Number',
     [Controls.TABLE_INPUT]: 'Table',
     [Controls.FORM]: 'Form',
-    [Controls.CHECKBOX] : 'Checkbox'
+    [Controls.CHECKBOX]: 'Checkbox',
+    [Controls.PAGE]: 'Page'
 };
 
 export const ControlForPageRenderer = {
@@ -63,7 +67,8 @@ export const ControlForPageRenderer = {
     [Controls.DATE_INPUT]: DateInputController,
     [Controls.TIME_INPUT]: TimeInputController,
     [Controls.TABLE_INPUT]: withTableData(withAutoPopulateColumn(TableInputController)),
-    [Controls.CHECKBOX] : CheckboxController
+    [Controls.CHECKBOX]: CheckboxController,
+    [Controls.PAGE]: PageController
 }
 
 export const ControlForPageDesigner = {
@@ -77,7 +82,8 @@ export const ControlForPageDesigner = {
     [Controls.DATE_INPUT]: withTemplate(ControlForPageRenderer[Controls.DATE_INPUT]),
     [Controls.TIME_INPUT]: withTemplate(ControlForPageRenderer[Controls.TIME_INPUT]),
     [Controls.TABLE_INPUT]: withTemplate(ControlForPageRenderer[Controls.TABLE_INPUT]),
-    [Controls.CHECKBOX] : withTemplate(ControlForPageRenderer[Controls.CHECKBOX])
+    [Controls.CHECKBOX]: withTemplate(ControlForPageRenderer[Controls.CHECKBOX]),
+    [Controls.PAGE]: withTemplate(ControlForPageRenderer[Controls.PAGE])
 }
 
 const FORM_EVENT_CONFIG = {
@@ -101,7 +107,8 @@ export const ControlPropertiesCatalog = {
     [Controls.NUMBER_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
     [Controls.BUTTON]: [NameAndIdPanel, WidthAndHeightPanel],
     [Controls.TABLE_INPUT]: [NameAndIdPanel, DataPanel, ColumnsPanel, WidthAndHeightPanel],
-    [Controls.CHECKBOX]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity]
+    [Controls.CHECKBOX]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
+    [Controls.PAGE]: [NameAndIdPanel, PageSelectorPanel],
 }
 
 export const Icons = {
@@ -253,12 +260,23 @@ export const Icons = {
         </g>
     </svg>,
     [Controls.CHECKBOX]: <svg viewBox={'0 0 355 355'} width="16" height="16"
-                                overflow="hidden">
+                              overflow="hidden">
         <g transform="translate(-136 -104)">
             <rect x="145" y="112" width="337" height="338" stroke="#000000" strokeWidth="16"
                   strokeMiterlimit="8" fill="none"/>
             <path d="M239.5 151.5 239.5 410.825" stroke="#000000" strokeWidth="21.3333"
                   strokeMiterlimit="8" fill="none" fillRule="evenodd"/>
+        </g>
+    </svg>,
+    [Controls.PAGE]: <svg
+        width={16} height={16}
+        viewBox="0 0 89.958328 88.635422">
+        <g
+            transform="translate(-90.353101,-136.04247)">
+            <path
+                id="path838"
+                style={{strokeWidth: '0.264583'}}
+                d="m 135.33227,136.04247 -44.979169,88.63542 h 13.303069 l 11.63494,-22.88956 h 40.61148 l 11.63495,22.88956 h 12.77389 z m 0.26458,25.79688 14.19241,27.92181 h -28.38483 z"/>
         </g>
     </svg>,
 }
