@@ -33,6 +33,7 @@ export default function FormController({
                             style={style}
                             element={'form'}
                             onSubmit={handleSubmit(data => {
+                                // eslint-disable-next-line
                                 const f = new Function('data', 'actions', `(async(data,actions) => {
 ${onHandleSubmit}
 })(data,actions)`);

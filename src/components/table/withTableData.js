@@ -27,7 +27,7 @@ export default function withTableData(Component) {
             loadResource(url);
         }
 
-        refreshGrid.propTypes = {};
+        refreshGrid.propertyTypes = {};
 
         useControlRegistration({
             name: props?.data?.name,

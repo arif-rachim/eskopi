@@ -5,6 +5,7 @@ import useForm from "components/useForm";
 import {useCallback, useEffect, useRef} from "react";
 import {ControlForPageRenderer} from "module/page-designer/controls/ControllerMapper";
 import {mapToNameFactory} from "components/input/Input";
+import {ControlRegistrationContextProvider} from "components/page/useControlRegistration";
 
 export default function Page({
                                  pageId,
@@ -18,6 +19,7 @@ export default function Page({
                              }) {
 
     const $nameValue = useObserverMapper($value, mapToNameFactory(name));
+    // eslint-disable-next-line
     const $errorValue = useObserverMapper($errors, mapToNameFactory(name));
 
     const propsRef = useRef({
@@ -32,6 +34,7 @@ export default function Page({
     const [$onPageDesignLoad, setPageDesignLoad] = useResource();
     const [$onPageLoad] = useResource({url: `/db/${SYSTEM_PAGES}`});
     const [$pageDesign, setPageDesign] = useObserver();
+    // eslint-disable-next-line
     const [$pageInfo, setPageInfo] = useObserver();
     useResourceListener($onPageDesignLoad, (status, pageDesign) => {
         if (status === 'success') {
@@ -83,15 +86,17 @@ export default function Page({
 
     useEffect(() => {
         setPageDesignLoad(`/db/${SYSTEM_PAGE_DESIGNS}`, {pageId})
-    }, [pageId]);
+    }, [pageId, setPageDesignLoad]);
 
-    return <ObserverValue $observers={useObserverMapper($pageDesign, data => data?.children)}>{
-        (children) => {
-            children = children || [];
-            return children.map(child => {
-                const ChildRender = ControlForPageRenderer[child.type];
-                return <ChildRender key={child.id} data={child} control={control}/>
-            });
-        }
-    }</ObserverValue>
+    return <ControlRegistrationContextProvider>
+        <ObserverValue $observers={useObserverMapper($pageDesign, data => data?.children)}>{
+            (children) => {
+                children = children || [];
+                return children.map(child => {
+                    const ChildRender = ControlForPageRenderer[child.type];
+                    return <ChildRender key={child.id} data={child} control={control}/>
+                });
+            }
+        }</ObserverValue>
+    </ControlRegistrationContextProvider>
 }

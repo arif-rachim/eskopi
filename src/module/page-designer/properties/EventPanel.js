@@ -212,9 +212,9 @@ function ComponentSnippet({setValue}) {
                     const actions = control.actions.reduce((acc, action) => ({...acc, ...action.current}), {});
                     return Object.keys(actions).map(action => {
                         return <Button key={action} onClick={() => {
-                            const propType = actions[action].propTypes;
+                            const propType = actions[action].propertyTypes;
                             if (isNullOrUndefined(propType)) {
-                                throw new Error('propType is required for ' + action);
+                                throw new Error('propertyTypes is required for ' + action);
                             }
                             let parameterString = Object.keys(propType).join(',');
                             if (parameterString.length > 0) {

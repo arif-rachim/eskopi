@@ -1,10 +1,16 @@
-import useObserver from "components/useObserver";
+import useObserver, {useObserverListener} from "components/useObserver";
 import {createContext, useContext, useEffect, useRef} from "react";
 
 const ControlRegistrationContext = createContext([]);
 
-export function ControlRegistrationContextProvider({children}) {
-    return <ControlRegistrationContext.Provider value={useObserver({})}>
+export function ControlRegistrationContextProvider({children, onChange}) {
+    const controlRegistration = useObserver({});
+    useObserverListener(controlRegistration[0], registeredControls => {
+        if (onChange) {
+            onChange(registeredControls);
+        }
+    })
+    return <ControlRegistrationContext.Provider value={controlRegistration}>
         {children}
     </ControlRegistrationContext.Provider>
 }
@@ -12,6 +18,10 @@ export function ControlRegistrationContextProvider({children}) {
 export function useRegisteredControlsObserver() {
     const [$controls] = useContext(ControlRegistrationContext);
     return $controls;
+}
+
+export function useControlRegistrationContextSetter() {
+    return useContext(ControlRegistrationContext)[1];
 }
 
 export function useControlRegistration({id, name, actions}) {

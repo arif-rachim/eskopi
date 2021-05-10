@@ -28,7 +28,6 @@ export default function PageDesigner({setTitle}) {
                     <ControlListPanel/>
                 </Vertical>
                 <Vertical>
-
                 </Vertical>
                 <Vertical flex={3}>
                     <DesignerPanel $data={$data}

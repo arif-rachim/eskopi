@@ -12,6 +12,10 @@ import Button from "components/button/Button";
 import {isNullOrUndefined} from "components/utils";
 import {useInfoMessage} from "components/dialog/Dialog";
 import {SYSTEM_PAGE_DESIGNS} from "components/SystemTableName";
+import {
+    ControlRegistrationContextProvider,
+    useControlRegistrationContextSetter
+} from "components/page/useControlRegistration";
 
 
 const handleRootDragEnter = (dragHoverCountRef) => (event) => {
@@ -48,7 +52,7 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
     const dropListener = useContext(DropListenerContext);
     usePlaceHolderListener("drop", handlePlaceHolderDrop(rootRef, setData));
     const dragHoverCountRef = useRef(0);
-    const {control, handleSubmit, $value, reset} = useForm();
+    const {control, handleSubmit, reset} = useForm();
 
     const [$onPageDataSave, doSavePage] = useResource();
     const [$onPageDetailFetched, doLoadDetail] = useResource();
@@ -71,7 +75,8 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
             }
 
         }
-    })
+    });
+    const controlRegistrationSetter = useControlRegistrationContextSetter();
     return <>
         <Vertical color={"light"} brightness={-3} p={3} flex={1}
                   $visible={useObserverMapper($hasSelectedPage, value => !value)} vAlign={'center'} hAlign={'center'}>
@@ -79,12 +84,8 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
         </Vertical>
         <Vertical color={"light"} height={'100%'} brightness={-3} flex={1} $visible={$hasSelectedPage}
                   overflow={'auto'}>
-            <form action="" onSubmit={handleSubmit(() => {
-                const data = $data.current;
-                data.pageId = $selectedPage.current.id;
-                data.a = data.id_ ? 'u' : 'c';
-                doSavePage(`/db/${SYSTEM_PAGE_DESIGNS}`, data);
-            })} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+            {/*<form action="" style={{height: '100%', display: 'flex', flexDirection: 'column'}}>*/}
+            <Vertical height={'100%'}>
                 <Vertical domRef={rootRef} color={"light"} brightness={0} elevation={1}
                           onDragEnter={handleRootDragEnter(dragHoverCountRef)}
                           onDragOver={handleRootDragOver()}
@@ -94,25 +95,35 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
                           data-layout={'vertical'}
                           height={'calc(100% - 32px)'}
                           overflow={"auto"}>
-
                     <ObserverValue $observers={useObserverMapper($data, data => {
                         return data.children
                     })}>{
                         (value) => {
-                            return <RenderLayoutMemo value={value} control={control}
-                                                     setSelectedController={setSelectedController}
-                                                     $selectedController={$selectedController}/>
+                            return <ControlRegistrationContextProvider key={JSON.stringify(value)}
+                                                                       onChange={(controls) => {
+                                                                           controlRegistrationSetter(controls);
+                                                                       }}>
+                                <RenderLayoutMemo value={value} control={control}
+                                                  setSelectedController={setSelectedController}
+                                                  $selectedController={$selectedController}/>
+                            </ControlRegistrationContextProvider>
                         }
                     }</ObserverValue>
 
                 </Vertical>
                 <Horizontal hAlign={'right'} gap={2} color={"light"} p={2} brightness={0.5}>
-                    <Button type={'submit'}>Save</Button>
+                    <Button type={'submit'} onClick={handleSubmit(() => {
+                        const data = $data.current;
+                        data.pageId = $selectedPage.current.id;
+                        data.a = data.id_ ? 'u' : 'c';
+                        doSavePage(`/db/${SYSTEM_PAGE_DESIGNS}`, data);
+                    })}>Save</Button>
                     <Button type={"button"} onClick={() => {
                         reset()
                     }}>Cancel</Button>
                 </Horizontal>
-            </form>
+            </Vertical>
+
         </Vertical>
     </>
 }

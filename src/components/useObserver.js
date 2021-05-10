@@ -95,7 +95,8 @@ export function useObserverValue(observers, mapper, debounceTimeout = 0) {
     }
     const [internalState, setInternalState] = useState(() => observerIsUndefined ? observers : observers.map($o => $o.current));
     // eslint-disable-next-line
-    const setState = useCallback(debounce(setInternalState, debounceTimeout), []);
+    const setInternalStateDebounced = useCallback(debounce(setInternalState, debounceTimeout), [setInternalState, debounceTimeout]);
+    const setState = debounceTimeout > 0 ? setInternalStateDebounced : setInternalState;
     useLayoutEffect(() => {
         if (observers === undefined) {
             return;

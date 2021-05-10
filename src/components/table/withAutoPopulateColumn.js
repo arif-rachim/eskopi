@@ -12,12 +12,11 @@ export default function withAutoPopulateColumn(Component) {
             setColumns(constructColumns(data,columns));
         });
         useEffect(() => {
-            setColumns(constructColumns($data.current,columns));
-        },[columns])
+            setColumns(constructColumns($data.current, columns));
+        }, [$data, columns, setColumns])
         return <Component $columns={$columns} $data={$data} {...props}/>
     }
 }
-
 
 function constructColumns(rows,columns) {
     if(columns){
