@@ -1,18 +1,23 @@
 import useResource, {useResourceListener} from "components/useResource";
-import {SYSTEM_PAGE_DESIGNS, SYSTEM_PAGES} from "components/SystemTableName";
-import useObserver, {ObserverValue, useObserverListener, useObserverMapper} from "components/useObserver";
+import {SYSTEM_PAGE_DESIGNS, SYSTEM_PAGES, SYSTEM_TABLES} from "components/SystemTableName";
+import useObserver, {ObserverValue, useObserverListener, useObserverMapper,} from "components/useObserver";
 import useForm from "components/useForm";
-import {useCallback, useEffect, useRef} from "react";
+import {createContext, useCallback, useEffect, useRef} from "react";
 import {ControlForPageRenderer} from "module/page-designer/controls/ControllerMapper";
 import {mapToNameFactory} from "components/input/Input";
-import {ControlRegistrationContextProvider} from "components/page/useControlRegistration";
+import {useControlRegistration} from "components/page/useControlRegistration";
+
+function EmptyFunction() {
+}
+
+EmptyFunction.propertyTypes = {};
 
 export default function Page({
                                  pageId,
                                  setTitle,
                                  name,
                                  onBlur,
-                                 onChange,
+                                 onChange = EmptyFunction,
                                  $value,
                                  $errors,
                                  compRef
@@ -23,8 +28,7 @@ export default function Page({
     const $errorValue = useObserverMapper($errors, mapToNameFactory(name));
 
     const propsRef = useRef({
-        onChange, onBlur, handleSubmit: () => {
-        }
+        onChange, onBlur, handleSubmit: EmptyFunction
     });
     const localRef = useRef({});
     compRef = compRef || localRef;
@@ -73,22 +77,26 @@ export default function Page({
     propsRef.current.handleSubmit = handleSubmit;
     useObserverListener($nameValue, nameValue => {
         nameValue = nameValue === undefined ? {} : nameValue;
-        reset(nameValue);
+        reset({...nameValue});
     });
-
     compRef.current.commitChanges = useCallback(() => {
         propsRef.current.handleSubmit(data => {
-            if (propsRef.current.onChange) {
-                propsRef.current.onChange(data);
-            }
-        });
+            propsRef.current.onChange(data);
+        })();
     }, []);
 
     useEffect(() => {
         setPageDesignLoad(`/db/${SYSTEM_PAGE_DESIGNS}`, {pageId})
     }, [pageId, setPageDesignLoad]);
 
-    return <ControlRegistrationContextProvider>
+    function commitChanges() {
+        compRef.current.commitChanges();
+    }
+
+    commitChanges.propertyTypes = {};
+    reset.propertyTypes = {};
+
+    return <PageActions commitChanges={commitChanges} control={control} handleSubmit={handleSubmit} reset={reset}>
         <ObserverValue $observers={useObserverMapper($pageDesign, data => data?.children)}>{
             (children) => {
                 children = children || [];
@@ -98,5 +106,26 @@ export default function Page({
                 });
             }
         }</ObserverValue>
-    </ControlRegistrationContextProvider>
+    </PageActions>
+}
+export const PageControlContext = createContext({});
+
+export function PageActions({children, commitChanges = EmptyFunction, control, reset = EmptyFunction}) {
+    useControlRegistration({
+        name: 'page',
+        id: 'page',
+        actions: {
+            commitChanges,
+            reset
+        }
+    });
+    const [$systemTables, setSystemTables] = useObserver([]);
+    const [$onTableLoads] = useResource({url: `/db/${SYSTEM_TABLES}`});
+    useResourceListener($onTableLoads, (status, tables) => {
+        if (status === 'success') {
+            setSystemTables(tables);
+        }
+    })
+    return <PageControlContext.Provider
+        value={{control, $systemTables, reset, commitChanges}}>{children}</PageControlContext.Provider>;
 }

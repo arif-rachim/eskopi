@@ -11,37 +11,42 @@ import Panel from "components/panel/Panel";
 import {Controller} from "components/useForm";
 import {mapToNameFactory} from "components/input/Input";
 import {useRegisteredControlsObserver} from "components/page/useControlRegistration";
+import {Controls} from "module/page-designer/controls/ControllerMapper";
 
-const DEFAULT_EVENTS = [{
-    name : 'handleSubmit',
-    title : 'On Submit'
-},{
-    name : 'handleLoad',
-    title : 'On Load'
-}];
 
-export function eventPanelFactory({title='Event Panel',events=DEFAULT_EVENTS}){
-    function EventPanel({control, $selectedController}) {
+const DEFAULT_EVENTS = {
+    handleSubmit: {
+        title: 'On Submit'
+    },
+    handleLoad: {
+        title: 'On Load'
+    }
+}
+
+export function eventPanelFactory({title = 'Event Panel', events = DEFAULT_EVENTS}) {
+    function EventPanel({control, $selectedController, $selectedPage}) {
         return <Vertical p={2} gap={2}>
-            {events.map(event => {
+            {Object.keys(events).map(key => {
+                const event = events[key];
                 return <Controller
-                    key={event.name}
+                    key={key}
                     control={control}
-                    name={event.name}
+                    name={key}
                     $selectedController={$selectedController}
+                    $selectedPage={$selectedPage}
                     title={event.title}
                     render={EventListenerInput}
                 />
             })}
         </Vertical>
     }
+
     EventPanel.title = title;
     return EventPanel;
 }
 
 
-
-function EventListenerInput({$value, onChange, name, $errors, $selectedController, title}) {
+function EventListenerInput({$value, onChange, name, $errors, $selectedController, $selectedPage, title}) {
     const $nameValue = useObserverMapper($value, mapToNameFactory(name));
     const showPanel = useSlideDownStackPanel();
     const hasValue = useObserverValue($nameValue, value => !isNullOrUndefined(value) && value.length > 0);
@@ -51,6 +56,7 @@ function EventListenerInput({$value, onChange, name, $errors, $selectedControlle
             const code = await showPanel(CodeEditor, {
                 title: title + ' Listener',
                 $selectedController,
+                $selectedPage,
                 $code: $nameValue
             })
             if (code === false) {
@@ -61,14 +67,15 @@ function EventListenerInput({$value, onChange, name, $errors, $selectedControlle
     </Horizontal>
 }
 
-function getFormControllerNames(children) {
+function getControllerNames(children) {
     let result = [];
+    children = children || [];
     for (const child of children) {
         if (child?.name) {
             result.push(child.name);
         }
         if (child?.children) {
-            result = [...result, ...getFormControllerNames(child.children)];
+            result = [...result, ...getControllerNames(child.children)];
         }
     }
     return result;
@@ -139,7 +146,7 @@ actions.resetForm()`;
     </Horizontal>;
 }
 
-function CodeEditor({title, $code, closePanel, $selectedController}) {
+function CodeEditor({title, $code, closePanel, $selectedController, $selectedPage}) {
     const [$data, setData] = useObserver();
     const [$selectedTable, setSelectedTable] = useObserver();
     const [$onResourceLoad] = useResource({url: `/db/${SYSTEM_TABLES}`});
@@ -152,9 +159,15 @@ function CodeEditor({title, $code, closePanel, $selectedController}) {
         if ($code?.current) {
             return $code.current;
         }
-        const controllerNames = getFormControllerNames($selectedController.current.children);
-        controllerNames.unshift('id_');
+        let controllerNames = [];
+        if ($selectedController.current?.type === Controls.FORM) {
+            controllerNames = getControllerNames($selectedController.current.children);
+            controllerNames.unshift('id_');
+        } else {
+            controllerNames = getControllerNames($selectedPage.current?.children);
+        }
         return `const {${controllerNames.join(',')}} = data;`
+
     });
 
     return <Vertical width={800} p={4} gap={2}>

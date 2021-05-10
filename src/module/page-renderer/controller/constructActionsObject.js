@@ -1,10 +1,9 @@
 import {post} from "components/useResource";
 
-export default function constructActionsObject(reset, resources, token, $controls) {
+export default function constructActionsObject(reset, resources = [], token, controls = {}) {
     const actions = {
         resetForm: reset
     };
-
     for (const resource of resources) {
         const doSave = `doSave${resource.tableName}`;
         const doDelete = `doDelete${resource.tableName}`;
@@ -19,8 +18,8 @@ export default function constructActionsObject(reset, resources, token, $control
             return post(`/db/${resource.id_}`, ({...data, a: 'r'}), token);
         }
     }
-    Object.keys($controls.current).forEach(id => {
-        const control = $controls.current[id];
+    Object.keys(controls).forEach(id => {
+        const control = controls[id];
         const {actions: controlActions, name} = control;
         controlActions.forEach(controlAction => {
             const action = {};

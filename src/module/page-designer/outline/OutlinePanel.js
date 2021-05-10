@@ -105,7 +105,6 @@ function OutlineItemRenderer(props) {
                 props.setData(oldData => {
                     const newData = JSON.parse(JSON.stringify(oldData));
                     let removedData = newData;
-                    debugger;
                     for (const parentId of props.data.parentIds) {
                         removedData = removedData.children.find(c => c.id === parentId);
                     }

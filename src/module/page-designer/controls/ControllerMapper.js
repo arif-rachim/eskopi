@@ -1,9 +1,6 @@
 import BorderMarginPaddingPanel from "../properties/BorderMarginPaddingPanel";
 import AlignmentAndGapPanel from "module/page-designer/properties/AlignmentAndGapPanel";
-import WidthAndHeightPanel from "../properties/WidthAndHeightPanel";
 import ColorBrightnessOpacity from "../properties/ColorBrightnessOpacity";
-
-import NameAndIdPanel from "module/page-designer/properties/NameAndId";
 import TextInputController from "module/page-renderer/controller/TextInputController";
 import withTemplate from "module/page-designer/controls/controller/withTemplate";
 import NumberInputController from "module/page-renderer/controller/NumberInputController";
@@ -25,6 +22,8 @@ import ColumnsPanel from "module/page-designer/properties/ColumnsPanel";
 import CheckboxController from "../../page-renderer/controller/CheckboxController";
 import PageController from "module/page-renderer/controller/PageController";
 import PageSelectorPanel from "module/page-designer/properties/PageSelectorPanel";
+import withControlRegistration from "components/table/withControlRegistration";
+import dynamicPropertiesPanelFactory from "module/page-designer/properties/DynamicPropertiesPanel";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
@@ -68,7 +67,7 @@ export const ControlForPageRenderer = {
     [Controls.TIME_INPUT]: TimeInputController,
     [Controls.TABLE_INPUT]: withTableData(withAutoPopulateColumn(TableInputController)),
     [Controls.CHECKBOX]: CheckboxController,
-    [Controls.PAGE]: PageController
+    [Controls.PAGE]: withControlRegistration(PageController)
 }
 
 export const ControlForPageDesigner = {
@@ -87,28 +86,74 @@ export const ControlForPageDesigner = {
 }
 
 const FORM_EVENT_CONFIG = {
-    title : 'Form Event',
-    events : [{
-        name : 'handleSubmit',
-        title : 'On Submit'
-    },{
-        name : 'handleLoad',
-        title : 'On Load'
-    }]
+    title: 'Form Event',
+    events: {
+        handleSubmit: {
+            title: 'On Submit'
+        },
+        handleLoad: {
+            title: 'On Load'
+        }
+    }
+}
+
+const BUTTON_EVENT_CONFIG = {
+    title: 'Button Event',
+    events: {
+        handleClick: {
+            title: 'On Click'
+        }
+    }
+}
+
+const BUTTON_PROPERTIES = {
+    title: 'Button Properties',
+    properties: {
+        buttonType: {
+            title: 'Type',
+            type: 'select', // string,boolean,select,number
+            data: ['button', 'submit', 'reset']
+        }
+    }
+}
+
+const NAME_LABEL_PROPS = {
+    title: 'Name and Label',
+    properties: {
+        name: {
+            title: 'Name',
+            casing: 'camelCase'
+        },
+        label: {
+            title: 'Label'
+        }
+    }
+}
+
+const WIDTH_HEIGHT_PROPS = {
+    title: 'Width and Height',
+    properties: {
+        width: {
+            title: 'Width'
+        },
+        height: {
+            title: 'Height'
+        }
+    }
 }
 
 export const ControlPropertiesCatalog = {
-    [Controls.FORM]: [eventPanelFactory(FORM_EVENT_CONFIG), BorderMarginPaddingPanel, AlignmentAndGapPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
-    [Controls.GROUP]: [BorderMarginPaddingPanel, AlignmentAndGapPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
-    [Controls.TEXT_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
-    [Controls.TEXT_AREA]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
-    [Controls.DATE_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
-    [Controls.TIME_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
-    [Controls.NUMBER_INPUT]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel],
-    [Controls.BUTTON]: [NameAndIdPanel, WidthAndHeightPanel],
-    [Controls.TABLE_INPUT]: [NameAndIdPanel, DataPanel, ColumnsPanel, WidthAndHeightPanel],
-    [Controls.CHECKBOX]: [NameAndIdPanel, BorderMarginPaddingPanel, WidthAndHeightPanel, ColorBrightnessOpacity],
-    [Controls.PAGE]: [NameAndIdPanel, PageSelectorPanel],
+    [Controls.FORM]: [eventPanelFactory(FORM_EVENT_CONFIG), BorderMarginPaddingPanel, AlignmentAndGapPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
+    [Controls.GROUP]: [BorderMarginPaddingPanel, AlignmentAndGapPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
+    [Controls.TEXT_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
+    [Controls.TEXT_AREA]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
+    [Controls.DATE_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
+    [Controls.TIME_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
+    [Controls.NUMBER_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
+    [Controls.BUTTON]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), eventPanelFactory(BUTTON_EVENT_CONFIG), dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), dynamicPropertiesPanelFactory(BUTTON_PROPERTIES)],
+    [Controls.TABLE_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), DataPanel, ColumnsPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
+    [Controls.CHECKBOX]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
+    [Controls.PAGE]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), PageSelectorPanel],
 }
 
 export const Icons = {

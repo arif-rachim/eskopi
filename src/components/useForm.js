@@ -10,8 +10,10 @@ import {isFunction, isNullOrUndefined} from "components/utils";
  * @returns {function(*=): function(*): void}
  */
 const handleSubmitFactory = (control) => (callback) => (event) => {
-    event.preventDefault();
-    event.stopPropagation();
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
     // lets revalidate all errors
     Object.keys(control.current.validator).forEach(name => {
         const validator = control.current.validator[name];

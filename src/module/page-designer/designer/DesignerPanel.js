@@ -16,6 +16,7 @@ import {
     ControlRegistrationContextProvider,
     useControlRegistrationContextSetter
 } from "components/page/useControlRegistration";
+import {PageActions} from "components/page/Page";
 
 
 const handleRootDragEnter = (dragHoverCountRef) => (event) => {
@@ -84,7 +85,6 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
         </Vertical>
         <Vertical color={"light"} height={'100%'} brightness={-3} flex={1} $visible={$hasSelectedPage}
                   overflow={'auto'}>
-            {/*<form action="" style={{height: '100%', display: 'flex', flexDirection: 'column'}}>*/}
             <Vertical height={'100%'}>
                 <Vertical domRef={rootRef} color={"light"} brightness={0} elevation={1}
                           onDragEnter={handleRootDragEnter(dragHoverCountRef)}
@@ -103,9 +103,11 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
                                                                        onChange={(controls) => {
                                                                            controlRegistrationSetter(controls);
                                                                        }}>
-                                <RenderLayoutMemo value={value} control={control}
-                                                  setSelectedController={setSelectedController}
-                                                  $selectedController={$selectedController}/>
+                                <PageActions>
+                                    <RenderLayoutMemo value={value} control={control}
+                                                      setSelectedController={setSelectedController}
+                                                      $selectedController={$selectedController}/>
+                                </PageActions>
                             </ControlRegistrationContextProvider>
                         }
                     }</ObserverValue>
@@ -123,7 +125,6 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
                     }}>Cancel</Button>
                 </Horizontal>
             </Vertical>
-
         </Vertical>
     </>
 }
