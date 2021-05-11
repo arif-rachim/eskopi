@@ -10,6 +10,7 @@ export default function TextInputController({
                                                 ...controllerProps
                                             }) {
     const {children, type, parentIds, width, ...props} = data;
+
     return <Vertical p={2} pT={1} pB={1} width={width} {...containerProps}>
         <Controller render={Input}
                     type={"input"}

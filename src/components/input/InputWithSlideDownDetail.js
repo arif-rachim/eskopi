@@ -15,7 +15,7 @@ export default function InputWithSlideDownDetail({$value, name, onChange, title,
             {(formValue) => {
                 const hasValue = !isNullOrUndefined(formValue);
                 return <Button color={hasValue ? "secondary" : "light"} onClick={async () => {
-                    const result = await showPanel(DetailPanel, {$formValue,name,$value});
+                    const result = await showPanel(DetailPanel, {$formValue, name, $value});
                     if (result === 'REMOVE') {
                         onChange(undefined);
                         return;

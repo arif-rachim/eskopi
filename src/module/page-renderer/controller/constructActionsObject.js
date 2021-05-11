@@ -1,21 +1,21 @@
 import {post} from "components/useResource";
 
-export default function constructActionsObject(reset, resources = [], token, controls = {}) {
+export default function constructActionsObject(reset, dbTables = [], token, controls = {}) {
     const actions = {
         resetForm: reset
     };
-    for (const resource of resources) {
-        const doSave = `doSave${resource.tableName}`;
-        const doDelete = `doDelete${resource.tableName}`;
-        const doRead = `doRead${resource.tableName}`;
+    for (const table of dbTables) {
+        const doSave = `doSave${table.tableName}`;
+        const doDelete = `doDelete${table.tableName}`;
+        const doRead = `doRead${table.tableName}`;
         actions[doSave] = async (data) => {
-            return post(`/db/${resource.id_}`, ({...data, a: 'c'}), token);
+            return post(`/db/${table.id_}`, ({...data, a: 'c'}), token);
         }
         actions[doDelete] = async (id) => {
-            return post(`/db/${resource.id_}`, ({id_: id, a: 'd'}), token);
+            return post(`/db/${table.id_}`, ({id_: id, a: 'd'}), token);
         }
         actions[doRead] = async (data) => {
-            return post(`/db/${resource.id_}`, ({...data, a: 'r'}), token);
+            return post(`/db/${table.id_}`, ({...data, a: 'r'}), token);
         }
     }
     Object.keys(controls).forEach(id => {

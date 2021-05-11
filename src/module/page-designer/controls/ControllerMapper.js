@@ -24,6 +24,7 @@ import PageController from "module/page-renderer/controller/PageController";
 import PageSelectorPanel from "module/page-designer/properties/PageSelectorPanel";
 import withControlRegistration from "components/table/withControlRegistration";
 import dynamicPropertiesPanelFactory from "module/page-designer/properties/DynamicPropertiesPanel";
+import withChangeHandler from "components/input/withChangeHandler";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
@@ -60,7 +61,7 @@ export const ControlForPageRenderer = {
     [Controls.GROUP]: GroupController,
     [Controls.LABEL]: LabelController,
     [Controls.BUTTON]: ButtonController,
-    [Controls.TEXT_INPUT]: TextInputController,
+    [Controls.TEXT_INPUT]: withChangeHandler(TextInputController),
     [Controls.TEXT_AREA]: TextAreaController,
     [Controls.NUMBER_INPUT]: NumberInputController,
     [Controls.DATE_INPUT]: DateInputController,
@@ -93,6 +94,15 @@ const FORM_EVENT_CONFIG = {
         },
         handleLoad: {
             title: 'On Load'
+        }
+    }
+}
+
+const INPUT_EVENT_CONFIG = {
+    title: 'Input Event',
+    events: {
+        handleChange: {
+            title: 'On Change'
         }
     }
 }
@@ -145,7 +155,7 @@ const WIDTH_HEIGHT_PROPS = {
 export const ControlPropertiesCatalog = {
     [Controls.FORM]: [eventPanelFactory(FORM_EVENT_CONFIG), BorderMarginPaddingPanel, AlignmentAndGapPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
     [Controls.GROUP]: [BorderMarginPaddingPanel, AlignmentAndGapPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
-    [Controls.TEXT_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
+    [Controls.TEXT_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), eventPanelFactory(INPUT_EVENT_CONFIG), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
     [Controls.TEXT_AREA]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
     [Controls.DATE_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
     [Controls.TIME_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],

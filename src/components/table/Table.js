@@ -59,8 +59,9 @@ function RowItemRenderer({$columns, $list, $value, data, dataKey, dataToLabel, i
 }
 
 function DefaultCellRenderer({value, ...props}) {
+
     return <Vertical>
-        {value?.toString()}
+        {JSON.stringify(value)}
     </Vertical>;
 }
 

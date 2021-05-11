@@ -151,7 +151,7 @@ const callbackOnBlur = (propsRef) => () => {
  * @returns {function(*=): void}
  */
 const callbackOnChange = (propsRef) => function onChangeCallback(valueOrSetState) {
-    const {control, name, validator} = propsRef.current;
+    const {control, name, validator, onChange} = propsRef.current;
     if (isNullOrUndefined(name) || name === '') {
         console.warn('When declaring controller, name cannot be null or undefined or empty string');
         return;
@@ -173,6 +173,9 @@ const callbackOnChange = (propsRef) => function onChangeCallback(valueOrSetState
     control.current.modified[name] = true;
     if (control.current.validateOn[name] === 'change') {
         validateError(control, name, validator, value);
+    }
+    if (onChange) {
+        onChange(value);
     }
 };
 
@@ -204,13 +207,14 @@ export function Controller({
     if (isNullOrUndefined(control)) {
         throw Error('Please define control object from useForm');
     }
+    const {onChange: propsOnChange, ...remainingProps} = props;
     control.current.validateOn[name] = validateOn;
     control.current.validator[name] = validator;
     if (!control.current.modified[name]) {
         control.current.$value.current[name] = control.current.defaultValue[name]
     }
-    const propsRef = useRef({control, name, validator});
-    propsRef.current = {control, name, validator};
+    const propsRef = useRef({control, name, validator, onChange: propsOnChange});
+    propsRef.current = {control, name, validator, onChange: propsOnChange};
     // eslint-disable-next-line
     const onBlur = useCallback(callbackOnBlur(propsRef), []);
     // eslint-disable-next-line
@@ -227,7 +231,8 @@ export function Controller({
             <Horizontal style={{fontSize: '0.8rem', whiteSpace: 'nowrap'}}
                         flex={`0 0 ${horizontalLabelPositionWidth}px`}>{label}</Horizontal>
             <Render name={name} onBlur={onBlur} onChange={onChange} $value={control.current.$value}
-                    $errors={control.current.$errors} {...props} style={{...props.style, width: '100%'}}/>
+                    $errors={control.current.$errors} {...remainingProps}
+                    style={{...remainingProps.style, width: '100%'}}/>
             <Label name={name} color={'danger'} $value={control.current.$errors}
                    style={{fontSize: '0.7rem', position: 'absolute', bottom: -12, right: 0}}/>
         </Horizontal>
@@ -235,7 +240,7 @@ export function Controller({
     return <Vertical element={'label'} overflow={'visible'} style={containerStyle}>
         <Horizontal style={{fontSize: '0.8rem'}}>{label}</Horizontal>
         <Render name={name} onBlur={onBlur} onChange={onChange} $value={control.current.$value}
-                $errors={control.current.$errors} {...props}/>
+                $errors={control.current.$errors} {...remainingProps}/>
         <Label name={name} color={'danger'} $value={control.current.$errors}
                style={{fontSize: '0.7rem', position: 'absolute', bottom: -12, right: 0}}/>
     </Vertical>
