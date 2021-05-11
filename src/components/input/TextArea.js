@@ -3,6 +3,7 @@ import useTheme from "../useTheme";
 import {parseBorder, parseColorStyle, parseRadius, parseStyle} from "../layout/Layout";
 import React, {useCallback} from "react";
 import {useObserverMapper, useObserverValue} from "components/useObserver";
+import {sanitizeProps} from "components/utils";
 
 function isUndefinedOrNull(b) {
     return b === undefined || b === null;
@@ -43,7 +44,6 @@ const replacedAutoCapsKey = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', '
  * @param {number} rBL - radius bottom left
  * @param {number} rBR - radius bottom right
  * @param {boolean} autoCaps - indicate to enable autoCaps
- * @param {string} errorMessage - indicate there is error
  *
  * @param {function(value)} onChange,
  * @param {function()} onBlur,
@@ -125,7 +125,8 @@ function Input({
                      onBlur={onBlur}
                      value={value}
                      rows={rows}
-                     {...props}/>
+                     {...sanitizeProps(props)}
+    />
 }
 
 export default React.memo(Input);

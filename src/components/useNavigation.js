@@ -52,8 +52,7 @@ export function getElementToMount(hash) {
     if (hash && hash.length > 0) {
         const path = hash.substr(1, hash.length - 1);
         const pathArray = path.split('/');
-        const component = findMostMatchingComponent(pathArray, routing);
-        return component;
+        return findMostMatchingComponent(pathArray, routing);
     }
     if ('' in routing) {
         return {Element: routing[''], params: {}};

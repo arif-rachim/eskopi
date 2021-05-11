@@ -3,7 +3,8 @@ import {createShowPanel} from "components/useLayers";
 import useObserver, {ObserverValue} from "components/useObserver";
 
 /**
- * @returns {function(*=): Promise<ValidationOptions.unknown>}
+ *
+ * @returns {function(*=): Promise<*>}
  */
 export default function usePageLayers() {
     const setStacks = useContext(PageLayerContext);

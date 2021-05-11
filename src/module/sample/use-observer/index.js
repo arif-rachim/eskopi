@@ -1,5 +1,5 @@
 import useObserver, {useObserverListener} from "components/useObserver";
-import {Horizontal, Vertical} from "../../../components/layout/Layout";
+import {Horizontal, Vertical} from "components/layout/Layout";
 import {useEffect, useState} from "react";
 
 

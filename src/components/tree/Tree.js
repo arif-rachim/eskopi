@@ -14,9 +14,11 @@ export const DefaultTreeDataKey = (data) => data?.id;
  * @param {function(data:*):string} dataKey
  * @param {function(event:*):void} onKeyboardUp
  * @param {function(event:*):void} onKeyboardDown
- * @param {useRef} domRef
- * @param {useRef} compRef
+ * @param {{current:any}} domRef
+ * @param {{current:any}} compRef
  * @param {any} rowProps
+ * @param {{current:any}} $value
+ * @param {function()} onChange
  * @param props
  * @returns {JSX.Element}
  * @constructor

@@ -1,4 +1,4 @@
-import {Horizontal, Vertical} from "../../../components/layout/Layout";
+import {Horizontal, Vertical} from "components/layout/Layout";
 import useForm, {Controller} from "../../../components/useForm";
 import Input from "../../../components/input/Input";
 import Button from "../../../components/button/Button";

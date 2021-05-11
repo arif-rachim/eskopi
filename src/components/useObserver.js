@@ -50,17 +50,12 @@ export default function useObserver(defaultValue) {
             })
         };
 
-        /**
-         * @param {function()} listener
-         * @returns {function(): void}
-         */
-        const addListener = (listener) => {
+        $value.addListener = (listener) => {
             listeners.push(listener);
             return () => {
                 listeners.splice(listeners.indexOf(listener), 1);
             }
         };
-        $value.addListener = addListener;
         return [$value, setValue];
     }, []);
 }
@@ -84,7 +79,7 @@ export function useObserverMapper($observer, map = (value) => value) {
  * hook to extract the value of observer.
  * @param {{current:*}[] | {current:*} | null} observers
  * @param {function(newValue:any):any} mapper
- * @param {number} debounceTimeout
+ * @param {number | null} debounceTimeout
  * @returns {*}
  */
 export function useObserverValue(observers, mapper, debounceTimeout = 0) {
@@ -138,7 +133,7 @@ export function ObserverValue({$observers, ...props}) {
 /**
  * hook to listen when observer is changed, this is an alternative then using the addListener in observer.
  * @param {{current}|{current}[]} observers
- * @param {function(newValue)} listener
+ * @param {function(any)} listener
  */
 export function useObserverListener(observers, listener = undefined) {
     const observerIsUndefined = observers === undefined;

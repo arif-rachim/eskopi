@@ -402,6 +402,7 @@ function Layout({
  * @param {function(e)} onClick
  * @param {string} flex
  *
+ * @param {number} fSize - font size
  * @returns {JSX.Element}
  * @constructor
  */

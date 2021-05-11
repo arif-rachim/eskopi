@@ -12,7 +12,7 @@ import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import {isEmpty, isNullOrUndefined, stringToCamelCase, stringToPascalCase} from "components/utils";
 import {v4 as uuid} from "uuid";
-import {useConfirmMessage, useInfoMessage} from "../../components/dialog/Dialog";
+import {useConfirmMessage, useInfoMessage} from "components/dialog/Dialog";
 import Select from "components/input/Select";
 import InputTable from "components/table/InputTable";
 

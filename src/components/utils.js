@@ -71,7 +71,7 @@ export function debounce(func, wait = 100, immediate = false) {
 
 /**
  * Tools to handle double event within 500ms
- * @param {function(event,isDouble)} callback
+ * @param {function(event:any,isDouble:boolean)} callback
  * @returns {function(...[*]): void}
  */
 export function handleDouble(callback) {

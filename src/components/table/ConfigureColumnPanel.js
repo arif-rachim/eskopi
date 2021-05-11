@@ -40,11 +40,10 @@ export default function ConfigureColumnPanel({$columns, $value, closePanel: onCh
 
 export function createDefaultColumnsArray(columns) {
     columns = columns || {};
-    const configuredColumns = Object.keys(columns).map(key => {
+    return Object.keys(columns).map(key => {
         const isPrivate = key.endsWith('_');
         return {id: key, visible: !isPrivate, name: key}
     });
-    return configuredColumns;
 }
 
 export function createDefaultColumnsObject(configuredColumns) {

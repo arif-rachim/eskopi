@@ -4,7 +4,7 @@ import useObserver, {ObserverValue} from "components/useObserver";
 
 /**
  *
- * @returns {function(*=): Promise<ValidationOptions.unknown>}
+ * @returns {function(*=): Promise<any>}
  */
 export default function useLayers() {
     const setStacks = useContext(LayerContext);
@@ -15,10 +15,10 @@ export default function useLayers() {
 /**
  *
  * @param setStacks
- * @returns {function(*=): Promise<unknown>}
+ * @returns {function(*=): Promise<any>}
  */
 export function createShowPanel(setStacks) {
-    const showPanel = (panelCreatorFunction) => {
+    return (panelCreatorFunction) => {
         return new Promise(resolve => {
             const key = v4();
             new Promise(closePanel => {
@@ -29,8 +29,7 @@ export function createShowPanel(setStacks) {
                 resolve(result);
             })
         });
-    }
-    return showPanel;
+    };
 }
 
 const LayerContext = createContext({});

@@ -6,13 +6,7 @@ import {ControlPropertiesCatalog} from "module/page-designer/controls/Controller
 import CollapsiblePanel from "components/panel/CollapsiblePanel";
 
 /**
- @param {useRef} inputRef
- * @param {string} name
- * @param {{current:boolean}} $disabled
- * @param {string} className
- * @param {string} color
- * @param {Object} style
- * @param {string} type
+ *
  * @type {{common: {}, space: {layout: [string, string], name: string}}}
  */
 export default function PropertiesPanel({$layout, setLayout, $selectedController}) {

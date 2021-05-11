@@ -44,7 +44,6 @@ import {mapToNameFactory} from "components/input/Input";
  * @param {number} rBL - radius bottom left
  * @param {number} rBR - radius bottom right
  * @param {boolean} autoCaps - indicate to enable autoCaps
- * @param {string} errorMessage - indicate there is error
  *
  * @param {function(value)} onChange,
  * @param {function()} onBlur,
@@ -114,8 +113,7 @@ function InputCode({
             propsRef.current.userPerformChange = true;
             setLocalValue(value);
             if (propsRef?.current?.onChange) {
-                const val = value;
-                propsRef.current.onChange(val);
+                propsRef.current.onChange(value);
             }
             propsRef.current.userPerformChange = false;
         }

@@ -31,12 +31,14 @@ function handleOnRowChange(onChange, setSelectedRow) {
 
 /**
  *
+ * @param name
  * @param {any[]} $data
  * @param {React.FunctionComponent} itemRenderer
  * @param {function(data:*):string} dataKey
  * @param {function(data:*):string} dataToLabel
  * @param {any} domRef
  * @param {observer} $value
+ * @param {observer} $errors
  * @param {function(data)} onChange
  * @param props
  * @returns {JSX.Element}
@@ -70,8 +72,7 @@ export default function List({
             oldState = oldState || {};
             const nextState = {...oldState};
             if (isNullOrUndefined(name) || name === '') {
-                const oldValue = nextState;
-                return isFunction(newValue) ? newValue(oldValue) : newValue;
+                return isFunction(newValue) ? newValue(nextState) : newValue;
             } else {
                 const oldValue = nextState[name];
                 nextState[name] = isFunction(newValue) ? newValue(oldValue) : newValue;

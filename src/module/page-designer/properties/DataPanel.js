@@ -4,7 +4,7 @@ import Select from "components/input/Select";
 import useObserver, {useObserverListener, useObserverMapper} from "components/useObserver";
 import useResource, {useResourceListener} from "components/useResource";
 import Button from "../../../components/button/Button";
-import {SYSTEM_TABLES} from "../../../components/SystemTableName";
+import {SYSTEM_TABLES} from "components/SystemTableName";
 import InputTable from "../../../components/table/InputTable";
 import {v4 as uuid} from "uuid";
 import requireValidator from "components/validators/requireValidator";
@@ -105,7 +105,7 @@ function DetailPanel({closePanel, $formValue}) {
                 />
                 <Horizontal hAlign={'right'} gap={2} pT={2}>
                     <Button type={'button'} onClick={async () => {
-                        const result = await showConfirmation('Are you sure you want to remove this DataResouce link ?')
+                        const result = await showConfirmation('Are you sure you want to remove this DataResource link ?')
                         if (result === 'YES') {
                             closePanel('REMOVE');
                         }

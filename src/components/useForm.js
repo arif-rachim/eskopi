@@ -5,9 +5,9 @@ import Label from "./label/Label";
 import {isFunction, isNullOrUndefined} from "components/utils";
 
 /**
- * Create onSubmit handler
- * @param {React.MutableRefObject<{validateOn: {}, $errors: (React.MutableRefObject<*>|setObserver), $value: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>} control
- * @returns {function(*=): function(*): void}
+ *
+ * @param control
+ * @returns {function(*=): function(*=): void}
  */
 const handleSubmitFactory = (control) => (callback) => (event) => {
     if (event) {
@@ -31,8 +31,9 @@ const handleSubmitFactory = (control) => (callback) => (event) => {
 
 
 /**
- * @param {Object} defaultValue
- * @returns {{handleSubmit: (function(*=): function(*): void), control: React.MutableRefObject<{validateOn: {}, $errors: (React.MutableRefObject<*>|setObserver), $value: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, validator: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>, $errors: (React.MutableRefObject<*>|setObserver), $value: (React.MutableRefObject<*>|setObserver), setValue: (React.MutableRefObject<*>|setObserver), setErrors: (React.MutableRefObject<*>|setObserver), register: (function(*=): function(*): void)}}
+ *
+ * @param defaultValue
+ * @returns {{handleSubmit: (function(*=): function(*): void), $value: ({current: *, addListener: (function(function(*)): void)}|(function(value))), setValue: ({current: *, addListener: (function(function(*)): void)}|(function(value))), reset: (function(*, *=): void), control: React.MutableRefObject<{validateOn: {}, onChange: {}, defaultValue: {}, $value: ({current: *, addListener: (function(function(*)): void)}|(function(value))), setValue: ({current: *, addListener: (function(function(*)): void)}|(function(value))), userEditingField: {}, validator: {}, modified: {}, $errors: ({current: *, addListener: (function(function(*)): void)}|(function(value))), setErrors: ({current: *, addListener: (function(function(*)): void)}|(function(value))), previousValue: {}}>, $errors: ({current: *, addListener: (function(function(*)): void)}|(function(value))), setErrors: ({current: *, addListener: (function(function(*)): void)}|(function(value)))}}
  */
 export default function useForm(defaultValue = {}) {
     const [$errors, setErrors] = useObserver({});
@@ -51,7 +52,7 @@ export default function useForm(defaultValue = {}) {
         validator: {},
         onChange: {}
     });
-    const isModified = useCallback(() => {
+    control.current.isModified = useCallback(() => {
         const keys = Object.keys(control.current.modified);
         for (const key of keys) {
             if (control.current.modified[key] === true) {
@@ -60,7 +61,6 @@ export default function useForm(defaultValue = {}) {
         }
         return false;
     }, []);
-    control.current.isModified = isModified;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleSubmit = useCallback(handleSubmitFactory(control), []);
     const reset = useCallback(function resetForm(defaultValue, ignoreOldAttribute = false) {
@@ -105,10 +105,10 @@ export default function useForm(defaultValue = {}) {
 
 /**
  *
- * @param {React.MutableRefObject<{validateOn: {}, $errors: (React.MutableRefObject<*>|setObserver), $value: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>} control
  * @param {string} name
  * @param {function(*=):string} validator
  * @param {Object} value
+ * @param {any} control
  */
 function validateError(control, name, validator, value) {
     let newError = '';
@@ -133,7 +133,7 @@ const callbackOnBlur = (propsRef) => () => {
     if (control.current.userEditingField[name]) {
         // here we keep the oldValue
         // const oldValue = control.current.previousValue[name];
-        // here we get the curent value
+        // here we get the current value
         const newValue = control.current.$value.current[name];
         if (control.current.validateOn[name] === 'blur') {
             validateError(control, name, validator, newValue);
@@ -186,8 +186,8 @@ const callbackOnChange = (propsRef) => function onChangeCallback(valueOrSetState
  * @param {function(value)} validator
  * @param {'change'|'blur'} validateOn
  * @param {React.Element} render
+ * @param {any} control
  * @param {number} horizontalLabelPositionWidth
- * @param {React.MutableRefObject<{validateOn: {}, $errors: (React.MutableRefObject<*>|setObserver), $value: (React.MutableRefObject<*>|setObserver), defaultValue: {}, setValue: (React.MutableRefObject<*>|setObserver), userEditingField: {}, modified: {}, setErrors: (React.MutableRefObject<*>|setObserver), value: {}, previousValue: {}, errors: {}}>} control
  * @param {any} containerStyle
  * @param props
  * @returns {JSX.Element}

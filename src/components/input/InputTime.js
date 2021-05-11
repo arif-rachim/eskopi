@@ -49,9 +49,13 @@ const dateBlocks = {
  * @param {{current:*}} $value,
  * @param {{current:*}} $errors
  *
+ * @param {function()} onClick
+ * @param {function()} onMouseEnter
+ * @param {function()} onMouseLeave
  * @param {Date} min
  * @param {Date} max
  *
+ * @param props
  * @constructor
  */
 export default function InputTime({

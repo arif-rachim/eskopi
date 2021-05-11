@@ -1,7 +1,7 @@
 import {useEffect, useRef} from "react";
 
 /**
- * @param {MutableRefObject<T>[]} domRef
+ * @param {MutableRefObject<T>[]} domRefs
  * @param {function(event)} listener
  */
 export default function useClickOutside(domRefs = [], listener) {

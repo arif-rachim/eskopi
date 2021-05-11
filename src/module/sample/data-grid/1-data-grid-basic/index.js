@@ -1,4 +1,4 @@
-import {Vertical} from "../../../../components/layout/Layout";
+import {Vertical} from "components/layout/Layout";
 import style from "./Table.module.css";
 
 const array = Array.from({length: 100});

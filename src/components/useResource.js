@@ -8,6 +8,7 @@ const API_SERVER = 'http://localhost:4000'
  * Function to perform post method to api server
  * @param {string} url
  * @param {object} data
+ * @param {string} token
  * @returns {Promise<object>}
  */
 export const post = async (url, data, token) => {
@@ -62,7 +63,7 @@ const STATUS_SUCCESS = 'success';
 const STATUS_ERROR = 'error';
 
 /**
- * function to hold promise into supensify object
+ * function to hold promise into suspension object
  * @param promise
  * @param setIsPending
  * @returns {{read(): any, status(): string}}

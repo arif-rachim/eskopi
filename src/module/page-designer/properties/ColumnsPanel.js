@@ -9,7 +9,7 @@ import useObserver, {useObserverMapper} from "components/useObserver";
 import SelectCellRenderer from "./renderer/SelectCellRenderer";
 import InputCellRenderer from "./renderer/InputCellRenderer";
 import DeleteCellRenderer from "./renderer/DeleteCellRenderer";
-import {isNullOrUndefined} from "../../../components/utils";
+import {isNullOrUndefined} from "components/utils";
 
 function ColumnsPanel({control}) {
     return <Vertical p={2} gap={2}>
