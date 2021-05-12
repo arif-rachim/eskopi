@@ -5,7 +5,7 @@ import {isFunction, isNullOrUndefined} from "components/utils";
 import {mapToNameFactory} from "components/input/Input";
 
 
-const DEFAULT_DATA_KEY = (data) => {
+export const DEFAULT_DATA_KEY = (data) => {
     if (data && typeof data === 'string') {
         return data;
     }
@@ -18,7 +18,7 @@ const DEFAULT_DATA_KEY = (data) => {
     return undefined;
 };
 
-const DEFAULT_DATA_TO_LABEL = (data) => data;
+export const DEFAULT_DATA_TO_LABEL = (data) => data;
 
 function handleOnRowChange(onChange, setSelectedRow) {
     return function onRowChange(data) {
@@ -39,7 +39,8 @@ function handleOnRowChange(onChange, setSelectedRow) {
  * @param {any} domRef
  * @param {observer} $value
  * @param {observer} $errors
- * @param {function(data)} onChange
+ * @param {function(data)} onChange - event when selected Item is change
+ * @param {function(data)} onDataChange - event when the $data is change
  * @param props
  * @returns {JSX.Element}
  * @constructor
@@ -54,6 +55,7 @@ export default function List({
                                  $value,
                                  $errors,
                                  onChange,
+                                 onDataChange,
                                  ...props
                              }) {
 
@@ -140,14 +142,30 @@ export default function List({
                                      dataToLabel={dataToLabel}
                                      $value={$selectedRow}
                                      $list={$data}
-                                     onChange={handleOnRowChange(onChange, setSelectedRow)} {...props}/>
+                                     onChange={handleOnRowChange(onChange, setSelectedRow)}
+                                     onDataChange={handleOnRowDataChange(index, onDataChange)}
+                                     {...props}/>
                 })
-
             }}
         </ObserverValue>
     </Vertical>
 }
 
+function handleOnRowDataChange(rowIndex, onChange) {
+    return function onRowDataChange(data) {
+        if (onChange) {
+            onChange(oldState => {
+                const nextState = [...oldState];
+                const oldValue = nextState[rowIndex];
+                if (isFunction(data)) {
+                    data = data(oldValue)
+                }
+                nextState.splice(rowIndex, 1, data);
+                return nextState;
+            });
+        }
+    };
+}
 
 function DefaultItemRenderer({data, onChange, $value, dataKey, dataToLabel, ...props}) {
     const [selected, setSelected] = useState(() => {

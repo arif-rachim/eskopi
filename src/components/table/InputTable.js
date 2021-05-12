@@ -1,10 +1,14 @@
-import {ObserverValue} from "components/useObserver";
+import useObserver, {ObserverValue, useObserverMapper} from "components/useObserver";
 import {Horizontal, Vertical} from "components/layout/Layout";
-import InputList from "components/list/InputList";
+import List from "components/list/List";
 import {isNullOrUndefined} from "components/utils";
+import {mapToNameFactory} from "components/input/Input";
 
 export default function InputTable({dataKey, name, $columns, $errors, domRef, $value, onChange, ...props}) {
-
+    const $nameValue = useObserverMapper($value, mapToNameFactory(name));
+    // eslint-disable-next-line
+    const $errorValue = useObserverMapper($errors, mapToNameFactory(name));
+    const [$selectedRow, setSelectedRow] = useObserver();
     return <Vertical height={'100%'} {...props}>
         <Horizontal bB={2} color={'light'} brightness={-1} style={{minHeight: 25}}>
             <ObserverValue $observers={$columns}>
@@ -21,14 +25,17 @@ export default function InputTable({dataKey, name, $columns, $errors, domRef, $v
                 }}
             </ObserverValue>
         </Horizontal>
-        <InputList itemRenderer={RowItemRenderer}
-                   name={name}
-                   dataKey={dataKey}
-                   $value={$value}
-                   $errors={$errors}
-                   domRef={domRef}
-                   $columns={$columns}
-                   onChange={onChange}
+
+        <List itemRenderer={RowItemRenderer}
+              dataKey={dataKey}
+              $data={$nameValue}
+              $value={$selectedRow}
+              $tableData={$nameValue}
+              $errors={$errorValue}
+              domRef={domRef}
+              $columns={$columns}
+              onChange={setSelectedRow}
+              onDataChange={onChange}
         />
     </Vertical>
 }
@@ -48,7 +55,18 @@ export default function InputTable({dataKey, name, $columns, $errors, domRef, $v
  * @returns {JSX.Element}
  * @constructor
  */
-function RowItemRenderer({data, index, dataKey, dataToLabel, $value, onChange, $columns, ...props}) {
+function RowItemRenderer({
+                             data,
+                             index,
+                             dataKey,
+                             dataToLabel,
+                             $value,
+                             onChange,
+                             onDataChange,
+                             $tableData,
+                             $columns,
+                             ...props
+                         }) {
     return <Vertical color={"light"} brightness={0.5}>
         <Horizontal bB={1}>
             <ObserverValue $observers={$columns}>
@@ -66,10 +84,10 @@ function RowItemRenderer({data, index, dataKey, dataToLabel, $value, onChange, $
                                 $columns={$columns}
                                 field={columnKey}
                                 rowData={data}
-                                $tableData={$value}
+                                $tableData={$tableData}
                                 rowIndex={index}
                                 colIndex={colIndex}
-                                onChange={onChange}
+                                onChange={onDataChange}
                             />
                         </Vertical>
 

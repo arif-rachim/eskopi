@@ -18,7 +18,18 @@ import {createContext, useContext, useState} from "react";
  * @returns {JSX.Element}
  * @constructor
  */
-function RowItemRenderer({$columns, $list, $value, data, dataKey, dataToLabel, index, onChange, ...props}) {
+function RowItemRenderer({
+                             $columns,
+                             $list,
+                             $value,
+                             data,
+                             dataKey,
+                             dataToLabel,
+                             index,
+                             onChange,
+                             onDataChange,
+                             ...props
+                         }) {
 
     const onRowClicked = onChange;
     const $selectedRow = $value;
@@ -59,7 +70,6 @@ function RowItemRenderer({$columns, $list, $value, data, dataKey, dataToLabel, i
 }
 
 function DefaultCellRenderer({value, ...props}) {
-
     return <Vertical>
         {JSON.stringify(value)}
     </Vertical>;
@@ -73,15 +83,12 @@ export function useTableContext() {
 }
 
 export default function Table({dataKey, name, $columns, $data, $errors, domRef, $value, onChange, ...props}) {
-
     const [$localColumns, setLocalColumns] = useObserver($columns?.current)
-
     useObserverListener($columns, (columns) => {
         if ($localColumns.current !== columns) {
             setLocalColumns(columns)
         }
     })
-
     return <TableContext.Provider
         value={{
             $localColumns,
