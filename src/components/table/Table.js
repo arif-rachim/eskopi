@@ -59,6 +59,7 @@ function RowItemRenderer({
                                 $tableData={$list}
                                 rowIndex={index}
                                 colIndex={colIndex}
+                                onChange={onDataChange}
                             />
                         </Vertical>
 
@@ -82,7 +83,18 @@ export function useTableContext() {
     return useContext(TableContext);
 }
 
-export default function Table({dataKey, name, $columns, $data, $errors, domRef, $value, onChange, ...props}) {
+export default function Table({
+                                  dataKey,
+                                  name,
+                                  $columns,
+                                  $data,
+                                  $errors,
+                                  domRef,
+                                  $value,
+                                  onChange,
+                                  onDataChange,
+                                  ...props
+                              }) {
     const [$localColumns, setLocalColumns] = useObserver($columns?.current)
     useObserverListener($columns, (columns) => {
         if ($localColumns.current !== columns) {
@@ -122,6 +134,7 @@ export default function Table({dataKey, name, $columns, $data, $errors, domRef, 
                   $data={$data}
                   domRef={domRef}
                   $columns={$localColumns}
+                  onDataChange={onDataChange}
             />
         </Vertical>
     </TableContext.Provider>
