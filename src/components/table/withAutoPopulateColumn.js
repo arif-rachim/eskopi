@@ -22,7 +22,8 @@ function constructColumns(rows, columns) {
     if (columns) {
         const percentage = Math.round(100 / columns.length);
         return columns.reduce((acc, column) => {
-            acc[column.column.name] = {
+            const columnKey = typeof column.column === 'string' ? column.column : column.column.name;
+            acc[columnKey] = {
                 title: column.name,
                 width: `${percentage}%`
             }

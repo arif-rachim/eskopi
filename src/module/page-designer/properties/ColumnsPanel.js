@@ -41,7 +41,7 @@ function DetailPanel({closePanel, $formValue, $value, name}) {
             title: 'Column',
             width: '30%',
             $data: $fields,
-            dataToLabel: field => field?.name,
+            dataToLabel: field => typeof field === 'string' ? field : field?.name,
             renderer: SelectCellRenderer
         },
 
