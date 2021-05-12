@@ -23,7 +23,7 @@ function PageSelectorPanel({control}) {
                     horizontalLabelPositionWidth={60}
                     render={Select} name={'page'}
                     $data={$pageData}
-                    dataKey={data => data}
+                    dataKey={data => data?.id}
                     control={control}
                     dataToLabel={data => data?.name}
                     containerStyle={{width: '100%'}}
