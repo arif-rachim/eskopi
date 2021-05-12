@@ -2,6 +2,7 @@ import List from "components/list/List";
 import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import {createContext, useContext, useState} from "react";
+import {isNullOrUndefined} from "components/utils";
 
 
 /**
@@ -119,7 +120,7 @@ export default function Table({
                         }
                         return Object.keys(columns).map(col => {
                             const column = columns[col];
-                            const title = column.title || col;
+                            const title = !isNullOrUndefined(column.title) ? column.title : col;
                             return <Horizontal key={col} width={columns[col].width} p={1} bL={2}
                                                style={{fontWeight: 'bold', minWidth: 55}}>{title}</Horizontal>
                         });
