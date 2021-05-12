@@ -10,7 +10,6 @@ import CollapsiblePanel from "components/panel/CollapsiblePanel";
  * @type {{common: {}, space: {layout: [string, string], name: string}}}
  */
 export default function PropertiesPanel({$layout, setLayout, $selectedController}) {
-    console.log('We have layout', $layout.current);
     const [$propertiesPanel, setPropertiesPanel] = useObserver([]);
     const {control, reset, $value} = useForm();
     useObserverListener($value, (value) => {

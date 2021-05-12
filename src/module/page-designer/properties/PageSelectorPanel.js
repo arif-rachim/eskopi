@@ -31,7 +31,7 @@ function PageSelectorPanel({control}) {
     </Vertical>
 }
 
-function treeToArray(array) {
+export function treeToArray(array) {
     let result = [];
     for (const child of array) {
         if ('children' in child && child.children.length > 0) {

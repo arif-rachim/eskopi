@@ -18,12 +18,18 @@ export default function SelectCellRenderer({
         }
         return undefined;
     });
+
     const [$localData, setLocalData] = useObserver($data?.current);
     useObserverListener($data, newTable => {
         onChange((oldValue) => {
             const nextValue = {...oldValue};
-            nextValue[field] = null;
+            if($value.current){
+                nextValue[field] = newTable.find(row => row.id === $value.current.id);
+            }else{
+                nextValue[field] = null;
+            }
             return nextValue;
+
         });
         setLocalData(newTable);
     });

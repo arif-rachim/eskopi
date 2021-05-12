@@ -10,6 +10,11 @@ import SelectCellRenderer from "./renderer/SelectCellRenderer";
 import InputCellRenderer from "./renderer/InputCellRenderer";
 import DeleteCellRenderer from "./renderer/DeleteCellRenderer";
 import {isNullOrUndefined} from "components/utils";
+import useResource, {useResourceListener} from "../../../components/useResource";
+import {SYSTEM_PAGES} from "../../../components/SystemTableName";
+import {treeToArray} from "./PageSelectorPanel";
+import {useEffect} from "react";
+
 
 function ColumnsPanel({control}) {
     return <Vertical p={2} gap={2}>
@@ -28,13 +33,25 @@ function DetailPanel({closePanel, $formValue, $value, name}) {
         console.warn('ColumnsPanel dependent with DataPanel');
     }
 
+    const [$pageData, setPageData] = useObserver([]);
+    const [$loadPageResource, setLoadPageResource] = useResource();
+    useEffect(() => {
+        setLoadPageResource(`/db/${SYSTEM_PAGES}`, {});
+    }, [setLoadPageResource]);
+    useResourceListener($loadPageResource, (status, resource) => {
+        if (status === 'success') {
+            const arrayResource = treeToArray(resource);
+            setPageData(arrayResource);
+        }
+    })
+
     const {control, handleSubmit} = useForm($formValue?.current);
     const showConfirmation = useConfirmMessage();
 
     const [$columns] = useObserver({
         name: {
             title: 'Name',
-            width: '60%',
+            width: '30%',
             renderer: InputCellRenderer
         },
         column: {
@@ -44,7 +61,13 @@ function DetailPanel({closePanel, $formValue, $value, name}) {
             dataToLabel: field => typeof field === 'string' ? field : field?.name,
             renderer: SelectCellRenderer
         },
-
+        renderer: {
+            title: 'Renderer',
+            width: '30%',
+            $data: $pageData,
+            dataToLabel: field => field?.name,
+            renderer: SelectCellRenderer
+        },
         remove: {
             title: '',
             width: '10%',
