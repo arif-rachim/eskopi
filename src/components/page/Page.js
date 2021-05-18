@@ -5,7 +5,7 @@ import useForm from "components/useForm";
 import {createContext, useCallback, useEffect, useRef} from "react";
 import {ControlForPageRenderer} from "module/page-designer/controls/ControllerMapper";
 import {mapToNameFactory} from "components/input/Input";
-import {useControlRegistration} from "components/page/useControlRegistration";
+import {ControlRegistrationContextProvider, useControlRegistration} from "components/page/useControlRegistration";
 
 function EmptyFunction() {
 }
@@ -96,17 +96,20 @@ export default function Page({
     commitChanges.propertyTypes = {};
     reset.propertyTypes = {};
 
-    return <PageActions commitChanges={commitChanges} control={control} handleSubmit={handleSubmit} reset={reset}>
-        <ObserverValue $observers={useObserverMapper($pageDesign, data => data?.children)}>{
-            (children) => {
-                children = children || [];
-                return children.map(child => {
-                    const ChildRender = ControlForPageRenderer[child.type];
-                    return <ChildRender key={child.id} data={child} control={control}/>
-                });
-            }
-        }</ObserverValue>
-    </PageActions>
+    return <ControlRegistrationContextProvider>
+        <PageActions commitChanges={commitChanges} control={control}
+                     handleSubmit={handleSubmit} reset={reset}>
+            <ObserverValue $observers={useObserverMapper($pageDesign, data => data?.children)}>{
+                (children) => {
+                    children = children || [];
+                    return children.map(child => {
+                        const ChildRender = ControlForPageRenderer[child.type];
+                        return <ChildRender key={child.id} data={child} control={control}/>
+                    });
+                }
+            }</ObserverValue>
+        </PageActions>
+    </ControlRegistrationContextProvider>
 }
 export const PageControlContext = createContext({});
 

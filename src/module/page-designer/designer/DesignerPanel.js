@@ -12,11 +12,9 @@ import Button from "components/button/Button";
 import {isNullOrUndefined} from "components/utils";
 import {useInfoMessage} from "components/dialog/Dialog";
 import {SYSTEM_PAGE_DESIGNS} from "components/SystemTableName";
-import {
-    ControlRegistrationContextProvider,
-    useControlRegistrationContextSetter
-} from "components/page/useControlRegistration";
+import {ControlRegistrationContextProvider} from "components/page/useControlRegistration";
 import {PageActions} from "components/page/Page";
+import usePageContext from "components/page/usePageContext";
 
 
 const handleRootDragEnter = (dragHoverCountRef) => (event) => {
@@ -77,7 +75,7 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
 
         }
     });
-    const controlRegistrationSetter = useControlRegistrationContextSetter();
+    const [, setPageContext] = usePageContext();
     return <>
         <Vertical color={"light"} brightness={-3} p={3} flex={1}
                   $visible={useObserverMapper($hasSelectedPage, value => !value)} vAlign={'center'} hAlign={'center'}>
@@ -101,7 +99,7 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
                         (value) => {
                             return <ControlRegistrationContextProvider key={JSON.stringify(value)}
                                                                        onChange={(controls) => {
-                                                                           controlRegistrationSetter(controls);
+                                                                           setPageContext(({controls}))
                                                                        }}>
                                 <PageActions>
                                     <RenderLayoutMemo value={value} control={control}

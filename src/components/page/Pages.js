@@ -10,9 +10,10 @@ import {PageDimensionProvider} from "components/page/usePageDimension";
 import {PageLayerContextProvider} from "components/page/usePageLayers";
 import {SlideDownStackPanelContextProvider} from "components/page/useSlideDownStackPanel";
 import {findMostMatchingComponent} from "components/useNavigation";
-import {ControlRegistrationContextProvider} from "components/page/useControlRegistration";
+import {PageContextProvider} from "components/page/usePageContext";
 
-function Page({Element, index, $activeIndex}) {
+
+function PagesRenderer({Element, index, $activeIndex}) {
     const [$visible, setVisible] = useObserver($activeIndex.current === index);
     useObserverListener($activeIndex, (activeIndex) => setVisible(activeIndex === index));
     const pageRef = useRef();
@@ -20,17 +21,17 @@ function Page({Element, index, $activeIndex}) {
     return <Vertical domRef={pageRef} $visible={$visible} height={'100%'}>
         <PageDimensionProvider pageRef={pageRef}>
             <SlideDownStackPanelContextProvider>
-                <ControlRegistrationContextProvider>
+                <PageContextProvider>
                     <PageLayerContextProvider>
                         <Element.Element params={Element.params} path={Element.key} setTitle={setTitle}/>
                     </PageLayerContextProvider>
-                </ControlRegistrationContextProvider>
+                </PageContextProvider>
             </SlideDownStackPanelContextProvider>
         </PageDimensionProvider>
     </Vertical>
 }
 
-const MemoPage = memo(Page);
+const MemoPage = memo(PagesRenderer);
 export const SetTitleContext = createContext((title) => {
 });
 export default function Pages({pages, id, $activeIndex, index, setBookTitles}) {

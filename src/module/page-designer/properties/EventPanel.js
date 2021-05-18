@@ -10,8 +10,8 @@ import {isEmpty, isFunction, isNullOrUndefined, stringToCamelCase} from "compone
 import Panel from "components/panel/Panel";
 import {Controller} from "components/useForm";
 import {mapToNameFactory} from "components/input/Input";
-import {useRegisteredControlsObserver} from "components/page/useControlRegistration";
 import {Controls} from "module/page-designer/controls/ControllerMapper";
+import usePageContext from "components/page/usePageContext";
 
 
 const DEFAULT_EVENTS = {
@@ -196,7 +196,8 @@ function CodeEditor({title, $code, closePanel, $selectedController, $selectedPag
 }
 
 function ComponentSnippet({setValue}) {
-    const $controls = useRegisteredControlsObserver();
+    const [$pageContext] = usePageContext();
+    const $controls = useObserverMapper($pageContext, pageContext => pageContext?.controls);
     const [$selectedControl, setSelectedControl] = useObserver();
     return <Vertical gap={2} p={2}>
         <Horizontal flex={'1 0 auto'} gap={2}>

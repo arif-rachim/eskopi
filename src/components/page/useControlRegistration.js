@@ -20,10 +20,6 @@ export function useRegisteredControlsObserver() {
     return $controls;
 }
 
-export function useControlRegistrationContextSetter() {
-    return useContext(ControlRegistrationContext)[1];
-}
-
 export function useControlRegistration({id, name, actions}) {
     const [, setControls] = useContext(ControlRegistrationContext);
     const actionsRef = useRef(actions);
