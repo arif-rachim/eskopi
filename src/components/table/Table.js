@@ -1,9 +1,9 @@
 import List from "components/list/List";
 import useObserver, {ObserverValue, useObserverListener} from "components/useObserver";
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {createContext, useContext, useState} from "react";
+import {createContext, useContext, useEffect, useState} from "react";
 import {isNullOrUndefined} from "components/utils";
-
+import Page from "components/page/Page";
 
 /**
  *
@@ -47,7 +47,10 @@ function RowItemRenderer({
                     columns = columns || [];
                     return Object.keys(columns).map((columnKey, colIndex) => {
                         const column = columns[columnKey];
-                        const Renderer = column['renderer'] || DefaultCellRenderer;
+                        let Renderer = column['renderer'] || DefaultCellRenderer;
+                        if (column.dataCellRenderer) {
+                            Renderer = DataCellRenderer;
+                        }
                         let value = data[columnKey];
                         return <Vertical bL={1} p={1} overflow={'hidden'}
                                          width={$columns.current[columnKey].width}
@@ -61,6 +64,7 @@ function RowItemRenderer({
                                 rowIndex={index}
                                 colIndex={colIndex}
                                 onChange={onDataChange}
+                                pageId={column?.dataCellRenderer?.id}
                             />
                         </Vertical>
 
@@ -69,6 +73,12 @@ function RowItemRenderer({
             </ObserverValue>
         </Horizontal>
     </Vertical>
+}
+
+function DataCellRenderer({pageId, value, rowData, onChange, ...props}) {
+    const [$localValue, setLocalValue] = useObserver(rowData);
+    useEffect(() => setLocalValue(rowData), [rowData, setLocalValue]);
+    return <Page pageId={pageId} $value={$localValue} onChange={(rowData) => onChange(rowData)}/>
 }
 
 function DefaultCellRenderer({value, ...props}) {

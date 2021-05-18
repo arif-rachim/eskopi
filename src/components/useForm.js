@@ -9,7 +9,7 @@ import {isFunction, isNullOrUndefined} from "components/utils";
  * @param control
  * @returns {function(*=): function(*=): void}
  */
-const handleSubmitFactory = (control) => (callback) => (event) => {
+const handleSubmitFactory = (control) => (callback) => function dispatchSubmit(event) {
     if (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -189,6 +189,8 @@ const callbackOnChange = (propsRef) => function onChangeCallback(valueOrSetState
  * @param {any} control
  * @param {number} horizontalLabelPositionWidth
  * @param {any} containerStyle
+ * @param {string} onChangeEventName - name of the event that trigger onChange, default is onChange
+ * @param {string} labelContainerElement - element used to wrap label
  * @param props
  * @returns {JSX.Element}
  * @constructor
@@ -202,6 +204,8 @@ export function Controller({
                                control,
                                horizontalLabelPositionWidth,
                                containerStyle,
+                               onChangeEventName = 'onChange',
+                               labelContainerElement = 'label',
                                ...props
                            }) {
     if (isNullOrUndefined(control)) {
@@ -211,7 +215,7 @@ export function Controller({
     control.current.validateOn[name] = validateOn;
     control.current.validator[name] = validator;
     if (!control.current.modified[name]) {
-        control.current.$value.current[name] = control.current.defaultValue[name]
+        control.current.$value.current[name] = control.current.defaultValue[name];
     }
     const propsRef = useRef({control, name, validator, onChange: propsOnChange});
     propsRef.current = {control, name, validator, onChange: propsOnChange};
@@ -225,22 +229,23 @@ export function Controller({
     containerStyle = containerStyle || {};
 
     const isHorizontal = horizontalLabelPositionWidth > 0;
+    const onChangeEventProperty = {[onChangeEventName]: onChange};
     if (isHorizontal) {
-        return <Horizontal element={'label'} overflow={'visible'} flex={'1 0 auto'} vAlign={'center'}
+        return <Horizontal element={labelContainerElement} overflow={'visible'} flex={'1 0 auto'} vAlign={'center'}
                            style={containerStyle}>
             <Horizontal style={{fontSize: '0.8rem', whiteSpace: 'nowrap'}}
                         flex={`0 0 ${horizontalLabelPositionWidth}px`}>{label}</Horizontal>
-            <Render name={name} onBlur={onBlur} onChange={onChange} $value={control.current.$value}
-                    $errors={control.current.$errors} {...remainingProps}
+            <Render name={name} onBlur={onBlur} $value={control.current.$value}
+                    $errors={control.current.$errors} {...onChangeEventProperty} {...remainingProps}
                     style={{...remainingProps.style, width: '100%'}}/>
             <Label name={name} color={'danger'} $value={control.current.$errors}
                    style={{fontSize: '0.7rem', position: 'absolute', bottom: -12, right: 0}}/>
         </Horizontal>
     }
-    return <Vertical element={'label'} overflow={'visible'} style={containerStyle}>
+    return <Vertical element={labelContainerElement} overflow={'visible'} style={containerStyle}>
         <Horizontal style={{fontSize: '0.8rem'}}>{label}</Horizontal>
-        <Render name={name} onBlur={onBlur} onChange={onChange} $value={control.current.$value}
-                $errors={control.current.$errors} {...remainingProps}/>
+        <Render name={name} onBlur={onBlur} $value={control.current.$value}
+                $errors={control.current.$errors} {...onChangeEventProperty} {...remainingProps}/>
         <Label name={name} color={'danger'} $value={control.current.$errors}
                style={{fontSize: '0.7rem', position: 'absolute', bottom: -12, right: 0}}/>
     </Vertical>

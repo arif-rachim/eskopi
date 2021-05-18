@@ -155,6 +155,7 @@ function handleOnRowDataChange(rowIndex, onChange) {
     return function onRowDataChange(data) {
         if (onChange) {
             onChange(oldState => {
+                debugger;
                 const nextState = [...oldState];
                 const oldValue = nextState[rowIndex];
                 if (isFunction(data)) {

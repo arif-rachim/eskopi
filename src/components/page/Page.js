@@ -73,14 +73,14 @@ export default function Page({
         }
     });
 
-    const {control, handleSubmit, reset} = useForm(() => $nameValue?.current ? $nameValue.current : {});
+    const {control, handleSubmit, reset} = useForm($nameValue?.current ? $nameValue.current : {});
     propsRef.current.handleSubmit = handleSubmit;
     useObserverListener($nameValue, nameValue => {
         nameValue = nameValue === undefined ? {} : nameValue;
         reset({...nameValue});
     });
-    compRef.current.commitChanges = useCallback(() => {
-        propsRef.current.handleSubmit(data => {
+    compRef.current.commitChanges = useCallback(function commitChanges() {
+        propsRef.current.handleSubmit(function handleSubmit(data) {
             propsRef.current.onChange(data);
         })();
     }, []);
@@ -97,7 +97,8 @@ export default function Page({
     reset.propertyTypes = {};
 
     return <ControlRegistrationContextProvider>
-        <PageActions commitChanges={commitChanges} control={control}
+        <PageActions commitChanges={commitChanges}
+                     control={control}
                      handleSubmit={handleSubmit} reset={reset}>
             <ObserverValue $observers={useObserverMapper($pageDesign, data => data?.children)}>{
                 (children) => {
@@ -113,13 +114,19 @@ export default function Page({
 }
 export const PageControlContext = createContext({});
 
-export function PageActions({children, commitChanges = EmptyFunction, control, reset = EmptyFunction}) {
+export function PageActions({
+                                children,
+                                commitChanges = EmptyFunction,
+                                control,
+                                reset = EmptyFunction
+                            }) {
     useControlRegistration({
         name: 'page',
         id: 'page',
         actions: {
             commitChanges,
-            reset
+            reset,
+            getValue: () => control.current.$value.current
         }
     });
     const [$systemTables, setSystemTables] = useObserver([]);

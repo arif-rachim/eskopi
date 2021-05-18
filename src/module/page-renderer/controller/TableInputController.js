@@ -13,6 +13,7 @@ export default function TableInputController({
     const {children, type, parentIds, width, ...props} = data;
     return <Vertical p={2} pT={1} pB={1} width={width} {...containerProps}>
         <Controller render={Table}
+                    labelContainerElement={'div'}
                     control={control}
                     style={style}
                     {...controllerProps} {...props}/>

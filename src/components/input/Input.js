@@ -109,7 +109,7 @@ function Input({
         defaultStyle.textTransform = 'uppercase'
     }
     const handleOnChange = useMemo(() => {
-        return (data) => {
+        return function handleOnChange(data) {
             propsRef.current.userPerformChange = true;
             let val = data.target.value;
             const textCasing = casing.toUpperCase();

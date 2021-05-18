@@ -25,7 +25,8 @@ function constructColumns(rows, columns) {
             const columnKey = typeof column.column === 'string' ? column.column : column.column.name;
             acc[columnKey] = {
                 title: column.name,
-                width: `${percentage}%`
+                width: `${percentage}%`,
+                dataCellRenderer: column.renderer
             }
             return acc;
         }, {});
