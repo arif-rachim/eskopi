@@ -15,6 +15,7 @@ import Page from "components/page/Page";
  * @param dataToLabel is the dataItem to string
  * @param index is the rowIndex
  * @param onChange is the onChange selected row
+ * @param onDataChange is the event when the row data is change
  * @param props
  * @returns {JSX.Element}
  * @constructor
@@ -102,8 +103,10 @@ export default function Table({
                                   $errors,
                                   domRef,
                                   $value,
+                                  onBeforeChange,
                                   onChange,
                                   onDataChange,
+                                  onBeforeDataChange,
                                   ...props
                               }) {
     const [$localColumns, setLocalColumns] = useObserver($columns?.current)
@@ -138,14 +141,17 @@ export default function Table({
                 </ObserverValue>
             </Horizontal>
             <List itemRenderer={RowItemRenderer}
-                  onChange={onChange}
                   name={name}
                   $value={$value}
                   dataKey={dataKey}
                   $data={$data}
                   domRef={domRef}
                   $columns={$localColumns}
+                  onChange={onChange}
                   onDataChange={onDataChange}
+                  onBeforeChange={onBeforeChange}
+                  onBeforeDataChange={onBeforeDataChange}
+
             />
         </Vertical>
     </TableContext.Provider>

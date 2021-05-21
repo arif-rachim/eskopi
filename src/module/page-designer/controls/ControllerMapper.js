@@ -25,6 +25,7 @@ import PageSelectorPanel from "module/page-designer/properties/PageSelectorPanel
 import withControlRegistration from "components/table/withControlRegistration";
 import dynamicPropertiesPanelFactory from "module/page-designer/properties/DynamicPropertiesPanel";
 import withChangeHandler from "components/input/withChangeHandler";
+import withTableEvent from "components/table/withTableEvent";
 
 export const Controls = {
     TEXT_INPUT: 'textInput',
@@ -66,7 +67,7 @@ export const ControlForPageRenderer = {
     [Controls.NUMBER_INPUT]: NumberInputController,
     [Controls.DATE_INPUT]: DateInputController,
     [Controls.TIME_INPUT]: TimeInputController,
-    [Controls.TABLE_INPUT]: withTableData(withAutoPopulateColumn(TableInputController)),
+    [Controls.TABLE_INPUT]: withTableEvent(withTableData(withAutoPopulateColumn(TableInputController))),
     [Controls.CHECKBOX]: CheckboxController,
     [Controls.PAGE]: withControlRegistration(PageController)
 }
@@ -116,6 +117,24 @@ const BUTTON_EVENT_CONFIG = {
     }
 }
 
+const TABLE_EVENT_CONFIG = {
+    title: 'Table Event',
+    events: {
+        handleSelectedRowChange: {
+            title: 'On Selected Row Change'
+        },
+        handleBeforeSelectedRowChange: {
+            title: 'On Before Selected Row Change'
+        },
+        handleDataChange: {
+            title: 'On Data Change'
+        },
+        handleBeforeDataChange: {
+            title: 'On Before Data Change'
+        },
+    }
+}
+
 const BUTTON_PROPERTIES = {
     title: 'Button Properties',
     properties: {
@@ -161,7 +180,7 @@ export const ControlPropertiesCatalog = {
     [Controls.TIME_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
     [Controls.NUMBER_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
     [Controls.BUTTON]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), eventPanelFactory(BUTTON_EVENT_CONFIG), dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), dynamicPropertiesPanelFactory(BUTTON_PROPERTIES)],
-    [Controls.TABLE_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), DataPanel, ColumnsPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
+    [Controls.TABLE_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), eventPanelFactory(TABLE_EVENT_CONFIG), DataPanel, ColumnsPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
     [Controls.CHECKBOX]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
     [Controls.PAGE]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), PageSelectorPanel],
 }

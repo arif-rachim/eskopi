@@ -5,28 +5,22 @@ import {useControlRegistration} from "components/page/useControlRegistration";
 
 export default function withTableData(Component) {
     return function WithData(props) {
-
-
-        let tableId = props?.data?.dataResource?.resource?.id_;
-        tableId = tableId || '';
-
-
+        const {dataResource, ...data} = props?.data;
+        const nextProps = {...props, data}
+        let tableId = dataResource?.resource?.id_ || '';
         const url = `/db/${tableId}`;
         const [$onResourceLoad, loadResource] = useResource({url});
         const [$data, setData] = useObserver();
         useResourceListener($onResourceLoad, (status, result) => {
             setData(result);
         });
-
         useEffect(() => {
             loadResource(url)
         }, [loadResource, url]);
-        const nextProps = {...props, data: removeProps(props.data, ['resourceTable'])}
 
         function refreshGrid() {
             loadResource(url);
         }
-
         refreshGrid.propertyTypes = {};
 
         useControlRegistration({
@@ -38,12 +32,4 @@ export default function withTableData(Component) {
         });
         return <Component $data={$data} {...nextProps} />
     }
-}
-
-function removeProps(data, propsToRemove) {
-    const result = {};
-    Object.keys(data).filter(key => propsToRemove.indexOf(key) < 0).forEach(key => {
-        result[key] = data[key];
-    })
-    return result;
 }

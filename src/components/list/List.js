@@ -43,8 +43,8 @@ function handleOnRowChange({onBeforeChangeCallback, onChangeCallback, setSelecte
  * @param {observer} $errors
  * @param {function(data)} onChange - event when selected Item is change
  * @param {function(data)} onDataChange - event when the $data is change
- * @param onBeforeChange
- * @param onBeforeDataChange
+ * @param {function(data)} onBeforeChange - event before the selected row change
+ * @param {function(data)} onBeforeDataChange - event before the data change
  * @param props
  * @returns {JSX.Element}
  * @constructor

@@ -3,7 +3,11 @@ import {useEffect} from "react";
 
 export default function withAutoPopulateColumn(Component) {
     return function WithAutoPopulateColumn({$data, ...props}) {
-        const columns = props?.data?.columns?.columns;
+
+        let {columns, ...data} = props?.data;
+        columns = columns?.columns;
+        const nextProps = {...props, data};
+
         const [$columns, setColumns] = useObserver(() => {
             return constructColumns($data?.current, columns);
         });
@@ -14,7 +18,8 @@ export default function withAutoPopulateColumn(Component) {
         useEffect(() => {
             setColumns(constructColumns($data.current, columns));
         }, [$data, columns, setColumns])
-        return <Component $columns={$columns} $data={$data} {...props}/>
+
+        return <Component $columns={$columns} $data={$data} {...nextProps}/>
     }
 }
 
