@@ -1,6 +1,6 @@
 import {Vertical} from "components/layout/Layout";
 import useObserver, {ObserverValue, useObserverListener, useObserverMapper} from "components/useObserver";
-import {useCallback, useState} from "react";
+import {useCallback, useRef, useState} from "react";
 import {isFunction, isNullOrUndefined} from "components/utils";
 import {mapToNameFactory} from "components/input/Input";
 
@@ -20,12 +20,14 @@ export const DEFAULT_DATA_KEY = (data) => {
 
 export const DEFAULT_DATA_TO_LABEL = (data) => data;
 
-function handleOnRowChange(onChange, setSelectedRow) {
-    return function onRowChange(data) {
-        setSelectedRow(data);
-        if (onChange) {
-            onChange(data);
+function handleOnRowChange({onBeforeChangeCallback, onChangeCallback, setSelectedRow}) {
+    return async function onRowChange(nextRow) {
+        const continueChange = await onBeforeChangeCallback(nextRow);
+        if (continueChange === false) {
+            return;
         }
+        setSelectedRow(nextRow);
+        onChangeCallback(nextRow);
     };
 }
 
@@ -41,6 +43,8 @@ function handleOnRowChange(onChange, setSelectedRow) {
  * @param {observer} $errors
  * @param {function(data)} onChange - event when selected Item is change
  * @param {function(data)} onDataChange - event when the $data is change
+ * @param onBeforeChange
+ * @param onBeforeDataChange
  * @param props
  * @returns {JSX.Element}
  * @constructor
@@ -56,8 +60,12 @@ export default function List({
                                  $errors,
                                  onChange,
                                  onDataChange,
+                                 onBeforeChange,
+                                 onBeforeDataChange,
                                  ...props
                              }) {
+    const propsRef = useRef({onChange, onDataChange, onBeforeChange, onBeforeDataChange});
+    propsRef.current = {onChange, onDataChange, onBeforeChange, onBeforeDataChange};
 
     const $nameValue = useObserverMapper($value, mapToNameFactory(name));
     // eslint-disable-next-line
@@ -66,22 +74,22 @@ export default function List({
     const [$selectedRow, setSelectedRow] = useObserver($nameValue?.current);
     const [$tableData, setTableData] = useObserver($data?.current);
 
-    const onChangeCallback = useCallback((newValue) => {
+    const onChangeCallback = useCallback(function onChangeCallback(newValue) {
+        const {onChange} = propsRef.current;
         if (isNullOrUndefined(onChange)) {
             return;
         }
-        onChange(oldState => {
-            oldState = oldState || {};
-            const nextState = {...oldState};
-            if (isNullOrUndefined(name) || name === '') {
-                return isFunction(newValue) ? newValue(nextState) : newValue;
-            } else {
-                const oldValue = nextState[name];
-                nextState[name] = isFunction(newValue) ? newValue(oldValue) : newValue;
-                return nextState;
-            }
-        })
-    }, [name, onChange]);
+        onChange(newValue);
+    }, []);
+
+    const onBeforeChangeCallback = useCallback(async function onBeforeChangeCallback(newValue) {
+        const {onBeforeChange} = propsRef.current;
+        if (isNullOrUndefined(onBeforeChange)) {
+            return true;
+        }
+        const continueChange = await onBeforeChange($nameValue.current, newValue);
+        return continueChange;
+    }, [$nameValue])
 
     useObserverListener($nameValue, (value) => {
         if ($selectedRow.current !== value) {
@@ -102,17 +110,19 @@ export default function List({
     })
     const Renderer = itemRenderer;
 
-    return <Vertical domRef={domRef} tabIndex={0} style={{outline: 'none'}} onKeyDown={(event) => {
+    return <Vertical domRef={domRef} tabIndex={0} style={{outline: 'none'}} onKeyDown={async (event) => {
         if (event.code === 'ArrowDown') {
             event.preventDefault();
             event.stopPropagation();
             const currentSelectedIndex = $data.current.indexOf($selectedRow.current);
             if (($data.current.length - 1) > currentSelectedIndex) {
                 const nextRow = $data.current[currentSelectedIndex + 1];
-                setSelectedRow(nextRow);
-                if (onChangeCallback) {
-                    onChangeCallback(nextRow);
+                const continueChange = await onBeforeChangeCallback(nextRow);
+                if (continueChange === false) {
+                    return;
                 }
+                setSelectedRow(nextRow);
+                onChangeCallback(nextRow);
             }
         }
         if (event.code === 'ArrowUp') {
@@ -121,10 +131,12 @@ export default function List({
             const currentSelectedIndex = $data.current.indexOf($selectedRow.current);
             if (currentSelectedIndex > 0) {
                 const nextRow = $data.current[currentSelectedIndex - 1];
-                setSelectedRow(nextRow);
-                if (onChange) {
-                    onChange(nextRow);
+                const continueChange = await onBeforeChangeCallback(nextRow);
+                if (continueChange === false) {
+                    return;
                 }
+                setSelectedRow(nextRow);
+                onChangeCallback(nextRow);
             }
         }
     }}>
@@ -142,8 +154,16 @@ export default function List({
                                      dataToLabel={dataToLabel}
                                      $value={$selectedRow}
                                      $list={$data}
-                                     onChange={handleOnRowChange(onChange, setSelectedRow)}
-                                     onDataChange={handleOnRowDataChange(index, onDataChange)}
+                                     onChange={handleOnRowChange({
+                                         setSelectedRow,
+                                         onBeforeChangeCallback,
+                                         onChangeCallback
+                                     })}
+                                     onDataChange={handleOnRowDataChange({
+                                         rowIndex: index,
+                                         onDataChange,
+                                         onBeforeDataChange
+                                     })}
                                      {...props}/>
                 })
             }}
@@ -151,11 +171,16 @@ export default function List({
     </Vertical>
 }
 
-function handleOnRowDataChange(rowIndex, onChange) {
-    return function onRowDataChange(data) {
-        if (onChange) {
-            onChange(oldState => {
-                debugger;
+function handleOnRowDataChange({rowIndex, onDataChange, onBeforeDataChange}) {
+    return async function onRowDataChange(data) {
+        if (onBeforeDataChange) {
+            const continueChange = await onBeforeDataChange(data)
+            if (continueChange === false) {
+                return;
+            }
+        }
+        if (onDataChange) {
+            onDataChange(oldState => {
                 const nextState = [...oldState];
                 const oldValue = nextState[rowIndex];
                 if (isFunction(data)) {
