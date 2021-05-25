@@ -1,5 +1,6 @@
-import path from "path";
-import fs from "fs";
+const path = require('path');
+const fs = require('fs');
+
 
 function scanIndexFile(directory) {
     return new Promise(resolve => {

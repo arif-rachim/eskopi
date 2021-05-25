@@ -6,13 +6,13 @@ import useResource, {useResourceListener} from "components/useResource";
 import Button from "../../../components/button/Button";
 import {SYSTEM_TABLES} from "components/SystemTableName";
 import InputTable from "../../../components/table/InputTable";
-import {v4 as uuid} from "uuid";
 import requireValidator from "components/validators/requireValidator";
 import {useConfirmMessage} from "components/dialog/Dialog";
 import InputWithSlideDownDetail from "components/input/InputWithSlideDownDetail";
 import SelectCellRenderer from "module/page-designer/properties/renderer/SelectCellRenderer";
 import InputCellRenderer from "module/page-designer/properties/renderer/InputCellRenderer";
 import DeleteCellRenderer from "module/page-designer/properties/renderer/DeleteCellRenderer";
+import {uuid} from "components/utils";
 
 function DataPanel({control}) {
     return <Vertical p={2} gap={2}>

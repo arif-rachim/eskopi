@@ -1,4 +1,3 @@
-import {v4 as uuid} from "uuid";
 import voca from "voca";
 
 /**
@@ -108,8 +107,14 @@ export function isDate(date) {
  * Function to generate UID
  * @returns {string}
  */
-export function generateUid() {
-    return uuid();
+export function uuid() {
+    let dt = new Date().getTime();
+    const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (dt + Math.random() * 16) % 16 | 0;
+        dt = Math.floor(dt / 16);
+        return (c === 'x' ? r : ((r & 0x3) | 0x8)).toString(16)
+    });
+    return uuid;
 }
 
 /**

@@ -1,8 +1,8 @@
 import {Horizontal, Vertical} from "components/layout/Layout";
 import Tree, {findTreeDataFromKey} from "components/tree/Tree";
 import useObserver from "components/useObserver";
-import {v4 as uuid} from "uuid";
 import Button from "components/button/Button";
+import {uuid} from "components/utils";
 
 export default function TreeSample() {
     const [$data, setData] = useObserver([{

@@ -1,9 +1,9 @@
-import express from "express";
-import morgan from "morgan";
-import dbRouter from "./service/database.js";
-import authenticationRouter from "./service/authentication.js";
-import log from "./service/logger.js";
-import dotenv from "dotenv";
+const express = require("express");
+const morgan = require("morgan");
+const {router: dbRouter} = require("./service/database.js");
+const authenticationRouter = require("./service/authentication.js");
+const log = require("./service/logger.js");
+const dotenv = require("dotenv");
 
 const app = express();
 const PORT = 4000;

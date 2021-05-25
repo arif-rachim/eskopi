@@ -1,7 +1,7 @@
 import {Controls} from "module/page-designer/controls/ControllerMapper";
 import getOutlinePlaceHolder from "module/page-designer/outline/getOutlinePlaceHolder";
-import {v4 as uuid} from "uuid";
 import {getPlaceHolder} from "module/page-designer/designer/getPlaceHolder";
+import {uuid} from "components/utils";
 
 function cleanDataFromTree(data, dataToRemove) {
     if (data.id) {

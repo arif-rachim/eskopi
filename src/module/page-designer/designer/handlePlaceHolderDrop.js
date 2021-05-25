@@ -1,6 +1,5 @@
 import {getPlaceHolder} from "module/page-designer/designer/getPlaceHolder";
-import {v4 as uuid} from "uuid";
-
+import {uuid} from "components/utils";
 
 /**
  * Function to get parent element ids from current parentElement

@@ -1,8 +1,8 @@
-import express from "express";
-import {dbCreate, dbFindOne, dbUpdate} from "./database.js";
-import passwordHash from "password-hash";
-import jwt from "jsonwebtoken";
-import {SYSTEM_USERS} from "../src/components/SystemTableName.js";
+const express = require("express");
+const {dbCreate, dbFindOne, dbUpdate} = require("./database.js");
+const passwordHash = require("password-hash");
+const jwt = require("jsonwebtoken");
+const {SYSTEM_USERS} = 'system-users';
 
 const router = express.Router();
 
@@ -46,4 +46,4 @@ router.post('/register', (req, res) => {
     return res.json({error: false, data: {...user, password: ''}});
 })
 
-export default router;
+module.exports = router;

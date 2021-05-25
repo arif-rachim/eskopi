@@ -4,12 +4,11 @@ import InputWithSlideDownDetail from "components/input/InputWithSlideDownDetail"
 import Button from "components/button/Button";
 import InputTable from "components/table/InputTable";
 import {useConfirmMessage} from "components/dialog/Dialog";
-import {v4 as uuid} from "uuid";
 import useObserver, {useObserverMapper} from "components/useObserver";
 import SelectCellRenderer from "./renderer/SelectCellRenderer";
 import InputCellRenderer from "./renderer/InputCellRenderer";
 import DeleteCellRenderer from "./renderer/DeleteCellRenderer";
-import {isNullOrUndefined} from "components/utils";
+import {isNullOrUndefined, uuid} from "components/utils";
 import useResource, {useResourceListener} from "../../../components/useResource";
 import {SYSTEM_PAGES} from "../../../components/SystemTableName";
 import {treeToArray} from "./PageSelectorPanel";

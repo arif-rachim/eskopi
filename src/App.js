@@ -6,7 +6,6 @@ import {AuthCheck, UserProvider} from "components/authentication/useUser";
 import ErrorBoundary from "components/error-boundary/ErrorBoundary"
 import AppShell from "components/app-shell/AppShell";
 import {Horizontal, Vertical} from "components/layout/Layout";
-import {v4 as uuid} from "uuid";
 import Pages from "components/page/Pages";
 import useObserver, {
     ObserverValue,
@@ -15,6 +14,7 @@ import useObserver, {
     useObserverValue
 } from "components/useObserver";
 import {ElementToMountContext, getElementToMount, NavigationContextProvider} from "components/useNavigation";
+import {uuid} from "components/utils";
 
 function handleOnChange(setActiveTab) {
     return (index) => setActiveTab(index);

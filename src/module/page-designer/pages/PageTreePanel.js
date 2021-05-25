@@ -5,11 +5,11 @@ import {useConfirmMessage} from "components/dialog/Dialog";
 import {Horizontal, Vertical} from "components/layout/Layout";
 import Button from "components/button/Button";
 import Tree, {DefaultTreeDataKey, findTreeDataFromKey, removeTreeDataFromKey} from "components/tree/Tree";
-import {v4 as uuid} from "uuid";
 import useForm, {Controller} from "components/useForm";
 import Input from "components/input/Input";
 import Panel from "components/panel/Panel";
 import {SYSTEM_PAGES} from "components/SystemTableName";
+import {uuid} from "components/utils";
 
 export default function PageTreePanel({$selectedPage, setSelectedPage}) {
     const $value = $selectedPage;
@@ -92,6 +92,7 @@ function HeaderRenderer({$showDelete, showConfirmation, $value, $pages, setPageR
                       strokeWidth='32' d='M256 112v288M400 256H112'/>
             </svg>
         </Button>
+
     </Horizontal>
 
 }

@@ -3,8 +3,8 @@ import {Horizontal, Vertical} from "components/layout/Layout";
 import List from "components/list/List";
 import useObserver, {useObserverValue} from "components/useObserver";
 import Button from "components/button/Button";
-import {v4 as uuid} from "uuid";
 import PaginatedList from "components/list/PaginatedList";
+import {uuid} from "components/utils";
 
 export default function ListExample() {
     const [$data, setData] = useObserver([]);

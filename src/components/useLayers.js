@@ -1,6 +1,6 @@
 import {createContext, useCallback, useContext} from "react";
-import {v4} from "uuid";
 import useObserver, {ObserverValue} from "components/useObserver";
+import {uuid} from "components/utils";
 
 /**
  *
@@ -20,7 +20,7 @@ export default function useLayers() {
 export function createShowPanel(setStacks) {
     return (panelCreatorFunction) => {
         return new Promise(resolve => {
-            const key = v4();
+            const key = uuid();
             new Promise(closePanel => {
                 const panel = panelCreatorFunction(closePanel);
                 setStacks(stacks => [...stacks, {key, panel}]);

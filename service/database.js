@@ -1,12 +1,11 @@
 // In memory global store
-import {v4 as uuid} from "uuid";
-import path from "path";
-import {access, readFile, writeFile} from "fs/promises";
-import {constants} from "fs";
-import express from "express";
-import log from "./logger.js";
-import {SYSTEM_PAGES} from "../src/components/SystemTableName.js";
-
+const {v4} = require("uuid");
+const path = require("path");
+const {constants, promises: {access, readFile, writeFile}} = require("fs");
+const express = require("express");
+const log = require("./logger.js");
+const {SYSTEM_PAGES} = 'system-pages';
+const uuid = v4;
 
 const router = express.Router();
 
@@ -290,8 +289,11 @@ const onActionUnlink = (params, queries) => {
  * @param {object} query
  * @returns {string|*}
  */
-export function processRequest(params, query) {
-    const {a, ...queries} = query;
+function processRequest(params, query) {
+    const {a, _, ...queries} = query;
+    // this is added by IE
+
+    console.log('We have query', query, 'we have params', params);
     if (a === undefined) {
         throw new Error('Action identified in the request');
     }
@@ -316,6 +318,8 @@ export function processRequest(params, query) {
     }
     throw new Error(`Unable to process request [${params}] ${JSON.stringify(query)}`);
 }
+
+module.exports.processRequest = processRequest;
 
 
 router.get('/*', (req, res) => {
@@ -371,7 +375,7 @@ function toCamelCase(object) {
     }, {});
 }
 
-export function getParamsAndQuery(req) {
+function getParamsAndQuery(req) {
     const queryIndex = req.url.indexOf('?');
     const url = req.url.substring(1, queryIndex > 0 ? queryIndex : req.url.length);
     const params = decodeURIComponent(url).split('/').filter(s => s.length > 0);
@@ -379,6 +383,8 @@ export function getParamsAndQuery(req) {
     const body = toCamelCase(req.body);
     return {params, query: {...body, ...query}};
 }
+
+module.exports.getParamsAndQuery = getParamsAndQuery;
 
 function camelize(str) {
     return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
@@ -444,18 +450,27 @@ initialization().then(() => {
  * @param {any} param
  * @returns {boolean}
  */
-export function isNullOrUndefined(param) {
+function isNullOrUndefined(param) {
     return param === undefined || param === null;
 }
 
-export const dbCreate = (type, config) => processRequest([type], {a: ACTION_CREATE, ...config});
-export const dbFind = (type, config) => processRequest([type], {a: ACTION_READ, ...config});
-export const dbFindOne = (type, config) => dbFind(type, config).reduce((acc, next) => acc ? acc : next, null);
-export const dbGet = (entityId, config) => processRequest(['', entityId], {a: ACTION_READ, ...config});
-export const dbUpdate = (entityId, config) => processRequest(['', entityId], {a: ACTION_UPDATE, ...config});
-export const dbDelete = (entityId, config) => processRequest(['', entityId], {a: ACTION_DELETE, ...config});
-export const dbLink = (entityFromId, prop, entityToId, config) => processRequest(['', entityFromId, prop, entityToId], {a: ACTION_LINK, ...config});
-export const dbUnlink = (entityFromId, prop, entityToId, config) => processRequest(['', entityFromId, prop, entityToId], {a: ACTION_UNLINK, ...config});
+module.exports.isNullOrUndefined = isNullOrUndefined;
 
+const dbCreate = (type, config) => processRequest([type], {a: ACTION_CREATE, ...config});
+const dbFind = (type, config) => processRequest([type], {a: ACTION_READ, ...config});
+const dbFindOne = (type, config) => dbFind(type, config).reduce((acc, next) => acc ? acc : next, null);
+const dbGet = (entityId, config) => processRequest(['', entityId], {a: ACTION_READ, ...config});
+const dbUpdate = (entityId, config) => processRequest(['', entityId], {a: ACTION_UPDATE, ...config});
+const dbDelete = (entityId, config) => processRequest(['', entityId], {a: ACTION_DELETE, ...config});
+const dbLink = (entityFromId, prop, entityToId, config) => processRequest(['', entityFromId, prop, entityToId], {a: ACTION_LINK, ...config});
+const dbUnlink = (entityFromId, prop, entityToId, config) => processRequest(['', entityFromId, prop, entityToId], {a: ACTION_UNLINK, ...config});
 
-export default router;
+module.exports.dbCreate = dbCreate;
+module.exports.dbFind = dbFind;
+module.exports.dbFindOne = dbFindOne;
+module.exports.dbGet = dbGet;
+module.exports.dbUpdate = dbUpdate;
+module.exports.dbDelete = dbDelete;
+module.exports.dbLink = dbLink;
+module.exports.dbUnlink = dbUnlink;
+module.exports.router = router;
