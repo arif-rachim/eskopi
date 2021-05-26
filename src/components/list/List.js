@@ -74,7 +74,7 @@ export default function List({
     const [$selectedRow, setSelectedRow] = useObserver($nameValue?.current);
     const [$tableData, setTableData] = useObserver($data?.current);
 
-    const onChangeCallback = useCallback(function onChangeCallback(newValue) {
+    const onChangeCallback = useCallback(function onChangeCallbackInvoker(newValue) {
         const {onChange} = propsRef.current;
         if (isNullOrUndefined(onChange)) {
             return;
@@ -82,12 +82,12 @@ export default function List({
         onChange(newValue);
     }, []);
 
-    const onBeforeChangeCallback = useCallback(async function onBeforeChangeCallback(newValue) {
+    const onBeforeChangeCallback = useCallback(async function onBeforeChangeCallbackInvoker(newValue) {
         const {onBeforeChange} = propsRef.current;
         if (isNullOrUndefined(onBeforeChange)) {
             return true;
         }
-        const continueChange = await onBeforeChange($nameValue.current, newValue);
+        const continueChange = await onBeforeChange($selectedRow.current, newValue);
         return continueChange;
     }, [$nameValue])
 

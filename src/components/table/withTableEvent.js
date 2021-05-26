@@ -11,13 +11,18 @@ export default function withTableEvent(Component) {
         } = props?.data;
         const eventHandlerInvoker = useEventHandlerInvoker();
         const nextProps = {...props, data}
-        // @TODO THIS IS NOT COMPLETE YET !!
-        return <Component onBeforeChange={handleBeforeSelectedRowChange}
-                          onChange={(oldVal, nextVal) => {
-                              eventHandlerInvoker()
+        return <Component onBeforeChange={(oldVal, newVal) => eventHandlerInvoker(handleBeforeSelectedRowChange, {
+            oldVal: oldVal,
+            newVal: newVal
+        })}
+                          onBeforeDataChange={() => {
+                              // TODO
                           }}
-                          onBeforeDataChange={handleBeforeDataChange}
-                          onDataChange={handleDataChange}
-                          {...nextProps} />
+                          onDataChange={() => {
+                              // TODO
+                          }}
+                          onChange={(value) => eventHandlerInvoker(handleSelectedRowChange, {value: value})}
+                          {...nextProps}
+        />
     }
 }

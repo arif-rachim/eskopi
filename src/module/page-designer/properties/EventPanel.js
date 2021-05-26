@@ -142,7 +142,7 @@ function CodeEditor({title, $code, closePanel, $selectedController, $selectedPag
         }
     });
 
-    const [$value, setValue] = useObserver('');
+    const [$value, setValue] = useObserver($code.current);
 
     return <Vertical width={800} p={4} gap={2}>
         <Horizontal style={{fontSize: 18}} hAlign={'center'}>{title}</Horizontal>
@@ -157,7 +157,7 @@ function CodeEditor({title, $code, closePanel, $selectedController, $selectedPag
             fontFamily: '"Fira code", "Fira Mono", monospace',
             fontSize: 12
         }}>
-            <Horizontal>{`export default async function ${stringToCamelCase(title)}(actions){`}</Horizontal>
+            <Horizontal>{`export default async function ${stringToCamelCase(title)}(actions,context){`}</Horizontal>
             <InputCode $value={$value} onChange={setValue}/>
             <Horizontal>{'}'}</Horizontal>
         </Vertical>

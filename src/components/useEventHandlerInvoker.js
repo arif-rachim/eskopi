@@ -21,8 +21,8 @@ export default function useEventHandlerInvoker() {
         setActions(actions);
     });
 
-    return useCallback(function eventHandlerInvoker(handler) {
-        const f = new Function('actions', `(async function eventInvoker(actions){${handler}})(actions)`);
-        return f.call({}, $actions?.current);
+    return useCallback(function eventHandlerInvoker(handler, context) {
+        const f = new Function('actions', 'context', `return (async function eventHandlerInvoker(actions,context){\n\n${handler}\n\n})(actions,context)`);
+        return f.call({}, $actions?.current, context);
     }, [$actions])
 }

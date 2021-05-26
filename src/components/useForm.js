@@ -152,11 +152,14 @@ const callbackOnBlur = (propsRef) => () => {
  */
 const callbackOnChange = (propsRef) => function onChangeCallback(valueOrSetState) {
     const {control, name, validator, onChange} = propsRef.current;
+    let value = valueOrSetState;
     if (isNullOrUndefined(name) || name === '') {
         console.warn('When declaring controller, name cannot be null or undefined or empty string');
+        if (onChange) {
+            onChange(value);
+        }
         return;
     }
-    let value = valueOrSetState;
     if (isFunction(valueOrSetState)) {
         const oldValue = control.current?.$value?.current[name];
         value = valueOrSetState.call(null, oldValue);
