@@ -13,13 +13,14 @@ export default function FormController({
 
     const {handleSubmit: onHandleSubmitUsingData, handleLoad: onHandleLoad, ...dataProps} = data;
     const {control, handleSubmit, reset} = useForm();
-
+    const ignoreOldAttribute = true;
+    // If you are updating actions of FormController please ensure you also update the FormTemplate.js
     useControlRegistration({
         controllerName: data?.controllerName,
         id: data?.id,
         actions: {
             getValue: () => control?.current?.$value?.current,
-            reset,
+            reset: (initialValue) => reset(initialValue, ignoreOldAttribute),
         }
     });
     const eventHandlerInvoker = useEventHandlerInvoker();

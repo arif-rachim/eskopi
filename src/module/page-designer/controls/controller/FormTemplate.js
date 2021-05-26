@@ -10,13 +10,14 @@ export default function FormTemplate({
                                          style,
                                          ...controllerProps
                                      }) {
+    // If you are updating actions of FormController please ensure you also update the FormController.js
     useControlRegistration({
         controllerName: data?.controllerName,
         id: data?.id,
         actions: {
             getValue: () => {
             },
-            reset: () => {
+            reset: (initialValue) => {
             }
         }
     });
