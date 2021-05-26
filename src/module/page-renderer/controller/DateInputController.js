@@ -14,6 +14,6 @@ export default function DateInputController({
         <Controller render={InputDate}
                     control={control}
                     style={style}
-                    {...controllerProps} {...props}/>
+                    {...controllerProps} {...props} name={data?.dataFieldName}/>
     </Vertical>
 }

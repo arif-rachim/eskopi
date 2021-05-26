@@ -10,7 +10,6 @@ import {isEmpty, isFunction, isNullOrUndefined, stringToCamelCase} from "compone
 import Panel from "components/panel/Panel";
 import {Controller} from "components/useForm";
 import {mapToNameFactory} from "components/input/Input";
-import {Controls} from "module/page-designer/controls/ControllerMapper";
 import usePageContext from "components/page/usePageContext";
 
 
@@ -67,19 +66,20 @@ function EventListenerInput({$value, onChange, name, $errors, $selectedControlle
     </Horizontal>
 }
 
-function getControllerNames(children) {
-    let result = [];
-    children = children || [];
-    for (const child of children) {
-        if (child?.name) {
-            result.push(child.name);
-        }
-        if (child?.children) {
-            result = [...result, ...getControllerNames(child.children)];
-        }
-    }
-    return result;
-}
+//
+// function getControllerNames(children) {
+//     let result = [];
+//     children = children || [];
+//     for (const child of children) {
+//         if (child?.name) {
+//             result.push(child.name);
+//         }
+//         if (child?.children) {
+//             result = [...result, ...getControllerNames(child.children)];
+//         }
+//     }
+//     return result;
+// }
 
 function TableSnippet({$data, $selectedTable, setSelectedTable, setValue}) {
     const $noSelectedTable = useObserverMapper($selectedTable, table => isNullOrUndefined(table));
@@ -100,9 +100,7 @@ function TableSnippet({$data, $selectedTable, setSelectedTable, setValue}) {
                         acc[f.name] = '';
                         return acc;
                     }, {id_: ''});
-                    const code = `
-const save${$selectedTable?.current?.tableName}Result = await actions.doSave${$selectedTable?.current?.tableName}(
-    ${JSON.stringify(fields)});`;
+                    const code = `const save${$selectedTable?.current?.tableName}Result = await actions.doSave${$selectedTable?.current?.tableName}(${JSON.stringify(fields)});\n`;
                     return oldValue + code;
                 })
             }}>Save</Button>
@@ -112,8 +110,7 @@ const save${$selectedTable?.current?.tableName}Result = await actions.doSave${$s
                         return oldValue;
                     }
                     oldValue = isFunction(oldValue) ? oldValue() : oldValue;
-                    const code = `
-const delete${$selectedTable?.current?.tableName}Result = await actions.doDelete${$selectedTable?.current?.tableName}(id_="");`;
+                    const code = `const delete${$selectedTable?.current?.tableName}Result = await actions.doDelete${$selectedTable?.current?.tableName}(id_="");\n`;
                     return oldValue + code;
                 })
             }}>Delete</Button>
@@ -127,21 +124,10 @@ const delete${$selectedTable?.current?.tableName}Result = await actions.doDelete
                         acc[f.name] = '';
                         return acc;
                     }, {id_: ''});
-                    const code = `
-const read${$selectedTable?.current?.tableName}Result = await actions.doRead${$selectedTable?.current?.tableName}(${JSON.stringify(fields)});`;
+                    const code = `const read${$selectedTable?.current?.tableName}Result = await actions.doRead${$selectedTable?.current?.tableName}(${JSON.stringify(fields)});\n`;
                     return oldValue + code;
                 })
             }}>Read</Button>
-        </Horizontal>
-        <Horizontal pL={4} bL={2}>
-            <Button onClick={() => {
-                setValue(oldValue => {
-                    oldValue = isFunction(oldValue) ? oldValue() : oldValue;
-                    const code = `
-actions.resetForm()`;
-                    return oldValue + code;
-                })
-            }}>Reset</Button>
         </Horizontal>
     </Horizontal>;
 }
@@ -154,37 +140,24 @@ function CodeEditor({title, $code, closePanel, $selectedController, $selectedPag
         if (status === 'success') {
             setData(tables);
         }
-    })
-    const [$value, setValue] = useObserver(() => {
-        if ($code?.current) {
-            return $code.current;
-        }
-        let controllerNames = [];
-        if ($selectedController.current?.type === Controls.FORM) {
-            controllerNames = getControllerNames($selectedController.current.children);
-            controllerNames.unshift('id_');
-        } else {
-            controllerNames = getControllerNames($selectedPage.current?.children);
-        }
-        return `const {${controllerNames.join(',')}} = data;`
-
     });
+
+    const [$value, setValue] = useObserver('');
 
     return <Vertical width={800} p={4} gap={2}>
         <Horizontal style={{fontSize: 18}} hAlign={'center'}>{title}</Horizontal>
-        <Panel headerTitle={'Resource'}>
+        <Panel headerTitle={'Component Actions'}>
+            <ComponentSnippet setValue={setValue}/>
+        </Panel>
+        <Panel headerTitle={'Database Table'}>
             <TableSnippet $data={$data} $selectedTable={$selectedTable} setSelectedTable={setSelectedTable}
                           setValue={setValue}/>
         </Panel>
-        <Panel headerTitle={'Component & Actions'}>
-            <ComponentSnippet setValue={setValue}/>
-        </Panel>
-
         <Vertical mT={2} style={{
             fontFamily: '"Fira code", "Fira Mono", monospace',
             fontSize: 12
         }}>
-            <Horizontal>{`export default async function ${stringToCamelCase(title)}(data,actions){`}</Horizontal>
+            <Horizontal>{`export default async function ${stringToCamelCase(title)}(actions){`}</Horizontal>
             <InputCode $value={$value} onChange={setValue}/>
             <Horizontal>{'}'}</Horizontal>
         </Vertical>
@@ -205,12 +178,15 @@ function ComponentSnippet({setValue}) {
                 if (data === undefined) {
                     return '';
                 }
-                if (isEmpty($controls.current[data].name)) {
-                    return data
+                if (isEmpty($controls.current[data]?.controllerName)) {
+                    return data;
                 }
-                return $controls.current[data].name;
+                return $controls.current[data]?.controllerName;
             }}
-                    $data={useObserverMapper($controls, controls => Object.keys(controls))}
+                    $data={useObserverMapper($controls, controls => {
+                        const keys = Object.keys(controls);
+                        return keys.filter((key) => !isEmpty($controls.current[key]?.controllerName));
+                    })}
                     style={{flex: '1 0 auto'}}
                     $value={$selectedControl}
                     onChange={setSelectedControl}
@@ -226,21 +202,13 @@ function ComponentSnippet({setValue}) {
                     const actions = control.actions.reduce((acc, action) => ({...acc, ...action.current}), {});
                     return Object.keys(actions).map(action => {
                         return <Button key={action} onClick={() => {
-                            const propType = actions[action].propertyTypes;
-                            if (isNullOrUndefined(propType)) {
-                                throw new Error('propertyTypes is required for ' + action);
-                            }
-                            let parameterString = Object.keys(propType).join(',');
-                            if (parameterString.length > 0) {
-                                parameterString = `{${parameterString}`;
-                            }
+                            const actionString = actions[action].toString();
+                            const parameterString = actionString.substring(actionString.indexOf('(') + 1, actionString.indexOf(')'))
                             setValue(oldValue => {
-                                const code = `
-actions.${$controls.current[controlId].name}.${action}(${parameterString});
-`;
+                                const code = `actions.${$controls.current[controlId].controllerName}.${action}(${parameterString});\n`;
                                 return oldValue + code;
                             })
-                        }}>{action}</Button>
+                        }} style={{marginRight: 5}}>{action}</Button>
                     })
                 }}
             </ObserverValue>

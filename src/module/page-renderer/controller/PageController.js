@@ -14,6 +14,6 @@ export default function PageController({
         <Controller render={Page}
                     pageId={page?.id}
                     control={control}
-                    {...controllerProps} {...props}/>
+                    {...controllerProps} {...props} />
     </Vertical>
 }

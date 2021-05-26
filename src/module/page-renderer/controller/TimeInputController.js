@@ -15,6 +15,6 @@ export default function TimeInputController({
         <Controller render={InputTime}
                     control={control}
                     style={style}
-                    {...controllerProps} {...props}/>
+                    {...controllerProps} {...props} name={data?.dataFieldName}/>
     </Vertical>
 }

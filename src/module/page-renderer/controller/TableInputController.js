@@ -16,6 +16,6 @@ export default function TableInputController({
                     labelContainerElement={'div'}
                     control={control}
                     style={style}
-                    {...controllerProps} {...props}/>
+                    {...controllerProps} {...props} name={data?.dataFieldName}/>
     </Vertical>
 }

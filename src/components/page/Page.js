@@ -121,7 +121,8 @@ export function PageActions({
                                 reset = EmptyFunction
                             }) {
     useControlRegistration({
-        name: 'page',
+        dataFieldName: '',
+        controllerName: 'page',
         id: 'page',
         actions: {
             commitChanges,

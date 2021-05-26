@@ -16,6 +16,6 @@ export default function TextAreaController({
                     disabled={false}
                     style={style}
                     autoComplete={'off'}
-                    {...controllerProps} {...props}/>
+                    {...controllerProps} {...props} name={data?.dataFieldName}/>
     </Vertical>
 }

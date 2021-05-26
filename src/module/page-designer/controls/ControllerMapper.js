@@ -147,14 +147,24 @@ const BUTTON_PROPERTIES = {
 }
 
 const NAME_LABEL_PROPS = {
-    title: 'Name and Label',
+    title: 'Field and Label',
     properties: {
-        name: {
-            title: 'Name',
+        dataFieldName: {
+            title: 'Field',
             casing: 'camelCase'
         },
         label: {
             title: 'Label'
+        }
+    }
+}
+
+const CONTROLLER_NAME_PROPS = {
+    title: 'Controller',
+    properties: {
+        controllerName: {
+            title: 'Name',
+            casing: 'camelCase'
         }
     }
 }
@@ -172,17 +182,17 @@ const WIDTH_HEIGHT_PROPS = {
 }
 
 export const ControlPropertiesCatalog = {
-    [Controls.FORM]: [eventPanelFactory(FORM_EVENT_CONFIG), BorderMarginPaddingPanel, AlignmentAndGapPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
+    [Controls.FORM]: [dynamicPropertiesPanelFactory(CONTROLLER_NAME_PROPS), eventPanelFactory(FORM_EVENT_CONFIG), BorderMarginPaddingPanel, AlignmentAndGapPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
     [Controls.GROUP]: [BorderMarginPaddingPanel, AlignmentAndGapPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
-    [Controls.TEXT_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), eventPanelFactory(INPUT_EVENT_CONFIG), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
-    [Controls.TEXT_AREA]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
-    [Controls.DATE_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
-    [Controls.TIME_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
-    [Controls.NUMBER_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
-    [Controls.BUTTON]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), eventPanelFactory(BUTTON_EVENT_CONFIG), dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), dynamicPropertiesPanelFactory(BUTTON_PROPERTIES)],
-    [Controls.TABLE_INPUT]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), eventPanelFactory(TABLE_EVENT_CONFIG), DataPanel, ColumnsPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
-    [Controls.CHECKBOX]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
-    [Controls.PAGE]: [dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), PageSelectorPanel],
+    [Controls.TEXT_INPUT]: [dynamicPropertiesPanelFactory(CONTROLLER_NAME_PROPS), dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), eventPanelFactory(INPUT_EVENT_CONFIG), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
+    [Controls.TEXT_AREA]: [dynamicPropertiesPanelFactory(CONTROLLER_NAME_PROPS), dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
+    [Controls.DATE_INPUT]: [dynamicPropertiesPanelFactory(CONTROLLER_NAME_PROPS), dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
+    [Controls.TIME_INPUT]: [dynamicPropertiesPanelFactory(CONTROLLER_NAME_PROPS), dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
+    [Controls.NUMBER_INPUT]: [dynamicPropertiesPanelFactory(CONTROLLER_NAME_PROPS), dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
+    [Controls.BUTTON]: [dynamicPropertiesPanelFactory(CONTROLLER_NAME_PROPS), dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), eventPanelFactory(BUTTON_EVENT_CONFIG), dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), dynamicPropertiesPanelFactory(BUTTON_PROPERTIES)],
+    [Controls.TABLE_INPUT]: [dynamicPropertiesPanelFactory(CONTROLLER_NAME_PROPS), dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), eventPanelFactory(TABLE_EVENT_CONFIG), DataPanel, ColumnsPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS)],
+    [Controls.CHECKBOX]: [dynamicPropertiesPanelFactory(CONTROLLER_NAME_PROPS), dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), BorderMarginPaddingPanel, dynamicPropertiesPanelFactory(WIDTH_HEIGHT_PROPS), ColorBrightnessOpacity],
+    [Controls.PAGE]: [dynamicPropertiesPanelFactory(CONTROLLER_NAME_PROPS), dynamicPropertiesPanelFactory(NAME_LABEL_PROPS), PageSelectorPanel],
 }
 
 export const Icons = {

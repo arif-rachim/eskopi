@@ -15,6 +15,6 @@ export default function NumberInputController({
         <Controller render={InputNumber}
                     control={control}
                     style={style}
-                    {...controllerProps} {...props}/>
+                    {...controllerProps} {...props} name={data?.dataFieldName}/>
     </Vertical>
 }

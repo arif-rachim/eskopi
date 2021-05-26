@@ -42,7 +42,7 @@ export default function useObserver(defaultValue) {
             }
             defaultValueRef.current = newVal;
             $value.current = newVal;
-            listeners.forEach((l) => {
+            listeners.forEach(function listenerInvoker(l) {
                 if (newVal === oldVal) {
                     return;
                 }
@@ -149,13 +149,17 @@ export function useObserverListener(observers, listener = undefined) {
             //console.log('Oppps we got undefined observers, this might cause issue in future');
             return;
         }
-        const listener = (index) => (newValue) => {
-            let currentValue = observers.map(o => o.current);
-            let newValues = [...currentValue];
-            newValues.splice(index, 1, newValue);
-            newValues = observerIsArray ? newValues : newValues[0];
-            listenerRef.current.apply(null, [newValues]);
-        };
+
+        function listener(index) {
+            return function invokerExecutor(newValue) {
+                let currentValue = observers.map(o => o.current);
+                let newValues = [...currentValue];
+                newValues.splice(index, 1, newValue);
+                newValues = observerIsArray ? newValues : newValues[0];
+                listenerRef.current.apply(null, [newValues]);
+            };
+        }
+
         const removeListeners = observers.map(($o, index) => {
             if (isNullOrUndefined($o) || !isFunction($o.addListener)) {
                 console.warn('We have undefined observer this might cause issue in future');

@@ -5,24 +5,24 @@ import constructActionsObject from "module/page-renderer/controller/constructAct
 import useUser from "components/authentication/useUser";
 import {useRegisteredControlsObserver} from "components/page/useControlRegistration";
 
-export default function useEventHandlerInvoker({control: formControl, handleSubmit, reset: formReset} = {}) {
-    const {$systemTables, reset: pageReset, control: pageControl} = useContext(PageControlContext);
+export default function useEventHandlerInvoker() {
+    const {$systemTables} = useContext(PageControlContext);
     const [$user] = useUser();
     const token = useObserverValue($user)?.token;
     const $controls = useRegisteredControlsObserver();
     // maybe in future we can rename this to formControl or pageControl
-    const control = formControl ? formControl : pageControl;
-    const reset = formReset ? formReset : pageReset;
 
     const [$actions, setActions] = useObserver(() => {
-        return constructActionsObject(reset, $systemTables.current, token, $controls.current);
+        return constructActionsObject($systemTables.current, token, $controls.current);
     });
+
     useObserverListener([$systemTables, $controls], ([tables, controls]) => {
-        const actions = constructActionsObject(reset, tables, token, controls);
+        const actions = constructActionsObject(tables, token, controls);
         setActions(actions);
     });
+
     return useCallback(function eventHandlerInvoker(handler) {
-        const f = new Function('data', 'actions', `(async function eventInvoker(data,actions){${handler}})(data,actions)`);
-        return f.call({}, control?.current?.$value?.current, $actions?.current);
-    }, [$actions, control])
+        const f = new Function('actions', `(async function eventInvoker(actions){${handler}})(actions)`);
+        return f.call({}, $actions?.current);
+    }, [$actions])
 }

@@ -1,9 +1,7 @@
 import {post} from "components/useResource";
 
-export default function constructActionsObject(reset, dbTables = [], token, controls = {}) {
-    const actions = {
-        resetForm: reset
-    };
+export default function constructActionsObject(dbTables = [], token, controls = {}) {
+    const actions = {};
     for (const table of dbTables) {
         const doSave = `doSave${table.tableName}`;
         const doDelete = `doDelete${table.tableName}`;
@@ -20,13 +18,13 @@ export default function constructActionsObject(reset, dbTables = [], token, cont
     }
     Object.keys(controls).forEach(id => {
         const control = controls[id];
-        const {actions: controlActions, name} = control;
+        const {actions: controlActions, controllerName} = control;
         controlActions.forEach(controlAction => {
             const action = {};
             Object.keys(controlAction.current).forEach(actionName => {
                 action[actionName] = (...args) => controlAction.current[actionName].apply(null, args);
             });
-            actions[name] = action;
+            actions[controllerName] = action;
         });
     });
     return actions;

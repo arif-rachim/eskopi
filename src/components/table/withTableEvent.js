@@ -11,25 +11,7 @@ export default function withTableEvent(Component) {
         } = props?.data;
         const eventHandlerInvoker = useEventHandlerInvoker();
         const nextProps = {...props, data}
-        // function refreshGrid() {
-        // }
-        // refreshGrid.propertyTypes = {};
-        // useControlRegistration({
-        //     name: props?.data?.name,
-        //     id: props?.data?.id,
-        //     actions: {
-        //         refreshGrid
-        //     }
-        // });
-
-        // onChange={(value) => {
-        //     if (onChange) {
-        //         onChange(value)
-        //     }
-        //     const f = new Function('data', 'actions', `(async(data,actions) => {${handleChange}})(data,actions)`);
-        //     f.call({}, formControl?.current?.$value?.current, $actions?.current);
-        // }}
-
+        // @TODO THIS IS NOT COMPLETE YET !!
         return <Component onBeforeChange={handleBeforeSelectedRowChange}
                           onChange={(oldVal, nextVal) => {
                               eventHandlerInvoker()

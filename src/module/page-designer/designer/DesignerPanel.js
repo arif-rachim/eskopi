@@ -98,9 +98,7 @@ export default function DesignerPanel({$data, setData, $selectedPage, $selectedC
                     })}>{
                         (value) => {
                             return <ControlRegistrationContextProvider key={JSON.stringify(value)}
-                                                                       onChange={(controls) => {
-                                                                           setPageContext(({controls}))
-                                                                       }}>
+                                                                       onChange={(controls) => setPageContext(({controls}))}>
                                 <PageActions>
                                     <RenderLayoutMemo value={value} control={control}
                                                       setSelectedController={setSelectedController}

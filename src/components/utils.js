@@ -145,7 +145,7 @@ export function stringToKebabCase(string) {
 }
 
 export function sanitizeProps(props) {
-    const propsToRemove = ['$selectedController', 'setSelectedController', 'dataResource', 'handleSubmit', 'handleLoad', 'vAlign', 'hAlign', 'handleClick', 'buttonType', 'handleChange'];
+    const propsToRemove = ['$selectedController', 'setSelectedController', 'dataResource', 'handleSubmit', 'handleLoad', 'vAlign', 'hAlign', 'handleClick', 'buttonType', 'handleChange', 'dataFieldName', 'controllerName'];
     return Object.keys(props).filter(p => propsToRemove.indexOf(p) < 0).reduce((acc, key) => {
         acc[key] = props[key];
         return acc;

@@ -15,6 +15,6 @@ export default function CheckboxController({
         <Controller render={Checkbox}
                     control={control}
                     style={style}
-                    {...controllerProps} {...props}/>
+                    {...controllerProps} {...props} name={data?.dataFieldName}/>
     </Vertical>
 }

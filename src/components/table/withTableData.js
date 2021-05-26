@@ -24,7 +24,8 @@ export default function withTableData(Component) {
         refreshGrid.propertyTypes = {};
 
         useControlRegistration({
-            name: props?.data?.name,
+            dataFieldName: props?.data?.dataFieldName,
+            controllerName: props?.data?.controllerName,
             id: props?.data?.id,
             actions: {
                 refreshGrid
