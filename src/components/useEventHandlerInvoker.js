@@ -22,7 +22,7 @@ export default function useEventHandlerInvoker({control: formControl, handleSubm
         setActions(actions);
     });
     return useCallback(function eventHandlerInvoker(handler) {
-        const f = new Function('data', 'actions', `(function eventInvoker(data,actions){${handler}})(data,actions)`);
+        const f = new Function('data', 'actions', `(async function eventInvoker(data,actions){${handler}})(data,actions)`);
         return f.call({}, control?.current?.$value?.current, $actions?.current);
     }, [$actions, control])
 }
