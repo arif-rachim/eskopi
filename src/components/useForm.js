@@ -74,7 +74,6 @@ export default function useForm(defaultValue = {}) {
         });
         control.current.defaultValue = defaultValue ? defaultValue : control.current.defaultValue;
         setValue(oldValue => {
-            debugger;
             if (ignoreOldAttribute) {
                 return control.current.defaultValue;
             }
