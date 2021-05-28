@@ -2,7 +2,7 @@ const express = require("express");
 const {dbCreate, dbFindOne, dbUpdate} = require("./database.js");
 const passwordHash = require("password-hash");
 const jwt = require("jsonwebtoken");
-const {SYSTEM_USERS} = 'system-users';
+const SYSTEM_USERS = 'system-users';
 
 const router = express.Router();
 

@@ -4,7 +4,7 @@ const path = require("path");
 const {constants, promises: {access, readFile, writeFile}} = require("fs");
 const express = require("express");
 const log = require("./logger.js");
-const {SYSTEM_PAGES} = 'system-pages';
+const SYSTEM_PAGES = 'system-pages';
 const uuid = v4;
 
 const router = express.Router();
@@ -175,7 +175,8 @@ function filterByQuery(array, query) {
  * @returns {*}
  */
 function flatTree(tree) {
-    return tree.children.reduce((result, child) => {
+    const children = tree.children || [];
+    return children.reduce((result, child) => {
         result[child.id] = child;
         if ('children' in child && child.children.length > 0) {
             const children = flatTree(child);
@@ -292,8 +293,6 @@ const onActionUnlink = (params, queries) => {
 function processRequest(params, query) {
     const {a, _, ...queries} = query;
     // this is added by IE
-
-    console.log('We have query', query, 'we have params', params);
     if (a === undefined) {
         throw new Error('Action identified in the request');
     }
@@ -328,6 +327,7 @@ router.get('/*', (req, res) => {
         const data = processRequest(params, {a: ACTION_READ, ...query});
         return res.json({error: false, data});
     } catch (err) {
+        log(err);
         return res.json({error: err.message});
     }
 
@@ -362,6 +362,7 @@ router.post('/*', (req, res) => {
         const data = processRequest(params, {...query, a: action});
         return res.json({error: false, data});
     } catch (err) {
+        log(err);
         return res.json({error: err.message});
     }
 });
@@ -406,7 +407,7 @@ async function initialization() {
         warehouse = JSON.parse(warehouseSerializedData);
         log('Store successfully loaded');
     } catch (err) {
-        log(err.message);
+        log(err);
     }
 }
 
@@ -434,6 +435,7 @@ async function _persist() {
         await writeFile(warehousePath, JSON.stringify(warehouse));
         log('Store successfully persisted');
     } catch (err) {
+        log(err);
         log(err.message);
     }
 }
