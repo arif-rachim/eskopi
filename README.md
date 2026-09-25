@@ -1,70 +1,74 @@
-# Getting Started with Create React App
+# eskopi
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+eskopi is a prototype low-code platform, built between January and May 2021, for putting together data-driven web applications in the browser instead of hand-coding every form and table. A drag-and-drop page designer lets you arrange controls such as text, number, date and time inputs, text areas, checkboxes, buttons, labels, groups, forms, editable tables and sub-pages, then set their layout, data bindings and JavaScript event handlers in property panels. A database designer defines tables and fields, a database explorer browses the stored records, and a page renderer runs the saved pages as working screens. The front end is a React 17 app from Create React App with its own component library and observer-based state hooks. The back end is a small Express server with JWT sign-in that keeps every entity in memory and saves it to two JSON files. It is a personal experiment rather than a finished product: request authentication is switched off in the server, the API address is hard-coded, and there are no real tests.
 
-## Available Scripts
+> Status: prototype from 2021, not actively maintained.
 
-In the project directory, you can run:
+## Features
 
-### `yarn start`
+- **Page designer** (`page-designer`, also the home route): page tree, control palette, drag-and-drop canvas, outline view, and property panels for width and height, alignment and gap, border, margin and padding, colours, data, table columns and events.
+- **Event handlers** written as JavaScript in an in-app code editor (react-simple-code-editor with Prism highlighting).
+- **Page renderer** (`page-renderer/<pageId>`): renders a saved page design as a working screen.
+- **DB designer** (`db-designer`): create tables and edit their fields.
+- **DB explorer** (`db-explorer`): list every collection and view its records.
+- **Login and registration** screens backed by `/authentication/sign-in` and `/authentication/register`.
+- Tabbed app shell with a side menu built from the saved pages; modules open by URL hash.
+- Reusable components: layout primitives, inputs (masked, number, date, time, code), tables with auto-populated and configurable columns, lists, trees, panels, dialogs and slide-down panels.
+- Sample modules under `src/module/sample/` (form, list, tree, data grid, database CRUD, sidebar, custom controller and others).
+- Browser targets include Internet Explorer 11.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Tech stack
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+React 17 · Create React App 4 · CSS Modules · Express 4 · jsonwebtoken · password-hash · imask · Prism · Yarn
 
-### `yarn test`
+## Getting started
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Prerequisites: Node.js and Yarn (a `yarn.lock` is committed).
 
-### `yarn build`
+```bash
+yarn install
+yarn start-server   # API server on http://localhost:4000 (node server.js)
+yarn start          # generates src/routing.js, then starts the React dev server on :3000
+yarn build          # production build of the React app
+yarn test           # CRA test runner (one placeholder test)
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Environment variable for the server, read from `.env`: `ACCESS_TOKEN_SECRET` (used to sign JWTs on sign-in).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The front end calls the API at `http://localhost:4000`, hard-coded in `src/components/useResource.js`. Data is kept in `.store.json` and `.warehouse.json` in the directory where the server is started; both are gitignored.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Project structure
 
-### `yarn eject`
+```text
+server.js                 Express app: CORS, JSON body, /db and /authentication routes, port 4000
+service/
+  database.js             In-memory entity store with JSON-file persistence and the /db REST router
+  authentication.js       Sign-in, register, sign-out and change-password routes
+  logger.js               Console logger
+scan-module.js            Builds src/routing.js from every src/module/**/index.js
+src/
+  App.js                  App shell, tabs and hash-based module loading
+  components/             UI library, layout, tables, forms, observer and resource hooks
+  module/
+    page-designer/        Visual page designer
+    page-renderer/        Runtime for saved pages
+    db-designer/          Table and field designer
+    db-explorer/          Record browser
+    login/                Login and registration
+    sample/               Component and feature samples
+public/                   CRA public folder and bundled web fonts
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## How it works
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **Routing.** `scan-module.js` finds every `index.js` under `src/module/` and writes `src/routing.js`, mapping paths such as `db-designer` or `sample/tree` to their components. The app opens a module from the URL hash in a new tab.
+- **Data API.** `service/database.js` treats the URL path as a collection or entity reference and the `a` query parameter as the action: `c` create, `r` read, `u` update, `d` delete, `l` link and `ul` unlink. `GET /db` lists collections, `GET /db/<collection>` returns records filtered by query parameters, and deeper paths read an entity by id and then its properties. Links between entities are stored as id arrays with back-references in `associated_`.
+- **System collections.** Users, page designs, pages and tables are stored in the collections `system-users`, `system-page-designs`, `system-pages` and `system-tables`.
+- **Persistence.** Every change schedules a debounced (1 second) write of the whole store to `.store.json` and `.warehouse.json`, which are loaded again when the server starts.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Limitations
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- The JWT check in `server.js` is commented out, so every `/db` route is open, and `/authentication/change-password` expects a `req.user` that is never set.
+- The API URL is hard-coded to `http://localhost:4000`.
+- `service/database.js` requires `uuid`, which is not listed in `package.json` and only resolves through other dependencies.
+- The only test is a placeholder render test in `src/App.test.js`.
